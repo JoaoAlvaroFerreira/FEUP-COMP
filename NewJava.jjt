@@ -1,0 +1,30 @@
+options {
+  LOOKAHEAD=1;
+}
+PARSER_BEGIN(NewJava)
+public class NewJava
+{
+  public static void main(String args[]) throws ParseException {
+    NewJava myJava = new NewJava(System.in);
+    SimpleNode root = myJava.Expression();
+    root.dump("");
+
+    System.out.println("F*CK JAS");
+  }
+}
+
+PARSER_END(NewJava)
+SKIP :
+{
+  " " | "\r" | "\t"
+}
+TOKEN:
+{
+  < CLASS: "class" >
+  | < LF: "\n" >
+  | < SYMBOL: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
+}
+SimpleNode Expression(): {}
+{
+  <CLASS> <SYMBOL> "{""}" <LF> {return jjtThis;}
+}
