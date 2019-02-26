@@ -25,8 +25,9 @@ SKIP :
 TOKEN:
 {
   < CLASS: "class" >
+    | < EXTENDS: "extends" >
   | < LF: "\n" >
-  | < SYMBOL: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
+  | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* >
 }
 SimpleNode Expression(): {/*@bgen(jjtree) Expression */
   SimpleNode jjtn000 = new SimpleNode(JJTEXPRESSION);
@@ -36,11 +37,11 @@ SimpleNode Expression(): {/*@bgen(jjtree) Expression */
 {/*@bgen(jjtree) Expression */
   try {
 /*@egen*/
-  <CLASS> <SYMBOL> "{""}" <LF>/*@bgen(jjtree)*/
-                               {
-                                 jjtree.closeNodeScope(jjtn000, true);
-                                 jjtc000 = false;
-                               }
+  <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? "{""}" <LF>/*@bgen(jjtree)*/
+                                                             {
+                                                               jjtree.closeNodeScope(jjtn000, true);
+                                                               jjtc000 = false;
+                                                             }
 /*@egen*/ {return jjtn000;}/*@bgen(jjtree)*/
   } finally {
     if (jjtc000) {

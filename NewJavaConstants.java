@@ -11,9 +11,11 @@ public interface NewJavaConstants {
   /** RegularExpression Id. */
   int CLASS = 4;
   /** RegularExpression Id. */
-  int LF = 5;
+  int EXTENDS = 5;
   /** RegularExpression Id. */
-  int SYMBOL = 6;
+  int LF = 6;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 7;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -25,8 +27,9 @@ public interface NewJavaConstants {
     "\"\\r\"",
     "\"\\t\"",
     "\"class\"",
+    "\"extends\"",
     "\"\\n\"",
-    "<SYMBOL>",
+    "<IDENTIFIER>",
     "\"{\"",
     "\"}\"",
   };

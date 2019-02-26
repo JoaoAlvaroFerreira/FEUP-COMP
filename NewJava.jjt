@@ -21,10 +21,11 @@ SKIP :
 TOKEN:
 {
   < CLASS: "class" >
+    | < EXTENDS: "extends" >
   | < LF: "\n" >
-  | < SYMBOL: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z"])* >
+  | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* >
 }
 SimpleNode Expression(): {}
 {
-  <CLASS> <SYMBOL> "{""}" <LF> {return jjtThis;}
+  <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? "{""}" <LF> {return jjtThis;}
 }
