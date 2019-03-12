@@ -21,7 +21,7 @@ SKIP :
 TOKEN:
 {
   < CLASS: "class" >
-    | < EXTENDS: "extends" >
+  | < EXTENDS: "extends" >
   | < LF: "\n" >
   | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* >
 }

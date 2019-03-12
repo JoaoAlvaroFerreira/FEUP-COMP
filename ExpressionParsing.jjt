@@ -1,0 +1,45 @@
+options {
+  LOOKAHEAD=1;
+}
+
+PARSER_BEGIN(NewJava)
+
+public class NewJava
+{
+  public static void main(String args[]) throws ParseException {
+    NewJava myJava = new NewJava(System.in);
+    SimpleNode root = myJava.Expression();
+    root.dump("");
+
+    System.out.println("F*CK JAS");
+  }
+}
+
+PARSER_END(NewJava)
+SKIP :
+{
+  " " | "\r" | "\t"
+}
+TOKEN:
+{
+  < OPERATORS: "&&" | "<" | "+" | "-" | "*" | "/" >  
+  | < BRACKETOPEN: "[" >
+  | < BRACKETCLOSE: "]" >
+  | < FULLSTOP: "." >
+  | < COMMA: "," >
+  | < NOT: "!" >
+  | < ROUNDBRACKETOPEN: "(" >
+  | < ROUNDBRACKETCLOSED: ")" >
+  | < TRUE: "true" >
+  | < FALSE: "false" >
+  | < THIS: "this" >
+  | < NEW: "new" >
+  | < LENGTH: "length" >
+  | < INTEGERLITERAL: (["0" - "9"])+ >  
+  | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* >
+  | < LF: "\n" >
+}
+SimpleNode Expression(): {}
+{
+  <INTEGERLITERAL> <OPERATORS> <INTEGERLITERAL> <LF> {return jjtThis;}
+}
