@@ -2,14 +2,38 @@ options {
   LOOKAHEAD=1;
 }
 PARSER_BEGIN(NewJava)
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.*;
+
 public class NewJava
 {
   public static void main(String args[]) throws ParseException {
-    NewJava myJava = new NewJava(System.in);
-    SimpleNode root = myJava.Expression();
+    String filePath = "exemplo1.java";
+    String res = readAllBytesJava7(filePath);
+    NewJava myJava = new NewJava(new ByteArrayInputStream(res.getBytes()));
+    SimpleNode root = myJava.Program();
     root.dump("");
 
     System.out.println("F*CK JAS");
+  }
+
+  private static String readAllBytesJava7(String filePath)
+  {
+    String content = "";
+
+    try
+    {
+        content = new String ( Files.readAllBytes( Paths.get(filePath) ) );
+    }
+    catch (IOException e)
+    {
+        e.printStackTrace();
+    }
+
+    return content;
   }
 }
 
@@ -25,7 +49,12 @@ TOKEN:
   | < LF: "\n" >
   | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* >
 }
-SimpleNode Expression(): {}
+SimpleNode Program(): {}
 {
-  <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? "{""}" <LF> {return jjtThis;}
+  ClassDeclaration() "\n" <EOF> {return jjtThis;}
+}
+
+void ClassDeclaration()#void:  {}
+{
+  <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? "{""}"
 }

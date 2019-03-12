@@ -3,17 +3,41 @@
   LOOKAHEAD=1;
 }
 PARSER_BEGIN(NewJava)
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.*;
+
 public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
 {/*@bgen(jjtree)*/
   protected static JJTNewJavaState jjtree = new JJTNewJavaState();
 
 /*@egen*/
   public static void main(String args[]) throws ParseException {
-    NewJava myJava = new NewJava(System.in);
-    SimpleNode root = myJava.Expression();
+    String filePath = "exemplo1.java";
+    String res = readAllBytesJava7(filePath);
+    NewJava myJava = new NewJava(new ByteArrayInputStream(res.getBytes()));
+    SimpleNode root = myJava.Program();
     root.dump("");
 
     System.out.println("F*CK JAS");
+  }
+
+  private static String readAllBytesJava7(String filePath)
+  {
+    String content = "";
+
+    try
+    {
+        content = new String ( Files.readAllBytes( Paths.get(filePath) ) );
+    }
+    catch (IOException e)
+    {
+        e.printStackTrace();
+    }
+
+    return content;
   }
 }
 
@@ -29,24 +53,43 @@ TOKEN:
   | < LF: "\n" >
   | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* >
 }
-SimpleNode Expression(): {/*@bgen(jjtree) Expression */
-  SimpleNode jjtn000 = new SimpleNode(JJTEXPRESSION);
+SimpleNode Program(): {/*@bgen(jjtree) Program */
+  SimpleNode jjtn000 = new SimpleNode(JJTPROGRAM);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
-{/*@bgen(jjtree) Expression */
+{/*@bgen(jjtree) Program */
   try {
 /*@egen*/
-  <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? "{""}" <LF>/*@bgen(jjtree)*/
-                                                             {
-                                                               jjtree.closeNodeScope(jjtn000, true);
-                                                               jjtc000 = false;
-                                                             }
+  ClassDeclaration() "\n" <EOF>/*@bgen(jjtree)*/
+                                {
+                                  jjtree.closeNodeScope(jjtn000, true);
+                                  jjtc000 = false;
+                                }
 /*@egen*/ {return jjtn000;}/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
   } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
 /*@egen*/
+}
+
+void ClassDeclaration()     :  {}
+{
+  <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? "{""}"
 }
