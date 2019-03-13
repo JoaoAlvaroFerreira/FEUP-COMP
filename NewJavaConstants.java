@@ -9,13 +9,55 @@ public interface NewJavaConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int CLASS = 4;
+  int CLASS = 6;
   /** RegularExpression Id. */
-  int EXTENDS = 5;
+  int EXTENDS = 7;
   /** RegularExpression Id. */
-  int LF = 6;
+  int OPERATORS = 8;
   /** RegularExpression Id. */
-  int IDENTIFIER = 7;
+  int BRACKETOPEN = 9;
+  /** RegularExpression Id. */
+  int BRACKETCLOSE = 10;
+  /** RegularExpression Id. */
+  int FULLSTOP = 11;
+  /** RegularExpression Id. */
+  int COMMA = 12;
+  /** RegularExpression Id. */
+  int SEMICOLON = 13;
+  /** RegularExpression Id. */
+  int NOT = 14;
+  /** RegularExpression Id. */
+  int ROUNDBRACKETOPEN = 15;
+  /** RegularExpression Id. */
+  int ROUNDBRACKETCLOSED = 16;
+  /** RegularExpression Id. */
+  int TRUE = 17;
+  /** RegularExpression Id. */
+  int FALSE = 18;
+  /** RegularExpression Id. */
+  int THIS = 19;
+  /** RegularExpression Id. */
+  int NEW = 20;
+  /** RegularExpression Id. */
+  int LENGTH = 21;
+  /** RegularExpression Id. */
+  int INT = 22;
+  /** RegularExpression Id. */
+  int PUBLIC = 23;
+  /** RegularExpression Id. */
+  int STATIC = 24;
+  /** RegularExpression Id. */
+  int VOID = 25;
+  /** RegularExpression Id. */
+  int MAIN = 26;
+  /** RegularExpression Id. */
+  int STRING = 27;
+  /** RegularExpression Id. */
+  int BOOLEAN = 28;
+  /** RegularExpression Id. */
+  int INTEGERLITERAL = 29;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 30;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -26,9 +68,32 @@ public interface NewJavaConstants {
     "\" \"",
     "\"\\r\"",
     "\"\\t\"",
+    "\"\\n\"",
+    "\"\\n \"",
     "\"class\"",
     "\"extends\"",
-    "\"\\n\"",
+    "<OPERATORS>",
+    "\"[\"",
+    "\"]\"",
+    "\".\"",
+    "\",\"",
+    "\";\"",
+    "\"!\"",
+    "\"(\"",
+    "\")\"",
+    "\"true\"",
+    "\"false\"",
+    "\"this\"",
+    "\"new\"",
+    "\"length\"",
+    "\"int\"",
+    "\"public\"",
+    "\"static\"",
+    "\"void\"",
+    "\"main\"",
+    "\"String\"",
+    "\"boolean\"",
+    "<INTEGERLITERAL>",
     "<IDENTIFIER>",
     "\"{\"",
     "\"}\"",

@@ -1,0 +1,6 @@
+class tiago extends stuff{
+  int x;
+  public static void main(String [] args){
+    
+  }
+}
