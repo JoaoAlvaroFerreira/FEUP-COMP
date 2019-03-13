@@ -31,33 +31,39 @@ public interface NewJavaConstants {
   /** RegularExpression Id. */
   int ROUNDBRACKETCLOSED = 16;
   /** RegularExpression Id. */
-  int TRUE = 17;
+  int CURLYBRACKETOPENED = 17;
   /** RegularExpression Id. */
-  int FALSE = 18;
+  int CURLYBRACKETCLOSED = 18;
   /** RegularExpression Id. */
-  int THIS = 19;
+  int TRUE = 19;
   /** RegularExpression Id. */
-  int NEW = 20;
+  int FALSE = 20;
   /** RegularExpression Id. */
-  int LENGTH = 21;
+  int THIS = 21;
   /** RegularExpression Id. */
-  int INT = 22;
+  int NEW = 22;
   /** RegularExpression Id. */
-  int PUBLIC = 23;
+  int LENGTH = 23;
   /** RegularExpression Id. */
-  int STATIC = 24;
+  int INT = 24;
   /** RegularExpression Id. */
-  int VOID = 25;
+  int PUBLIC = 25;
   /** RegularExpression Id. */
-  int MAIN = 26;
+  int STATIC = 26;
   /** RegularExpression Id. */
-  int STRING = 27;
+  int VOID = 27;
   /** RegularExpression Id. */
-  int BOOLEAN = 28;
+  int MAIN = 28;
   /** RegularExpression Id. */
-  int INTEGERLITERAL = 29;
+  int RETURN = 29;
   /** RegularExpression Id. */
-  int IDENTIFIER = 30;
+  int STRING = 30;
+  /** RegularExpression Id. */
+  int BOOLEAN = 31;
+  /** RegularExpression Id. */
+  int INTEGERLITERAL = 32;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 33;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -81,6 +87,8 @@ public interface NewJavaConstants {
     "\"!\"",
     "\"(\"",
     "\")\"",
+    "\"{\"",
+    "\"}\"",
     "\"true\"",
     "\"false\"",
     "\"this\"",
@@ -91,12 +99,11 @@ public interface NewJavaConstants {
     "\"static\"",
     "\"void\"",
     "\"main\"",
+    "\"return\"",
     "\"String\"",
     "\"boolean\"",
     "<INTEGERLITERAL>",
     "<IDENTIFIER>",
-    "\"{\"",
-    "\"}\"",
   };
 
 }

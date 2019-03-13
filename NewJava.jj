@@ -59,6 +59,8 @@ TOKEN:
   | < NOT: "!" >
   | < ROUNDBRACKETOPEN: "(" >
   | < ROUNDBRACKETCLOSED: ")" >
+  | < CURLYBRACKETOPENED: "{" >
+  | < CURLYBRACKETCLOSED: "}" >
   | < TRUE: "true" >
   | < FALSE: "false" >
   | < THIS: "this" >
@@ -69,6 +71,7 @@ TOKEN:
   | < STATIC: "static" >
   | < VOID: "void" >
   | < MAIN: "main" >
+  | < RETURN: "return" >
   | < STRING: "String" >
   | < BOOLEAN: "boolean" >
   | < INTEGERLITERAL: (["0" - "9"])+ >
@@ -112,7 +115,7 @@ SimpleNode Program(): {/*@bgen(jjtree) Program */
 
 void ClassDeclaration()     :  {}
 {
-  <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? "{"(VarDeclaration())*(MainDeclaration()/*|MethodDeclaration()*/)*"}"
+  <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? <CURLYBRACKETOPENED>(VarDeclaration())*(MainDeclaration()|MethodDeclaration())*<CURLYBRACKETCLOSED>
 }
 
 void VarDeclaration()     : {}
@@ -130,5 +133,10 @@ void Type()     : {}
 
 void MainDeclaration()     : {}
 {
-  <PUBLIC> <STATIC> <VOID> <MAIN> <ROUNDBRACKETOPEN> <STRING> <BRACKETOPEN> <BRACKETCLOSE> <IDENTIFIER> <ROUNDBRACKETCLOSED> "{""}" 
+  <PUBLIC> <STATIC> <VOID> <MAIN> <ROUNDBRACKETOPEN> <STRING> <BRACKETOPEN> <BRACKETCLOSE> <IDENTIFIER> <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>(VarDeclaration())*/*(Statement())**/<CURLYBRACKETCLOSED>
+}
+
+void MethodDeclaration()     : {}
+{
+  <PUBLIC> Type() <IDENTIFIER> <ROUNDBRACKETOPEN> (Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*)? <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED> (VarDeclaration())* /*(Statement())**/ <RETURN> /*Expression()*/ <SEMICOLON> <CURLYBRACKETCLOSED>
 }

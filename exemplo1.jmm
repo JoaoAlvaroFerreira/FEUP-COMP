@@ -1,6 +1,12 @@
 class tiago extends stuff{
   int x;
+  int t;
   public static void main(String [] args){
-    
+
+  }
+
+  public int function1(int arg1){
+
+    return;
   }
 }
