@@ -2,9 +2,9 @@ options {
   LOOKAHEAD=1;
 }
 
-PARSER_BEGIN(NewJava)
+PARSER_BEGIN(ExpressionParsing)
 
-public class NewJava
+public class ExpressionParsing
 {
   public static void main(String args[]) throws ParseException {
     NewJava myJava = new NewJava(System.in);
@@ -15,7 +15,8 @@ public class NewJava
   }
 }
 
-PARSER_END(NewJava)
+PARSER_END(ExpressionParsing)
+
 SKIP :
 {
   " " | "\r" | "\t"
