@@ -101,8 +101,7 @@ void VarTerm(): {/*@bgen(jjtree) VarTerm */
   | <THIS>
   | <NEW> (<INT> <BRACKETOPEN> Expr1() <BRACKETCLOSE> | <IDENTIFIER> <ROUNDBRACKETOPEN> <ROUNDBRACKETCLOSED>)
   | <NOT> Expr1()
-  | <ROUNDBRACKETOPEN> Expr1() <ROUNDBRACKETCLOSED>
-  | <BRACKETOPEN> Expr1() <BRACKETCLOSE>/*@bgen(jjtree)*/
+  | <ROUNDBRACKETOPEN> Expr1() <ROUNDBRACKETCLOSED>/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -122,8 +121,7 @@ void VarTerm(): {/*@bgen(jjtree) VarTerm */
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
-/*@egen*/ 
-  
+/*@egen*/
 }
 
 void Expr3(): {/*@bgen(jjtree) Expr3 */
@@ -134,10 +132,9 @@ void Expr3(): {/*@bgen(jjtree) Expr3 */
 {/*@bgen(jjtree) Expr3 */
   try {
 /*@egen*/
-  <FULLSTOP> (<LENGTH> [Expr3()] | <IDENTIFIER> <ROUNDBRACKETOPEN> [Expr1() (<COMMA> Expr1())*] <ROUNDBRACKETCLOSED>)
+  <FULLSTOP> (<LENGTH> [Expr3()] | <IDENTIFIER> [<ROUNDBRACKETOPEN> [Expr1() (<COMMA> Expr1())*] <ROUNDBRACKETCLOSED>] [Expr3()])
   | <OPERATORS> Expr1() 
-  | <BRACKETOPEN> Expr1() <BRACKETCLOSE> 
-  | <ROUNDBRACKETOPEN> Expr1() <ROUNDBRACKETCLOSED>/*@bgen(jjtree)*/
+  | <BRACKETOPEN> [Expr1()] <BRACKETCLOSE> [Expr3()]/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
