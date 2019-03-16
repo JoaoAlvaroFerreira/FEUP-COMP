@@ -34,7 +34,7 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
     }
     catch (IOException e)
     {
-        e.printStackTrace();
+        System.out.println(e.toString());
     }
 
     return content;
@@ -115,65 +115,289 @@ SimpleNode Program(): {/*@bgen(jjtree) Program */
 
 void ClassDeclaration()     :  {}
 {
-  <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? <CURLYBRACKETOPENED>(VarDeclaration())*(<PUBLIC> (MainDeclaration()|MethodDeclaration()))*<CURLYBRACKETCLOSED>
+  try{
+    <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? <CURLYBRACKETOPENED>(VarDeclaration())*(<PUBLIC> (MainDeclaration()|MethodDeclaration()))*<CURLYBRACKETCLOSED>
+  }catch(ParseException e) {
+    System.out.println(e.toString());
+  }
 }
 
-void VarDeclaration()     : {}
+void VarDeclaration()     : {Token t;}
 {
-  Type() <IDENTIFIER> <SEMICOLON>
+  try{
+    Type() t=<IDENTIFIER> <SEMICOLON>/*@bgen(jjtree) VAR */
+                                     {
+                                       SimpleNode jjtn001 = new SimpleNode(JJTVAR);
+                                       boolean jjtc001 = true;
+                                       jjtree.openNodeScope(jjtn001);
+                                     }
+                                     try {
+/*@egen*//*@bgen(jjtree)*/
+                                     {
+                                       jjtree.closeNodeScope(jjtn001, true);
+                                       jjtc001 = false;
+                                     }
+/*@egen*/{
+      jjtn001.symbol=t.image;
+    }/*@bgen(jjtree)*/
+                                     } finally {
+                                       if (jjtc001) {
+                                         jjtree.closeNodeScope(jjtn001, true);
+                                       }
+                                     }
+/*@egen*/    
+  }catch(ParseException e) {
+    System.out.println(e.toString());
+  }
 }
 
 void Type()     : {}
 {
-  <INT> [<BRACKETOPEN> <BRACKETCLOSE>]
-  | <BOOLEAN>
-  | <IDENTIFIER>
+  try{
+    <INT> [<BRACKETOPEN> <BRACKETCLOSE>]
+    | <BOOLEAN>
+    | <IDENTIFIER>
+  }catch(ParseException e) {
+    System.out.println(e.toString());
+  }
 }
 
 void MainDeclaration()     : {}
 {
   try{
-  <STATIC> <VOID> <MAIN> <ROUNDBRACKETOPEN> <STRING> <BRACKETOPEN> <BRACKETCLOSE> <IDENTIFIER> <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>(VarDeclaration())*/*(Statement())**/<CURLYBRACKETCLOSED>
-}catch(ParseException e){
-    System.out.println(e.toString());
-    Token t;
-    do {
-      t = getNextToken();
-    } while (t.kind != CURLYBRACKETCLOSED);
-}
+    <STATIC> <VOID> <MAIN> <ROUNDBRACKETOPEN> <STRING> <BRACKETOPEN> <BRACKETCLOSE> <IDENTIFIER> <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>(VarDeclaration())*/*(Statement())**/<CURLYBRACKETCLOSED>
+  }catch(ParseException e){
+      System.out.println(e.toString());
+  }
 }
 
 void MethodDeclaration()     : {}
 {
-  Type() <IDENTIFIER> <ROUNDBRACKETOPEN> (Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*)? <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED> (VarDeclaration())* /*(Statement())**/ <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>
+  try{
+    Type() <IDENTIFIER> <ROUNDBRACKETOPEN> (Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*)? <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED> (VarDeclaration())* /*(Statement())**/ <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>
+  }catch(ParseException e) {
+    System.out.println(e.toString());
+  }
 }
 
 void Expression()     : {}
 {
- VarTerm() [Expr2()]
+  try{
+    VarTerm() [Expr2()]
+  }catch(ParseException e) {
+    System.out.println(e.toString());
+  }
 }
 
-void Expr2()     : {}
+void Expr2()     : {Token t;}
 {
   try{
-  <FULLSTOP> ("length" [Expr2()] |
-  <IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])
-  | <OPERATORS>  Expression() [Expr2()]
-  | <BRACKETOPEN> Expression() <BRACKETCLOSE> [Expr2()]
-}catch(ParseException e) {
-  e.printStackTrace();
-}
+    <FULLSTOP> (<LENGTH> [Expr2()] |
+    <IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])
+    | t=<OPERATORS> Expression()/*@bgen(jjtree) #OP( 2) */
+      {
+        SimpleNode jjtn001 = new SimpleNode(JJTOP);
+        boolean jjtc001 = true;
+        jjtree.openNodeScope(jjtn001);
+      }
+      try {
+/*@egen*//*@bgen(jjtree)*/
+      {
+        jjtree.closeNodeScope(jjtn001,  2);
+        jjtc001 = false;
+      }
+/*@egen*/
+      {
+        jjtn001.symbol = t.image;
+      }/*@bgen(jjtree)*/
+      } finally {
+        if (jjtc001) {
+          jjtree.closeNodeScope(jjtn001,  2);
+        }
+      }
+/*@egen*/      
+    | <BRACKETOPEN> Expression() <BRACKETCLOSE> [Expr2()]
+  }catch(ParseException e) {
+    System.out.println(e.toString());
+  }
 }
 
-void VarTerm()     : {}
+void VarTerm()     : {Token t;Token open = new Token();Token close = new Token();}
 {
-  <INTEGERLITERAL>
-  | <IDENTIFIER>
-  | <TRUE>
-  | <FALSE>
-  | <THIS>
-  | <NEW> (<INT> <BRACKETOPEN> Expression() <BRACKETCLOSE> | <IDENTIFIER> <ROUNDBRACKETOPEN> <ROUNDBRACKETCLOSED>)
-  | <NOT> Expression()
-  | <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED>
-  | <BRACKETOPEN> Expression() <BRACKETCLOSE>
+  try{
+    t=<INTEGERLITERAL>/*@bgen(jjtree) VAL */
+      {
+        SimpleNode jjtn001 = new SimpleNode(JJTVAL);
+        boolean jjtc001 = true;
+        jjtree.openNodeScope(jjtn001);
+      }
+      try {
+/*@egen*//*@bgen(jjtree)*/
+      {
+        jjtree.closeNodeScope(jjtn001, true);
+        jjtc001 = false;
+      }
+/*@egen*/
+      {
+        jjtn001.symbol = t.image;
+      }/*@bgen(jjtree)*/
+      } finally {
+        if (jjtc001) {
+          jjtree.closeNodeScope(jjtn001, true);
+        }
+      }
+/*@egen*/    
+    | t=<IDENTIFIER>/*@bgen(jjtree) TEXT */
+      {
+        SimpleNode jjtn002 = new SimpleNode(JJTTEXT);
+        boolean jjtc002 = true;
+        jjtree.openNodeScope(jjtn002);
+      }
+      try {
+/*@egen*//*@bgen(jjtree)*/
+      {
+        jjtree.closeNodeScope(jjtn002, true);
+        jjtc002 = false;
+      }
+/*@egen*/
+      {
+        jjtn002.symbol = t.image;
+      }/*@bgen(jjtree)*/
+      } finally {
+        if (jjtc002) {
+          jjtree.closeNodeScope(jjtn002, true);
+        }
+      }
+/*@egen*/     
+    |/*@bgen(jjtree) TRUE */
+      {
+        SimpleNode jjtn003 = new SimpleNode(JJTTRUE);
+        boolean jjtc003 = true;
+        jjtree.openNodeScope(jjtn003);
+      }
+      try {
+/*@egen*/ <TRUE>/*@bgen(jjtree)*/
+      } finally {
+        if (jjtc003) {
+          jjtree.closeNodeScope(jjtn003, true);
+        }
+      }
+/*@egen*/      
+    |/*@bgen(jjtree) FALSE */
+      {
+        SimpleNode jjtn004 = new SimpleNode(JJTFALSE);
+        boolean jjtc004 = true;
+        jjtree.openNodeScope(jjtn004);
+      }
+      try {
+/*@egen*/ <FALSE>/*@bgen(jjtree)*/
+      } finally {
+        if (jjtc004) {
+          jjtree.closeNodeScope(jjtn004, true);
+        }
+      }
+/*@egen*/       
+    |/*@bgen(jjtree) THIS */
+      {
+        SimpleNode jjtn005 = new SimpleNode(JJTTHIS);
+        boolean jjtc005 = true;
+        jjtree.openNodeScope(jjtn005);
+      }
+      try {
+/*@egen*/ <THIS>/*@bgen(jjtree)*/
+      } finally {
+        if (jjtc005) {
+          jjtree.closeNodeScope(jjtn005, true);
+        }
+      }
+/*@egen*/      
+    | <NEW> (t=<INT> open=<BRACKETOPEN> Expression() close=<BRACKETCLOSE>/*@bgen(jjtree) #NEW( 1) */
+                                                                          {
+                                                                            SimpleNode jjtn006 = new SimpleNode(JJTNEW);
+                                                                            boolean jjtc006 = true;
+                                                                            jjtree.openNodeScope(jjtn006);
+                                                                          }
+                                                                          try {
+/*@egen*//*@bgen(jjtree)*/
+                                                                          {
+                                                                            jjtree.closeNodeScope(jjtn006,  1);
+                                                                            jjtc006 = false;
+                                                                          }
+/*@egen*/ {
+      jjtn006.symbol = t.image;
+    }/*@bgen(jjtree)*/
+                                                                          } finally {
+                                                                            if (jjtc006) {
+                                                                              jjtree.closeNodeScope(jjtn006,  1);
+                                                                            }
+                                                                          }
+/*@egen*/       
+    | t=<IDENTIFIER> open=<ROUNDBRACKETOPEN> close=<ROUNDBRACKETCLOSED>/*@bgen(jjtree) NEW */
+    {
+      SimpleNode jjtn007 = new SimpleNode(JJTNEW);
+      boolean jjtc007 = true;
+      jjtree.openNodeScope(jjtn007);
+    }
+    try {
+/*@egen*//*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn007, true);
+      jjtc007 = false;
+    }
+/*@egen*/
+    {
+      jjtn007.symbol = t.image;
+    }/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc007) {
+        jjtree.closeNodeScope(jjtn007, true);
+      }
+    }
+/*@egen*/    
+    )
+    | <NOT>/*@bgen(jjtree) #NOT( 1) */
+            {
+              SimpleNode jjtn008 = new SimpleNode(JJTNOT);
+              boolean jjtc008 = true;
+              jjtree.openNodeScope(jjtn008);
+            }
+            try {
+/*@egen*/ Expression()/*@bgen(jjtree)*/
+            } catch (Throwable jjte008) {
+              if (jjtc008) {
+                jjtree.clearNodeScope(jjtn008);
+                jjtc008 = false;
+              } else {
+                jjtree.popNode();
+              }
+              if (jjte008 instanceof RuntimeException) {
+                throw (RuntimeException)jjte008;
+              }
+              if (jjte008 instanceof ParseException) {
+                throw (ParseException)jjte008;
+              }
+              throw (Error)jjte008;
+            } finally {
+              if (jjtc008) {
+                jjtree.closeNodeScope(jjtn008,  1);
+              }
+            }
+/*@egen*/        
+    | <ROUNDBRACKETOPEN> Expression()/*@bgen(jjtree) #BRACKETS( 1) */
+                                      {
+                                        SimpleNode jjtn009 = new SimpleNode(JJTBRACKETS);
+                                        boolean jjtc009 = true;
+                                        jjtree.openNodeScope(jjtn009);
+                                      }
+                                      try {
+/*@egen*/ <ROUNDBRACKETCLOSED>/*@bgen(jjtree)*/
+                                      } finally {
+                                        if (jjtc009) {
+                                          jjtree.closeNodeScope(jjtn009,  1);
+                                        }
+                                      }
+/*@egen*/             
+  }catch(ParseException e) {
+    System.out.println(e.toString());
+  }
 }

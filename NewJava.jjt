@@ -30,7 +30,7 @@ public class NewJava
     }
     catch (IOException e)
     {
-        e.printStackTrace();
+        System.out.println(e.toString());
     }
 
     return content;
@@ -80,68 +80,102 @@ SimpleNode Program(): {}
 
 void ClassDeclaration()#void:  {}
 {
-  <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? <CURLYBRACKETOPENED>(VarDeclaration())*(<PUBLIC> (MainDeclaration()|MethodDeclaration()))*<CURLYBRACKETCLOSED>
+  try{
+    <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? <CURLYBRACKETOPENED>(VarDeclaration())*(<PUBLIC> (MainDeclaration()|MethodDeclaration()))*<CURLYBRACKETCLOSED>
+  }catch(ParseException e) {
+    System.out.println(e.toString());
+  }
 }
 
-void VarDeclaration()#void: {}
+void VarDeclaration()#void: {Token t;}
 {
-  Type() <IDENTIFIER> <SEMICOLON>
+  try{
+    Type() t=<IDENTIFIER> <SEMICOLON>{
+      jjtThis.symbol=t.image;
+    }#VAR
+  }catch(ParseException e) {
+    System.out.println(e.toString());
+  }
 }
 
 void Type()#void: {}
 {
-  <INT> [<BRACKETOPEN> <BRACKETCLOSE>]
-  | <BOOLEAN>
-  | <IDENTIFIER>
+  try{
+    <INT> [<BRACKETOPEN> <BRACKETCLOSE>]
+    | <BOOLEAN>
+    | <IDENTIFIER>
+  }catch(ParseException e) {
+    System.out.println(e.toString());
+  }
 }
 
 void MainDeclaration()#void: {}
 {
   try{
-  <STATIC> <VOID> <MAIN> <ROUNDBRACKETOPEN> <STRING> <BRACKETOPEN> <BRACKETCLOSE> <IDENTIFIER> <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>(VarDeclaration())*/*(Statement())**/<CURLYBRACKETCLOSED>
-}catch(ParseException e){
-    System.out.println(e.toString());
-    Token t;
-    do {
-      t = getNextToken();
-    } while (t.kind != CURLYBRACKETCLOSED);
-}
+    <STATIC> <VOID> <MAIN> <ROUNDBRACKETOPEN> <STRING> <BRACKETOPEN> <BRACKETCLOSE> <IDENTIFIER> <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>(VarDeclaration())*/*(Statement())**/<CURLYBRACKETCLOSED>
+  }catch(ParseException e){
+      System.out.println(e.toString());
+  }
 }
 
 void MethodDeclaration()#void: {}
 {
-  Type() <IDENTIFIER> <ROUNDBRACKETOPEN> (Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*)? <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED> (VarDeclaration())* /*(Statement())**/ <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>
+  try{
+    Type() <IDENTIFIER> <ROUNDBRACKETOPEN> (Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*)? <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED> (VarDeclaration())* /*(Statement())**/ <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>
+  }catch(ParseException e) {
+    System.out.println(e.toString());
+  }
 }
 
 void Expression()#void: {}
 {
- VarTerm() [Expr2()]
-}
-
-void Expr2()#void: {}
-{
   try{
-  <FULLSTOP> (<LENGTH> [Expr2()] |
-  <IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])
-  | <OPERATORS>  Expression() [Expr2()]
-  | <BRACKETOPEN> Expression() <BRACKETCLOSE> [Expr2()]
-}catch(ParseException e) {
-  e.printStackTrace();
-}
-}
-
-void VarTerm()#void: {}
-{
-  try{
-    <INTEGERLITERAL>
-    | <IDENTIFIER>
-    | <TRUE>
-    | <FALSE>
-    | <THIS>
-    | <NEW> (<INT> <BRACKETOPEN> Expression() <BRACKETCLOSE> | <IDENTIFIER> <ROUNDBRACKETOPEN> <ROUNDBRACKETCLOSED>)
-    | <NOT> Expression()
-    | <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED>
+    VarTerm() [Expr2()]
   }catch(ParseException e) {
-    e.printStackTrace();
+    System.out.println(e.toString());
+  }
+}
+
+void Expr2()#void: {Token t;}
+{
+  try{
+    <FULLSTOP> (<LENGTH> [Expr2()] |
+    <IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])
+    | t=<OPERATORS> Expression()
+      {
+        jjtThis.symbol = t.image;
+      }#OP(2)
+    | <BRACKETOPEN> Expression() <BRACKETCLOSE> [Expr2()]
+  }catch(ParseException e) {
+    System.out.println(e.toString());
+  }
+}
+
+void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token();}
+{
+  try{
+    t=<INTEGERLITERAL>
+      {
+        jjtThis.symbol = t.image;
+      }#VAL
+    | t=<IDENTIFIER>
+      {
+        jjtThis.symbol = t.image;
+      }#TEXT
+    | <TRUE> #TRUE
+    | <FALSE> #FALSE
+    | <THIS> #THIS
+    | <NEW> (t=<INT> open=<BRACKETOPEN> Expression() close=<BRACKETCLOSE> {
+      jjtThis.symbol = t.image;
+    }#NEW(1)
+    | t=<IDENTIFIER> open=<ROUNDBRACKETOPEN> close=<ROUNDBRACKETCLOSED>
+    {
+      jjtThis.symbol = t.image;
+    }#NEW
+    )
+    | <NOT> Expression() #NOT(1)
+    | <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> #BRACKETS(1)
+  }catch(ParseException e) {
+    System.out.println(e.toString());
   }
 }

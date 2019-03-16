@@ -3,11 +3,31 @@ public interface NewJavaTreeConstants
 {
   public int JJTPROGRAM = 0;
   public int JJTVOID = 1;
+  public int JJTVAR = 2;
+  public int JJTOP = 3;
+  public int JJTVAL = 4;
+  public int JJTTEXT = 5;
+  public int JJTTRUE = 6;
+  public int JJTFALSE = 7;
+  public int JJTTHIS = 8;
+  public int JJTNEW = 9;
+  public int JJTNOT = 10;
+  public int JJTBRACKETS = 11;
 
 
   public String[] jjtNodeName = {
     "Program",
     "void",
+    "VAR",
+    "OP",
+    "VAL",
+    "TEXT",
+    "TRUE",
+    "FALSE",
+    "THIS",
+    "NEW",
+    "NOT",
+    "BRACKETS",
   };
 }
-/* JavaCC - OriginalChecksum=8f6fb1fdac2f1432cfde48cc6f1bf202 (do not edit this line) */
+/* JavaCC - OriginalChecksum=307b35c1a23735f8b127dcdbaedc257f (do not edit this line) */

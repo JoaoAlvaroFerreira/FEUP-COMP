@@ -8,6 +8,7 @@ class SimpleNode implements Node {
   protected int id;
   protected Object value;
   protected NewJava parser;
+  protected String symbol;
 
   public SimpleNode(int i) {
     id = i;
@@ -64,7 +65,10 @@ class SimpleNode implements Node {
      out its children. */
 
   public void dump(String prefix) {
-    System.out.println(toString(prefix));
+    System.out.print(toString(prefix));
+    if(this.symbol != null)
+      System.out.print(" "+this.symbol);
+    System.out.println();
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         SimpleNode n = (SimpleNode)children[i];
