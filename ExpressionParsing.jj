@@ -83,15 +83,15 @@ SimpleNode Expression(): {/*@bgen(jjtree) Expression */
 
 void Expr1()       : {}
 {
-  Expr2() [Expr3()]
+  VarTerm() [Expr3()]
 }
 
-void Expr2(): {/*@bgen(jjtree) Expr2 */
-  SimpleNode jjtn000 = new SimpleNode(JJTEXPR2);
+void VarTerm(): {/*@bgen(jjtree) VarTerm */
+  SimpleNode jjtn000 = new SimpleNode(JJTVARTERM);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
-{/*@bgen(jjtree) Expr2 */
+{/*@bgen(jjtree) VarTerm */
   try {
 /*@egen*/
   <INTEGERLITERAL>
@@ -134,7 +134,7 @@ void Expr3(): {/*@bgen(jjtree) Expr3 */
 {/*@bgen(jjtree) Expr3 */
   try {
 /*@egen*/
-  <FULLSTOP> (<LENGTH> Expr1() | <IDENTIFIER> <ROUNDBRACKETOPEN> [Expr1() (<COMMA> Expr1())*] <ROUNDBRACKETCLOSED>)
+  <FULLSTOP> (<LENGTH> [Expr3()] | <IDENTIFIER> <ROUNDBRACKETOPEN> [Expr1() (<COMMA> Expr1())*] <ROUNDBRACKETCLOSED>)
   | <OPERATORS> Expr1() 
   | <BRACKETOPEN> Expr1() <BRACKETCLOSE> 
   | <ROUNDBRACKETOPEN> Expr1() <ROUNDBRACKETCLOSED>/*@bgen(jjtree)*/

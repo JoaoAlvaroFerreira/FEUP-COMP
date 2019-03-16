@@ -48,10 +48,10 @@ SimpleNode Expression(): {}
 
 void Expr1() #void : {}
 {
-  Expr2() [Expr3()]
+  VarTerm() [Expr3()]
 }
 
-void Expr2(): {}
+void VarTerm(): {}
 {
   <INTEGERLITERAL>
   | <IDENTIFIER>
@@ -67,7 +67,7 @@ void Expr2(): {}
 
 void Expr3(): {}
 {
-  <FULLSTOP> (<LENGTH> Expr1() | <IDENTIFIER> <ROUNDBRACKETOPEN> [Expr1() (<COMMA> Expr1())*] <ROUNDBRACKETCLOSED>)
+  <FULLSTOP> (<LENGTH> [Expr3()] | <IDENTIFIER> <ROUNDBRACKETOPEN> [Expr1() (<COMMA> Expr1())*] <ROUNDBRACKETCLOSED>)
   | <OPERATORS> Expr1() 
   | <BRACKETOPEN> Expr1() <BRACKETCLOSE> 
   | <ROUNDBRACKETOPEN> Expr1() <ROUNDBRACKETCLOSED>

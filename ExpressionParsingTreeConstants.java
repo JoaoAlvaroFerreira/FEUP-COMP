@@ -3,15 +3,15 @@ public interface ExpressionParsingTreeConstants
 {
   public int JJTEXPRESSION = 0;
   public int JJTVOID = 1;
-  public int JJTEXPR2 = 2;
+  public int JJTVARTERM = 2;
   public int JJTEXPR3 = 3;
 
 
   public String[] jjtNodeName = {
     "Expression",
     "void",
-    "Expr2",
+    "VarTerm",
     "Expr3",
   };
 }
-/* JavaCC - OriginalChecksum=008109f957a154bf22a4100b1fc6331f (do not edit this line) */
+/* JavaCC - OriginalChecksum=56ae25ffdefa1834fafea634de6cc962 (do not edit this line) */
