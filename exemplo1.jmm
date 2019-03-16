@@ -7,6 +7,6 @@ class tiago extends stuff{
 
   public int function1(int arg1){
 
-    return;
+    return nuno.length[nuno.length];
   }
 }

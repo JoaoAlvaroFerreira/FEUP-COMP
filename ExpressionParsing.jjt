@@ -4,14 +4,42 @@ options {
 
 PARSER_BEGIN(ExpressionParsing)
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.*;
+
 public class ExpressionParsing
 {
   public static void main(String args[]) throws ParseException {
+<<<<<<< Updated upstream
     ExpressionParsing myJava = new ExpressionParsing(System.in);
     SimpleNode root = myJava.Expression();
+=======
+    String filePath = "exemplo2.jmm";
+    String fileContents = fileToString(filePath);
+    ExpressionParsing myJava = new ExpressionParsing(new ByteArrayInputStream(fileContents.getBytes()));
+    SimpleNode root = myJava.Program();
+>>>>>>> Stashed changes
     root.dump("");
 
     System.out.println("F*CK JAS");
+  }
+
+  private static String fileToString(String filePath)
+  {
+    String content = "";
+
+    try
+    {
+        content = new String ( Files.readAllBytes( Paths.get(filePath) ) );
+    }
+    catch (IOException e)
+    {
+        e.printStackTrace();
+    }
+
+    return content;
   }
 }
 
@@ -19,11 +47,11 @@ PARSER_END(ExpressionParsing)
 
 SKIP :
 {
-  " " | "\r" | "\t"
+  " " | "\r" | "\t" | "\n"
 }
 TOKEN:
 {
-  < OPERATORS: "&&" | "<" | "+" | "-" | "*" | "/" >  
+  < OPERATORS: "&&" | "<" | "+" | "-" | "*" | "/" >
   | < BRACKETOPEN: "[" >
   | < BRACKETCLOSE: "]" >
   | < FULLSTOP: "." >
@@ -37,11 +65,31 @@ TOKEN:
   | < LENGTH: "length" >
   | < NEW: "new" >
   | < INT: "int" >
-  | < INTEGERLITERAL: (["0" - "9"])+ >  
-  | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* > 
-  | < LF: "\n" >
+  | < INTEGERLITERAL: (["0" - "9"])+ >
+  | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* >
 }
-SimpleNode Expression(): {}
+SimpleNode Program(): {}
+{
+  Expression() <EOF> {return jjtThis;}
+}
+
+void Expression()#void: {}
+{
+ VarTerm() [Expr2()]
+}
+
+void Expr2()#void: {}
+{
+  try{
+  <FULLSTOP> ("length" [Expr2()] |
+  <IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])
+  | <OPERATORS>  Expression()
+}catch(ParseException e) {
+  e.printStackTrace();
+}
+}
+
+void VarTerm()#void: {}
 {
   Expr1() <LF> {return jjtThis;}
 }

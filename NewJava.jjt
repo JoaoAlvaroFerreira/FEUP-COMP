@@ -1,5 +1,5 @@
 options {
-  LOOKAHEAD=2;
+  LOOKAHEAD=1;
 }
 PARSER_BEGIN(NewJava)
 
@@ -80,7 +80,7 @@ SimpleNode Program(): {}
 
 void ClassDeclaration()#void:  {}
 {
-  <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? <CURLYBRACKETOPENED>(VarDeclaration())*(MainDeclaration()|MethodDeclaration())*<CURLYBRACKETCLOSED>
+  <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? <CURLYBRACKETOPENED>(VarDeclaration())*(<PUBLIC> (MainDeclaration()|MethodDeclaration()))*<CURLYBRACKETCLOSED>
 }
 
 void VarDeclaration()#void: {}
@@ -90,18 +90,58 @@ void VarDeclaration()#void: {}
 
 void Type()#void: {}
 {
-  <INT> <BRACKETOPEN> <BRACKETCLOSE>
+  <INT> [<BRACKETOPEN> <BRACKETCLOSE>]
   | <BOOLEAN>
-  | <INT>
-//  | Expression()
+  | <IDENTIFIER>
 }
 
 void MainDeclaration()#void: {}
 {
-  <PUBLIC> <STATIC> <VOID> <MAIN> <ROUNDBRACKETOPEN> <STRING> <BRACKETOPEN> <BRACKETCLOSE> <IDENTIFIER> <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>(VarDeclaration())*/*(Statement())**/<CURLYBRACKETCLOSED>
+  try{
+  <STATIC> <VOID> <MAIN> <ROUNDBRACKETOPEN> <STRING> <BRACKETOPEN> <BRACKETCLOSE> <IDENTIFIER> <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>(VarDeclaration())*/*(Statement())**/<CURLYBRACKETCLOSED>
+}catch(ParseException e){
+    System.out.println(e.toString());
+    Token t;
+    do {
+      t = getNextToken();
+    } while (t.kind != CURLYBRACKETCLOSED);
+}
 }
 
 void MethodDeclaration()#void: {}
 {
-  <PUBLIC> Type() <IDENTIFIER> <ROUNDBRACKETOPEN> (Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*)? <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED> (VarDeclaration())* /*(Statement())**/ <RETURN> /*Expression()*/ <SEMICOLON> <CURLYBRACKETCLOSED>
+  Type() <IDENTIFIER> <ROUNDBRACKETOPEN> (Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*)? <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED> (VarDeclaration())* /*(Statement())**/ <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>
+}
+
+void Expression()#void: {}
+{
+ VarTerm() [Expr2()]
+}
+
+void Expr2()#void: {}
+{
+  try{
+  <FULLSTOP> (<LENGTH> [Expr2()] |
+  <IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])
+  | <OPERATORS>  Expression() [Expr2()]
+  | <BRACKETOPEN> Expression() <BRACKETCLOSE> [Expr2()]
+}catch(ParseException e) {
+  e.printStackTrace();
+}
+}
+
+void VarTerm()#void: {}
+{
+  try{
+    <INTEGERLITERAL>
+    | <IDENTIFIER>
+    | <TRUE>
+    | <FALSE>
+    | <THIS>
+    | <NEW> (<INT> <BRACKETOPEN> Expression() <BRACKETCLOSE> | <IDENTIFIER> <ROUNDBRACKETOPEN> <ROUNDBRACKETCLOSED>)
+    | <NOT> Expression()
+    | <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED>
+  }catch(ParseException e) {
+    e.printStackTrace();
+  }
 }

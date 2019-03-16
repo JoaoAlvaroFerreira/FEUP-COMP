@@ -9,37 +9,61 @@ public interface NewJavaConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int OPERATORS = 4;
+  int CLASS = 6;
   /** RegularExpression Id. */
-  int BRACKETOPEN = 5;
+  int EXTENDS = 7;
   /** RegularExpression Id. */
-  int BRACKETCLOSE = 6;
+  int OPERATORS = 8;
   /** RegularExpression Id. */
-  int FULLSTOP = 7;
+  int BRACKETOPEN = 9;
   /** RegularExpression Id. */
-  int COMMA = 8;
+  int BRACKETCLOSE = 10;
   /** RegularExpression Id. */
-  int NOT = 9;
+  int FULLSTOP = 11;
   /** RegularExpression Id. */
-  int ROUNDBRACKETOPEN = 10;
+  int COMMA = 12;
   /** RegularExpression Id. */
-  int ROUNDBRACKETCLOSED = 11;
+  int SEMICOLON = 13;
   /** RegularExpression Id. */
-  int TRUE = 12;
+  int NOT = 14;
   /** RegularExpression Id. */
-  int FALSE = 13;
+  int ROUNDBRACKETOPEN = 15;
   /** RegularExpression Id. */
-  int THIS = 14;
+  int ROUNDBRACKETCLOSED = 16;
   /** RegularExpression Id. */
-  int NEW = 15;
+  int CURLYBRACKETOPENED = 17;
   /** RegularExpression Id. */
-  int LENGTH = 16;
+  int CURLYBRACKETCLOSED = 18;
   /** RegularExpression Id. */
-  int INTEGERLITERAL = 17;
+  int TRUE = 19;
   /** RegularExpression Id. */
-  int IDENTIFIER = 18;
+  int FALSE = 20;
   /** RegularExpression Id. */
-  int LF = 19;
+  int THIS = 21;
+  /** RegularExpression Id. */
+  int NEW = 22;
+  /** RegularExpression Id. */
+  int LENGTH = 23;
+  /** RegularExpression Id. */
+  int INT = 24;
+  /** RegularExpression Id. */
+  int PUBLIC = 25;
+  /** RegularExpression Id. */
+  int STATIC = 26;
+  /** RegularExpression Id. */
+  int VOID = 27;
+  /** RegularExpression Id. */
+  int MAIN = 28;
+  /** RegularExpression Id. */
+  int RETURN = 29;
+  /** RegularExpression Id. */
+  int STRING = 30;
+  /** RegularExpression Id. */
+  int BOOLEAN = 31;
+  /** RegularExpression Id. */
+  int INTEGERLITERAL = 32;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 33;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -50,22 +74,36 @@ public interface NewJavaConstants {
     "\" \"",
     "\"\\r\"",
     "\"\\t\"",
+    "\"\\n\"",
+    "\"\\n \"",
+    "\"class\"",
+    "\"extends\"",
     "<OPERATORS>",
     "\"[\"",
     "\"]\"",
     "\".\"",
     "\",\"",
+    "\";\"",
     "\"!\"",
     "\"(\"",
     "\")\"",
+    "\"{\"",
+    "\"}\"",
     "\"true\"",
     "\"false\"",
     "\"this\"",
     "\"new\"",
     "\"length\"",
+    "\"int\"",
+    "\"public\"",
+    "\"static\"",
+    "\"void\"",
+    "\"main\"",
+    "\"return\"",
+    "\"String\"",
+    "\"boolean\"",
     "<INTEGERLITERAL>",
     "<IDENTIFIER>",
-    "\"\\n\"",
   };
 
 }

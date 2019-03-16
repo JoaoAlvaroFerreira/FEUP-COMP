@@ -5,17 +5,45 @@
 
 PARSER_BEGIN(ExpressionParsing)
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.*;
+
 public class ExpressionParsing/*@bgen(jjtree)*/implements ExpressionParsingTreeConstants/*@egen*/
 {/*@bgen(jjtree)*/
   protected static JJTExpressionParsingState jjtree = new JJTExpressionParsingState();
 
 /*@egen*/
   public static void main(String args[]) throws ParseException {
+<<<<<<< Updated upstream
     ExpressionParsing myJava = new ExpressionParsing(System.in);
     SimpleNode root = myJava.Expression();
+=======
+    String filePath = "exemplo2.jmm";
+    String fileContents = fileToString(filePath);
+    ExpressionParsing myJava = new ExpressionParsing(new ByteArrayInputStream(fileContents.getBytes()));
+    SimpleNode root = myJava.Program();
+>>>>>>> Stashed changes
     root.dump("");
 
     System.out.println("F*CK JAS");
+  }
+
+  private static String fileToString(String filePath)
+  {
+    String content = "";
+
+    try
+    {
+        content = new String ( Files.readAllBytes( Paths.get(filePath) ) );
+    }
+    catch (IOException e)
+    {
+        e.printStackTrace();
+    }
+
+    return content;
   }
 }
 
@@ -23,11 +51,11 @@ PARSER_END(ExpressionParsing)
 
 SKIP :
 {
-  " " | "\r" | "\t"
+  " " | "\r" | "\t" | "\n"
 }
 TOKEN:
 {
-  < OPERATORS: "&&" | "<" | "+" | "-" | "*" | "/" >  
+  < OPERATORS: "&&" | "<" | "+" | "-" | "*" | "/" >
   | < BRACKETOPEN: "[" >
   | < BRACKETCLOSE: "]" >
   | < FULLSTOP: "." >
@@ -39,25 +67,38 @@ TOKEN:
   | < FALSE: "false" >
   | < THIS: "this" >
   | < LENGTH: "length" >
+<<<<<<< Updated upstream
   | < NEW: "new" >
   | < INT: "int" >
   | < INTEGERLITERAL: (["0" - "9"])+ >  
   | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* > 
   | < LF: "\n" >
+=======
+  | < INTEGERLITERAL: (["0" - "9"])+ >
+  | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* >
+>>>>>>> Stashed changes
 }
-SimpleNode Expression(): {/*@bgen(jjtree) Expression */
-  SimpleNode jjtn000 = new SimpleNode(JJTEXPRESSION);
+SimpleNode Program(): {/*@bgen(jjtree) Program */
+  SimpleNode jjtn000 = new SimpleNode(JJTPROGRAM);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
 /*@egen*/}
-{/*@bgen(jjtree) Expression */
+{/*@bgen(jjtree) Program */
   try {
 /*@egen*/
+<<<<<<< Updated upstream
   Expr1() <LF>/*@bgen(jjtree)*/
                {
                  jjtree.closeNodeScope(jjtn000, true);
                  jjtc000 = false;
                }
+=======
+  Expression() <EOF>/*@bgen(jjtree)*/
+                     {
+                       jjtree.closeNodeScope(jjtn000, true);
+                       jjtc000 = false;
+                     }
+>>>>>>> Stashed changes
 /*@egen*/ {return jjtn000;}/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -73,6 +114,7 @@ SimpleNode Expression(): {/*@bgen(jjtree) Expression */
       throw (ParseException)jjte000;
     }
     throw (Error)jjte000;
+<<<<<<< Updated upstream
   } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
@@ -149,10 +191,36 @@ void Expr3(): {/*@bgen(jjtree) Expr3 */
       throw (ParseException)jjte000;
     }
     throw (Error)jjte000;
+=======
+>>>>>>> Stashed changes
   } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);
     }
   }
 /*@egen*/
+}
+
+void Expression()     : {}
+{
+ VarTerm() [Expr2()]
+}
+
+void Expr2()     : {}
+{
+  try{
+  <FULLSTOP> ("length" [Expr2()] |
+  <IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])
+  | <OPERATORS>  Expression()
+}catch(ParseException e) {
+  e.printStackTrace();
+}
+}
+
+void VarTerm()     : {}
+{
+<IDENTIFIER>
+| <TRUE>
+| <INTEGERLITERAL>
+| <THIS>
 }
