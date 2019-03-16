@@ -31,15 +31,17 @@ public interface ExpressionParsingConstants {
   /** RegularExpression Id. */
   int THIS = 14;
   /** RegularExpression Id. */
-  int NEW = 15;
+  int LENGTH = 15;
   /** RegularExpression Id. */
-  int LENGTH = 16;
+  int NEW = 16;
   /** RegularExpression Id. */
-  int INTEGERLITERAL = 17;
+  int INT = 17;
   /** RegularExpression Id. */
-  int IDENTIFIER = 18;
+  int INTEGERLITERAL = 18;
   /** RegularExpression Id. */
-  int LF = 19;
+  int IDENTIFIER = 19;
+  /** RegularExpression Id. */
+  int LF = 20;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -61,8 +63,9 @@ public interface ExpressionParsingConstants {
     "\"true\"",
     "\"false\"",
     "\"this\"",
-    "\"new\"",
     "\"length\"",
+    "\"new\"",
+    "\"int\"",
     "<INTEGERLITERAL>",
     "<IDENTIFIER>",
     "\"\\n\"",

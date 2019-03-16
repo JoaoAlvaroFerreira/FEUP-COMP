@@ -11,7 +11,7 @@ public class ExpressionParsing/*@bgen(jjtree)*/implements ExpressionParsingTreeC
 
 /*@egen*/
   public static void main(String args[]) throws ParseException {
-    NewJava myJava = new NewJava(System.in);
+    ExpressionParsing myJava = new ExpressionParsing(System.in);
     SimpleNode root = myJava.Expression();
     root.dump("");
 
@@ -38,10 +38,11 @@ TOKEN:
   | < TRUE: "true" >
   | < FALSE: "false" >
   | < THIS: "this" >
-  | < NEW: "new" >
   | < LENGTH: "length" >
+  | < NEW: "new" >
+  | < INT: "int" >
   | < INTEGERLITERAL: (["0" - "9"])+ >  
-  | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* >
+  | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* > 
   | < LF: "\n" >
 }
 SimpleNode Expression(): {/*@bgen(jjtree) Expression */
@@ -52,12 +53,105 @@ SimpleNode Expression(): {/*@bgen(jjtree) Expression */
 {/*@bgen(jjtree) Expression */
   try {
 /*@egen*/
-  <INTEGERLITERAL> <OPERATORS> <INTEGERLITERAL> <LF>/*@bgen(jjtree)*/
-                                                     {
-                                                       jjtree.closeNodeScope(jjtn000, true);
-                                                       jjtc000 = false;
-                                                     }
+  Expr1() <LF>/*@bgen(jjtree)*/
+               {
+                 jjtree.closeNodeScope(jjtn000, true);
+                 jjtc000 = false;
+               }
 /*@egen*/ {return jjtn000;}/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
+}
+
+void Expr1()       : {}
+{
+  Expr2() [Expr3()]
+}
+
+void Expr2(): {/*@bgen(jjtree) Expr2 */
+  SimpleNode jjtn000 = new SimpleNode(JJTEXPR2);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) Expr2 */
+  try {
+/*@egen*/
+  <INTEGERLITERAL>
+  | <IDENTIFIER>
+  | <TRUE>
+  | <FALSE>
+  | <THIS>
+  | <NEW> (<INT> <BRACKETOPEN> Expr1() <BRACKETCLOSE> | <IDENTIFIER> <ROUNDBRACKETOPEN> <ROUNDBRACKETCLOSED>)
+  | <NOT> Expr1()
+  | <ROUNDBRACKETOPEN> Expr1() <ROUNDBRACKETCLOSED>
+  | <BRACKETOPEN> Expr1() <BRACKETCLOSE>/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/ 
+  
+}
+
+void Expr3(): {/*@bgen(jjtree) Expr3 */
+  SimpleNode jjtn000 = new SimpleNode(JJTEXPR3);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) Expr3 */
+  try {
+/*@egen*/
+  <FULLSTOP> (<LENGTH> Expr1() | <IDENTIFIER> <ROUNDBRACKETOPEN> [Expr1() (<COMMA> Expr1())*] <ROUNDBRACKETCLOSED>)
+  | <OPERATORS> Expr1() 
+  | <BRACKETOPEN> Expr1() <BRACKETCLOSE> 
+  | <ROUNDBRACKETOPEN> Expr1() <ROUNDBRACKETCLOSED>/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
   } finally {
     if (jjtc000) {
       jjtree.closeNodeScope(jjtn000, true);

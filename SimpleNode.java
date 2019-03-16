@@ -7,13 +7,13 @@ class SimpleNode implements Node {
   protected Node[] children;
   protected int id;
   protected Object value;
-  protected NewJava parser;
+  protected ExpressionParsing parser;
 
   public SimpleNode(int i) {
     id = i;
   }
 
-  public SimpleNode(NewJava p, int i) {
+  public SimpleNode(ExpressionParsing p, int i) {
     this(i);
     parser = p;
   }
@@ -56,7 +56,7 @@ class SimpleNode implements Node {
      you need to do. */
 
   public String toString() {
-    return NewJavaTreeConstants.jjtNodeName[id];
+    return ExpressionParsingTreeConstants.jjtNodeName[id];
   }
   public String toString(String prefix) { return prefix + toString(); }
 
@@ -80,4 +80,4 @@ class SimpleNode implements Node {
   }
 }
 
-/* JavaCC - OriginalChecksum=9eef391808ffa9c1f856b164b9ceaad4 (do not edit this line) */
+/* JavaCC - OriginalChecksum=53df1660c6950e7e87f778b247fd0d68 (do not edit this line) */

@@ -2,10 +2,16 @@
 public interface ExpressionParsingTreeConstants
 {
   public int JJTEXPRESSION = 0;
+  public int JJTVOID = 1;
+  public int JJTEXPR2 = 2;
+  public int JJTEXPR3 = 3;
 
 
   public String[] jjtNodeName = {
     "Expression",
+    "void",
+    "Expr2",
+    "Expr3",
   };
 }
-/* JavaCC - OriginalChecksum=908a239c53de2e9f190006772ed725e7 (do not edit this line) */
+/* JavaCC - OriginalChecksum=008109f957a154bf22a4100b1fc6331f (do not edit this line) */

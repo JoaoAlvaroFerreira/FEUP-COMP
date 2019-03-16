@@ -7,7 +7,7 @@ PARSER_BEGIN(ExpressionParsing)
 public class ExpressionParsing
 {
   public static void main(String args[]) throws ParseException {
-    NewJava myJava = new NewJava(System.in);
+    ExpressionParsing myJava = new ExpressionParsing(System.in);
     SimpleNode root = myJava.Expression();
     root.dump("");
 
@@ -34,13 +34,41 @@ TOKEN:
   | < TRUE: "true" >
   | < FALSE: "false" >
   | < THIS: "this" >
-  | < NEW: "new" >
   | < LENGTH: "length" >
+  | < NEW: "new" >
+  | < INT: "int" >
   | < INTEGERLITERAL: (["0" - "9"])+ >  
-  | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* >
+  | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* > 
   | < LF: "\n" >
 }
 SimpleNode Expression(): {}
 {
-  <INTEGERLITERAL> <OPERATORS> <INTEGERLITERAL> <LF> {return jjtThis;}
+  Expr1() <LF> {return jjtThis;}
+}
+
+void Expr1() #void : {}
+{
+  Expr2() [Expr3()]
+}
+
+void Expr2(): {}
+{
+  <INTEGERLITERAL>
+  | <IDENTIFIER>
+  | <TRUE>
+  | <FALSE>
+  | <THIS>
+  | <NEW> (<INT> <BRACKETOPEN> Expr1() <BRACKETCLOSE> | <IDENTIFIER> <ROUNDBRACKETOPEN> <ROUNDBRACKETCLOSED>)
+  | <NOT> Expr1()
+  | <ROUNDBRACKETOPEN> Expr1() <ROUNDBRACKETCLOSED>
+  | <BRACKETOPEN> Expr1() <BRACKETCLOSE> 
+  
+}
+
+void Expr3(): {}
+{
+  <FULLSTOP> (<LENGTH> Expr1() | <IDENTIFIER> <ROUNDBRACKETOPEN> [Expr1() (<COMMA> Expr1())*] <ROUNDBRACKETCLOSED>)
+  | <OPERATORS> Expr1() 
+  | <BRACKETOPEN> Expr1() <BRACKETCLOSE> 
+  | <ROUNDBRACKETOPEN> Expr1() <ROUNDBRACKETCLOSED>
 }
