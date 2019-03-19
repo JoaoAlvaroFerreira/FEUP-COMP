@@ -57,6 +57,7 @@ TOKEN:
   | < ROUNDBRACKETCLOSED: ")" >
   | < CURLYBRACKETOPENED: "{" >
   | < CURLYBRACKETCLOSED: "}" >
+  | < ASSERT: "=">
   | < TRUE: "true" >
   | < FALSE: "false" >
   | < THIS: "this" >
@@ -70,6 +71,9 @@ TOKEN:
   | < RETURN: "return" >
   | < STRING: "String" >
   | < BOOLEAN: "boolean" >
+  | < IF: "if">
+  | < ELSE: "else">
+  | < WHILE: "while">
   | < INTEGERLITERAL: (["0" - "9"])+ >
   | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* >
 }
@@ -86,6 +90,8 @@ void ClassDeclaration()#void:  {}
     System.out.println(e.toString());
   }
 }
+
+//while (1 < ) ;
 
 void VarDeclaration()#void: {Token t;}
 {
@@ -109,22 +115,45 @@ void Type()#void: {}
   }
 }
 
-void MainDeclaration()#void: {}
+void MainDeclaration()#MAIN: {}
 {
-  try{
-    <STATIC> <VOID> <MAIN> <ROUNDBRACKETOPEN> <STRING> <BRACKETOPEN> <BRACKETCLOSE> <IDENTIFIER> <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>(VarDeclaration())*/*(Statement())**/<CURLYBRACKETCLOSED>
-  }catch(ParseException e){
-      System.out.println(e.toString());
-  }
+    <STATIC> <VOID> <MAIN> <ROUNDBRACKETOPEN> <STRING> <BRACKETOPEN> <BRACKETCLOSE> <IDENTIFIER> <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>
+    (LOOKAHEAD(2) VarDeclaration()|Statement())*
+    <CURLYBRACKETCLOSED>
 }
 
-void MethodDeclaration()#void: {}
+void MethodDeclaration()#FUNCTION: {Token name; }
 {
   try{
-    Type() <IDENTIFIER> <ROUNDBRACKETOPEN> (Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*)? <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED> (VarDeclaration())* /*(Statement())**/ <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>
+    Type() name=<IDENTIFIER> <ROUNDBRACKETOPEN> (Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*)? <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>
+    (LOOKAHEAD(2) VarDeclaration()|Statement())*
+    <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>
+    {
+      jjtThis.symbol = name.image;
+    }
   }catch(ParseException e) {
     System.out.println(e.toString());
   }
+}
+
+void Statement()#void:{Token t=new Token();}
+{
+    <CURLYBRACKETOPENED> (Statement())* <CURLYBRACKETCLOSED>
+  | <IF> IfStatement()
+  | <WHILE> WhileStatement()
+  | <IDENTIFIER> [t=<BRACKETOPEN>  Expression() <BRACKETCLOSE>] <ASSERT> Expression() <SEMICOLON>
+}
+
+void IfStatement()#void:{}
+{
+  <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement() [<ELSE> Statement()]
+}
+
+void WhileStatement()#void: {}
+{
+
+ <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()
+
 }
 
 void Expression()#void: {}

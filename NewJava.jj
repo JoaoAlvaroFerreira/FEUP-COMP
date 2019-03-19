@@ -61,6 +61,7 @@ TOKEN:
   | < ROUNDBRACKETCLOSED: ")" >
   | < CURLYBRACKETOPENED: "{" >
   | < CURLYBRACKETCLOSED: "}" >
+  | < ASSERT: "=">
   | < TRUE: "true" >
   | < FALSE: "false" >
   | < THIS: "this" >
@@ -74,6 +75,9 @@ TOKEN:
   | < RETURN: "return" >
   | < STRING: "String" >
   | < BOOLEAN: "boolean" >
+  | < IF: "if">
+  | < ELSE: "else">
+  | < WHILE: "while">
   | < INTEGERLITERAL: (["0" - "9"])+ >
   | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* >
 }
@@ -122,6 +126,8 @@ void ClassDeclaration()     :  {}
   }
 }
 
+//while (1 < ) ;
+
 void VarDeclaration()     : {Token t;}
 {
   try{
@@ -162,22 +168,97 @@ void Type()     : {}
   }
 }
 
-void MainDeclaration()     : {}
-{
-  try{
-    <STATIC> <VOID> <MAIN> <ROUNDBRACKETOPEN> <STRING> <BRACKETOPEN> <BRACKETCLOSE> <IDENTIFIER> <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>(VarDeclaration())*/*(Statement())**/<CURLYBRACKETCLOSED>
-  }catch(ParseException e){
-      System.out.println(e.toString());
-  }
+void MainDeclaration()     : {/*@bgen(jjtree) MAIN */
+  SimpleNode jjtn000 = new SimpleNode(JJTMAIN);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) MAIN */
+    try {
+/*@egen*/
+    <STATIC> <VOID> <MAIN> <ROUNDBRACKETOPEN> <STRING> <BRACKETOPEN> <BRACKETCLOSE> <IDENTIFIER> <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>
+    (LOOKAHEAD(2) VarDeclaration()|Statement())*
+    <CURLYBRACKETCLOSED>/*@bgen(jjtree)*/
+    } catch (Throwable jjte000) {
+      if (jjtc000) {
+        jjtree.clearNodeScope(jjtn000);
+        jjtc000 = false;
+      } else {
+        jjtree.popNode();
+      }
+      if (jjte000 instanceof RuntimeException) {
+        throw (RuntimeException)jjte000;
+      }
+      if (jjte000 instanceof ParseException) {
+        throw (ParseException)jjte000;
+      }
+      throw (Error)jjte000;
+    } finally {
+      if (jjtc000) {
+        jjtree.closeNodeScope(jjtn000, true);
+      }
+    }
+/*@egen*/
 }
 
-void MethodDeclaration()     : {}
-{
+void MethodDeclaration()         : {/*@bgen(jjtree) FUNCTION */
+                                    SimpleNode jjtn000 = new SimpleNode(JJTFUNCTION);
+                                    boolean jjtc000 = true;
+                                    jjtree.openNodeScope(jjtn000);
+/*@egen*/Token name; }
+{/*@bgen(jjtree) FUNCTION */
+  try {
+/*@egen*/
   try{
-    Type() <IDENTIFIER> <ROUNDBRACKETOPEN> (Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*)? <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED> (VarDeclaration())* /*(Statement())**/ <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>
+    Type() name=<IDENTIFIER> <ROUNDBRACKETOPEN> (Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*)? <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>
+    (LOOKAHEAD(2) VarDeclaration()|Statement())*
+    <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>
+    {
+      jjtn000.symbol = name.image;
+    }
   }catch(ParseException e) {
     System.out.println(e.toString());
+  }/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
   }
+/*@egen*/
+}
+
+void Statement()     :{Token t=new Token();}
+{
+    <CURLYBRACKETOPENED> (Statement())* <CURLYBRACKETCLOSED>
+  | <IF> IfStatement()
+  | <WHILE> WhileStatement()
+  | <IDENTIFIER> [t=<BRACKETOPEN>  Expression() <BRACKETCLOSE>] <ASSERT> Expression() <SEMICOLON>
+}
+
+void IfStatement()     :{}
+{
+  <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement() [<ELSE> Statement()]
+}
+
+void WhileStatement()     : {}
+{
+
+ <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()
+
 }
 
 void Expression()     : {}

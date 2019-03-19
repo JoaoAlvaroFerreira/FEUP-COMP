@@ -35,35 +35,43 @@ public interface NewJavaConstants {
   /** RegularExpression Id. */
   int CURLYBRACKETCLOSED = 18;
   /** RegularExpression Id. */
-  int TRUE = 19;
+  int ASSERT = 19;
   /** RegularExpression Id. */
-  int FALSE = 20;
+  int TRUE = 20;
   /** RegularExpression Id. */
-  int THIS = 21;
+  int FALSE = 21;
   /** RegularExpression Id. */
-  int NEW = 22;
+  int THIS = 22;
   /** RegularExpression Id. */
-  int LENGTH = 23;
+  int NEW = 23;
   /** RegularExpression Id. */
-  int INT = 24;
+  int LENGTH = 24;
   /** RegularExpression Id. */
-  int PUBLIC = 25;
+  int INT = 25;
   /** RegularExpression Id. */
-  int STATIC = 26;
+  int PUBLIC = 26;
   /** RegularExpression Id. */
-  int VOID = 27;
+  int STATIC = 27;
   /** RegularExpression Id. */
-  int MAIN = 28;
+  int VOID = 28;
   /** RegularExpression Id. */
-  int RETURN = 29;
+  int MAIN = 29;
   /** RegularExpression Id. */
-  int STRING = 30;
+  int RETURN = 30;
   /** RegularExpression Id. */
-  int BOOLEAN = 31;
+  int STRING = 31;
   /** RegularExpression Id. */
-  int INTEGERLITERAL = 32;
+  int BOOLEAN = 32;
   /** RegularExpression Id. */
-  int IDENTIFIER = 33;
+  int IF = 33;
+  /** RegularExpression Id. */
+  int ELSE = 34;
+  /** RegularExpression Id. */
+  int WHILE = 35;
+  /** RegularExpression Id. */
+  int INTEGERLITERAL = 36;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 37;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -89,6 +97,7 @@ public interface NewJavaConstants {
     "\")\"",
     "\"{\"",
     "\"}\"",
+    "\"=\"",
     "\"true\"",
     "\"false\"",
     "\"this\"",
@@ -102,6 +111,9 @@ public interface NewJavaConstants {
     "\"return\"",
     "\"String\"",
     "\"boolean\"",
+    "\"if\"",
+    "\"else\"",
+    "\"while\"",
     "<INTEGERLITERAL>",
     "<IDENTIFIER>",
   };

@@ -2,11 +2,16 @@ class tiago extends stuff{
   int x;
   int t;
   public static void main(String [] args){
-
+    while(true){
+      if(e<5){
+        a=2;
+      }
+    }
   }
 
   public int function1(int arg1){
-
+    int a;
+    a=new Integer();
     return (2+2)*3;
   }
 
