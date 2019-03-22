@@ -1,5 +1,5 @@
 options {
-  LOOKAHEAD=1;
+  LOOKAHEAD=2;
 }
 PARSER_BEGIN(NewJava)
 
@@ -42,6 +42,41 @@ SKIP :
 {
   " " | "\r" | "\t" | "\n" | "\n "
 }
+
+MORE :
+{
+  "//" : IN_SINGLE_LINE_COMMENT
+|
+  <"/**" ~["/"]> { input_stream.backup(1); } : IN_FORMAL_COMMENT
+|
+  "/*" : IN_MULTI_LINE_COMMENT
+}
+
+<IN_SINGLE_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <SINGLE_LINE_COMMENT: "\n" | "\r" | "\r\n" > : DEFAULT
+}
+
+<IN_FORMAL_COMMENT>
+SPECIAL_TOKEN :
+{
+  <FORMAL_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_MULTI_LINE_COMMENT>
+SPECIAL_TOKEN :
+{
+  <MULTI_LINE_COMMENT: "*/" > : DEFAULT
+}
+
+<IN_SINGLE_LINE_COMMENT,IN_FORMAL_COMMENT,IN_MULTI_LINE_COMMENT>
+MORE :
+{
+  < ~[] >
+}
+
+
 TOKEN:
 {
   < CLASS: "class" >
@@ -84,64 +119,55 @@ SimpleNode Program(): {}
 
 void ClassDeclaration()#void:  {}
 {
-  try{
     <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? <CURLYBRACKETOPENED>(VarDeclaration())*(<PUBLIC> (MainDeclaration()|MethodDeclaration()))*<CURLYBRACKETCLOSED>
-  }catch(ParseException e) {
-    System.out.println(e.toString());
-  }
 }
-
-//while (1 < ) ;
 
 void VarDeclaration()#void: {Token t;}
 {
-  try{
     Type() t=<IDENTIFIER> <SEMICOLON>{
       jjtThis.symbol=t.image;
     }#VAR
-  }catch(ParseException e) {
-    System.out.println(e.toString());
-  }
 }
 
 void Type()#void: {}
 {
-  try{
     <INT> [<BRACKETOPEN> <BRACKETCLOSE>]
     | <BOOLEAN>
     | <IDENTIFIER>
-  }catch(ParseException e) {
-    System.out.println(e.toString());
-  }
 }
 
 void MainDeclaration()#MAIN: {}
 {
     <STATIC> <VOID> <MAIN> <ROUNDBRACKETOPEN> <STRING> <BRACKETOPEN> <BRACKETCLOSE> <IDENTIFIER> <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>
-    (LOOKAHEAD(2) VarDeclaration()|Statement())*
+    (VarDeclaration()|Statement())*
     <CURLYBRACKETCLOSED>
 }
 
 void MethodDeclaration()#FUNCTION: {Token name; }
 {
-  try{
     Type() name=<IDENTIFIER> <ROUNDBRACKETOPEN> (Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*)? <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>
-    (LOOKAHEAD(2) VarDeclaration()|Statement())*
-    <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>
-    {
-      jjtThis.symbol = name.image;
-    }#RETURN(1)
-  }catch(ParseException e) {
-    System.out.println(e.toString());
-  }
+    (VarDeclaration()|Statement())*
+    <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>{}#RETURN(1)
 }
 
 void Statement()#void:{Token t=new Token();}
 {
-    <CURLYBRACKETOPENED> (Statement())* <CURLYBRACKETCLOSED>
+  <CURLYBRACKETOPENED> (Statement())* <CURLYBRACKETCLOSED>
   | <IF> IfStatement() 
   | <WHILE> WhileStatement()
-  | <IDENTIFIER> [<BRACKETOPEN>  Expression() <BRACKETCLOSE>] <ASSERT> Expression() <SEMICOLON>
+  | Assert()
+}
+
+void Assert() #ASSERT: {Token t;}
+{
+  AssertAux() <ASSERT> Expression() <SEMICOLON>
+}
+
+void AssertAux() #void: {Token t;} 
+{
+  t=<IDENTIFIER> [<BRACKETOPEN>  Expression() <BRACKETCLOSE>]{
+    jjtThis.symbol = t.image;
+  }#VAR
 }
 
 void IfStatement()#IF:{}
@@ -151,23 +177,22 @@ void IfStatement()#IF:{}
 
 void WhileStatement()#WHILE: {}
 {
-
- <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()
-
-}
-
-void Expression()#void: {}
-{
-  try{
-    VarTerm() [Expr2()]
-  }catch(ParseException e) {
+  try {
+    <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()
+  } catch (Exception e) {
+    System.out.println("oiiiiiiiiiii");
     System.out.println(e.toString());
   }
+ 
+}
+
+void Expression()#void: {Token t = new Token();}
+{
+    VarTerm() [Expr2()]
 }
 
 void Expr2()#void: {Token t;}
 {
-  try{
     <FULLSTOP> (<LENGTH> [Expr2()] |
     <IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])
     | t=<OPERATORS> Expression()
@@ -175,14 +200,10 @@ void Expr2()#void: {Token t;}
         jjtThis.symbol = t.image;
       }#OP(2)
     | <BRACKETOPEN> Expression() <BRACKETCLOSE> [Expr2()]
-  }catch(ParseException e) {
-    System.out.println(e.toString());
-  }
 }
 
 void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token();}
 {
-  try{
     t=<INTEGERLITERAL>
       {
         jjtThis.symbol = t.image;
@@ -204,7 +225,4 @@ void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token()
     )
     | <NOT> Expression() #NOT(1)
     | <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> #BRACKETS(1)
-  }catch(ParseException e) {
-    System.out.println(e.toString());
-  }
 }

@@ -9,72 +9,84 @@ public interface NewJavaConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int CLASS = 6;
+  int SINGLE_LINE_COMMENT = 9;
   /** RegularExpression Id. */
-  int EXTENDS = 7;
+  int FORMAL_COMMENT = 10;
   /** RegularExpression Id. */
-  int OPERATORS = 8;
+  int MULTI_LINE_COMMENT = 11;
   /** RegularExpression Id. */
-  int BRACKETOPEN = 9;
+  int CLASS = 13;
   /** RegularExpression Id. */
-  int BRACKETCLOSE = 10;
+  int EXTENDS = 14;
   /** RegularExpression Id. */
-  int FULLSTOP = 11;
+  int OPERATORS = 15;
   /** RegularExpression Id. */
-  int COMMA = 12;
+  int BRACKETOPEN = 16;
   /** RegularExpression Id. */
-  int SEMICOLON = 13;
+  int BRACKETCLOSE = 17;
   /** RegularExpression Id. */
-  int NOT = 14;
+  int FULLSTOP = 18;
   /** RegularExpression Id. */
-  int ROUNDBRACKETOPEN = 15;
+  int COMMA = 19;
   /** RegularExpression Id. */
-  int ROUNDBRACKETCLOSED = 16;
+  int SEMICOLON = 20;
   /** RegularExpression Id. */
-  int CURLYBRACKETOPENED = 17;
+  int NOT = 21;
   /** RegularExpression Id. */
-  int CURLYBRACKETCLOSED = 18;
+  int ROUNDBRACKETOPEN = 22;
   /** RegularExpression Id. */
-  int ASSERT = 19;
+  int ROUNDBRACKETCLOSED = 23;
   /** RegularExpression Id. */
-  int TRUE = 20;
+  int CURLYBRACKETOPENED = 24;
   /** RegularExpression Id. */
-  int FALSE = 21;
+  int CURLYBRACKETCLOSED = 25;
   /** RegularExpression Id. */
-  int THIS = 22;
+  int ASSERT = 26;
   /** RegularExpression Id. */
-  int NEW = 23;
+  int TRUE = 27;
   /** RegularExpression Id. */
-  int LENGTH = 24;
+  int FALSE = 28;
   /** RegularExpression Id. */
-  int INT = 25;
+  int THIS = 29;
   /** RegularExpression Id. */
-  int PUBLIC = 26;
+  int NEW = 30;
   /** RegularExpression Id. */
-  int STATIC = 27;
+  int LENGTH = 31;
   /** RegularExpression Id. */
-  int VOID = 28;
+  int INT = 32;
   /** RegularExpression Id. */
-  int MAIN = 29;
+  int PUBLIC = 33;
   /** RegularExpression Id. */
-  int RETURN = 30;
+  int STATIC = 34;
   /** RegularExpression Id. */
-  int STRING = 31;
+  int VOID = 35;
   /** RegularExpression Id. */
-  int BOOLEAN = 32;
+  int MAIN = 36;
   /** RegularExpression Id. */
-  int IF = 33;
+  int RETURN = 37;
   /** RegularExpression Id. */
-  int ELSE = 34;
+  int STRING = 38;
   /** RegularExpression Id. */
-  int WHILE = 35;
+  int BOOLEAN = 39;
   /** RegularExpression Id. */
-  int INTEGERLITERAL = 36;
+  int IF = 40;
   /** RegularExpression Id. */
-  int IDENTIFIER = 37;
+  int ELSE = 41;
+  /** RegularExpression Id. */
+  int WHILE = 42;
+  /** RegularExpression Id. */
+  int INTEGERLITERAL = 43;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 44;
 
   /** Lexical state. */
   int DEFAULT = 0;
+  /** Lexical state. */
+  int IN_SINGLE_LINE_COMMENT = 1;
+  /** Lexical state. */
+  int IN_FORMAL_COMMENT = 2;
+  /** Lexical state. */
+  int IN_MULTI_LINE_COMMENT = 3;
 
   /** Literal token values. */
   String[] tokenImage = {
@@ -84,6 +96,13 @@ public interface NewJavaConstants {
     "\"\\t\"",
     "\"\\n\"",
     "\"\\n \"",
+    "\"//\"",
+    "<token of kind 7>",
+    "\"/*\"",
+    "<SINGLE_LINE_COMMENT>",
+    "\"*/\"",
+    "\"*/\"",
+    "<token of kind 12>",
     "\"class\"",
     "\"extends\"",
     "<OPERATORS>",

@@ -1,29 +1,15 @@
-class tiago extends stuff{
-  int x;
-  int t;
+class Nuno extends sofia{
+  
+  /*public static void name() {
+    i=2;
+  }*/
+
   public static void main(String [] args){
-    while(true){
-      if(e<5){
-        a=2;
+    while(i<2){
+      if(i<2){
+        a=2;  // FUCK JAS CRL
       }
     }
   }
 
-  public int function1(int arg1){
-    int a;
-    a=new Integer();
-    return (2+2)*3;
-  }
-
-  public int function1(int arg1){
-    return new int[5];
-  }
-
-  public int function1(int arg1){
-    return new nuno();
-  }
-
-  public int function1(int arg1){
-    return !JAS;
-  }
 }
