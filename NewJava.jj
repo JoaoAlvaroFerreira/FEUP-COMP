@@ -14,6 +14,8 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
   protected static JJTNewJavaState jjtree = new JJTNewJavaState();
 
 /*@egen*/
+  public static int errorCount = 3;
+
   public static void main(String args[]) throws ParseException {
     String filePath = "exemplo1.jmm";
     String fileContents = fileToString(filePath);
@@ -369,18 +371,31 @@ void IfStatement()   :{/*@bgen(jjtree) IF */
 }
 
 void WhileStatement()      : {/*@bgen(jjtree) WHILE */
-  SimpleNode jjtn000 = new SimpleNode(JJTWHILE);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
+                              SimpleNode jjtn000 = new SimpleNode(JJTWHILE);
+                              boolean jjtc000 = true;
+                              jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}
 {/*@bgen(jjtree) WHILE */
   try {
 /*@egen*/
   try {
     <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()
+
   } catch (Exception e) {
-    System.out.println("oiiiiiiiiiii");
-    System.out.println(e.toString());
+    e.printStackTrace();
+   
+    System.out.println(errorCount);
+
+    if(errorCount > 0){
+      do{
+        t=NewJava.getNextToken();
+      }while(t.image != ")");
+    
+      errorCount--;
+
+      Statement();
+    }
+
   }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {

@@ -5,11 +5,12 @@ class Nuno extends sofia{
   }*/
 
   public static void main(String [] args){
-    while(i<2){
-      if(i<2){
-        a=2;  // FUCK JAS CRL
+    while(i<){
+        while(i<<<<<<<){
+          while(i<){
+
+          }
       }
     }
   }
-
 }

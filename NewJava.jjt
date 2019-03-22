@@ -10,6 +10,8 @@ import java.io.*;
 
 public class NewJava
 {
+  public static int errorCount = 10;
+
   public static void main(String args[]) throws ParseException {
     String filePath = "exemplo1.jmm";
     String fileContents = fileToString(filePath);
@@ -175,13 +177,24 @@ void IfStatement()#IF:{}
   <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement() [<ELSE> Statement()]
 }
 
-void WhileStatement()#WHILE: {}
+void WhileStatement()#WHILE: {Token t;}
 {
   try {
     <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()
+
   } catch (Exception e) {
-    System.out.println("oiiiiiiiiiii");
-    System.out.println(e.toString());
+    e.printStackTrace();
+
+    if(errorCount > 0){
+      do{
+        t=NewJava.getNextToken();
+      }while(t.image != ")");
+    
+      errorCount--;
+
+      Statement();
+    }
+
   }
  
 }
