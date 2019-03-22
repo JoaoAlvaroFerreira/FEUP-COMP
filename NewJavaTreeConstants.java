@@ -6,15 +6,18 @@ public interface NewJavaTreeConstants
   public int JJTVAR = 2;
   public int JJTMAIN = 3;
   public int JJTFUNCTION = 4;
-  public int JJTOP = 5;
-  public int JJTVAL = 6;
-  public int JJTTEXT = 7;
-  public int JJTTRUE = 8;
-  public int JJTFALSE = 9;
-  public int JJTTHIS = 10;
-  public int JJTNEW = 11;
-  public int JJTNOT = 12;
-  public int JJTBRACKETS = 13;
+  public int JJTRETURN = 5;
+  public int JJTIF = 6;
+  public int JJTWHILE = 7;
+  public int JJTOP = 8;
+  public int JJTVAL = 9;
+  public int JJTTEXT = 10;
+  public int JJTTRUE = 11;
+  public int JJTFALSE = 12;
+  public int JJTTHIS = 13;
+  public int JJTNEW = 14;
+  public int JJTNOT = 15;
+  public int JJTBRACKETS = 16;
 
 
   public String[] jjtNodeName = {
@@ -23,6 +26,9 @@ public interface NewJavaTreeConstants
     "VAR",
     "MAIN",
     "FUNCTION",
+    "RETURN",
+    "IF",
+    "WHILE",
     "OP",
     "VAL",
     "TEXT",
@@ -34,4 +40,4 @@ public interface NewJavaTreeConstants
     "BRACKETS",
   };
 }
-/* JavaCC - OriginalChecksum=d5fe8471fc8439bdd42311e87b94264a (do not edit this line) */
+/* JavaCC - OriginalChecksum=f402b72e2061935de3cad0130dade082 (do not edit this line) */

@@ -212,10 +212,28 @@ void MethodDeclaration()         : {/*@bgen(jjtree) FUNCTION */
   try{
     Type() name=<IDENTIFIER> <ROUNDBRACKETOPEN> (Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*)? <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>
     (LOOKAHEAD(2) VarDeclaration()|Statement())*
-    <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>
+    <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>/*@bgen(jjtree) #RETURN( 1) */
     {
-      jjtn000.symbol = name.image;
+      SimpleNode jjtn001 = new SimpleNode(JJTRETURN);
+      boolean jjtc001 = true;
+      jjtree.openNodeScope(jjtn001);
     }
+    try {
+/*@egen*//*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn001,  1);
+      jjtc001 = false;
+    }
+/*@egen*/
+    {
+      jjtn001.symbol = name.image;
+    }/*@bgen(jjtree)*/
+    } finally {
+      if (jjtc001) {
+        jjtree.closeNodeScope(jjtn001,  1);
+      }
+    }
+/*@egen*/          
   }catch(ParseException e) {
     System.out.println(e.toString());
   }/*@bgen(jjtree)*/
@@ -244,20 +262,72 @@ void MethodDeclaration()         : {/*@bgen(jjtree) FUNCTION */
 void Statement()     :{Token t=new Token();}
 {
     <CURLYBRACKETOPENED> (Statement())* <CURLYBRACKETCLOSED>
-  | <IF> IfStatement()
+  | <IF> IfStatement() 
   | <WHILE> WhileStatement()
-  | <IDENTIFIER> [t=<BRACKETOPEN>  Expression() <BRACKETCLOSE>] <ASSERT> Expression() <SEMICOLON>
+  | <IDENTIFIER> [<BRACKETOPEN>  Expression() <BRACKETCLOSE>] <ASSERT> Expression() <SEMICOLON>
 }
 
-void IfStatement()     :{}
-{
-  <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement() [<ELSE> Statement()]
+void IfStatement()   :{/*@bgen(jjtree) IF */
+  SimpleNode jjtn000 = new SimpleNode(JJTIF);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) IF */
+  try {
+/*@egen*/
+  <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement() [<ELSE> Statement()]/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
 }
 
-void WhileStatement()     : {}
-{
+void WhileStatement()      : {/*@bgen(jjtree) WHILE */
+  SimpleNode jjtn000 = new SimpleNode(JJTWHILE);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) WHILE */
+ try {
+/*@egen*/
 
- <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()
+ <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()/*@bgen(jjtree)*/
+ } catch (Throwable jjte000) {
+   if (jjtc000) {
+     jjtree.clearNodeScope(jjtn000);
+     jjtc000 = false;
+   } else {
+     jjtree.popNode();
+   }
+   if (jjte000 instanceof RuntimeException) {
+     throw (RuntimeException)jjte000;
+   }
+   if (jjte000 instanceof ParseException) {
+     throw (ParseException)jjte000;
+   }
+   throw (Error)jjte000;
+ } finally {
+   if (jjtc000) {
+     jjtree.closeNodeScope(jjtn000, true);
+   }
+ }
+/*@egen*/
 
 }
 

@@ -130,7 +130,7 @@ void MethodDeclaration()#FUNCTION: {Token name; }
     <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>
     {
       jjtThis.symbol = name.image;
-    }
+    }#RETURN(1)
   }catch(ParseException e) {
     System.out.println(e.toString());
   }
@@ -139,17 +139,17 @@ void MethodDeclaration()#FUNCTION: {Token name; }
 void Statement()#void:{Token t=new Token();}
 {
     <CURLYBRACKETOPENED> (Statement())* <CURLYBRACKETCLOSED>
-  | <IF> IfStatement()
+  | <IF> IfStatement() 
   | <WHILE> WhileStatement()
-  | <IDENTIFIER> [t=<BRACKETOPEN>  Expression() <BRACKETCLOSE>] <ASSERT> Expression() <SEMICOLON>
+  | <IDENTIFIER> [<BRACKETOPEN>  Expression() <BRACKETCLOSE>] <ASSERT> Expression() <SEMICOLON>
 }
 
-void IfStatement()#void:{}
+void IfStatement()#IF:{}
 {
   <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement() [<ELSE> Statement()]
 }
 
-void WhileStatement()#void: {}
+void WhileStatement()#WHILE: {}
 {
 
  <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()

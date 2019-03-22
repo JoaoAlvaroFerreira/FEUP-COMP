@@ -16,16 +16,14 @@ class tiago extends stuff{
   }
 
   public int function1(int arg1){
-
     return new int[5];
   }
 
   public int function1(int arg1){
-
     return new nuno();
   }
-  public int function1(int arg1){
 
+  public int function1(int arg1){
     return !JAS;
   }
 }

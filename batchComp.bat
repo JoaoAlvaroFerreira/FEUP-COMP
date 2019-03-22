@@ -1,10 +1,10 @@
 @echo off
 echo jjtree - - - - - - - - - - - - - - - - - 
 echo - - - -  - - - - - - - - - - - - - - - - -
-CALL jjtree ExpressionParsing.jjt
+CALL jjtree NewJava.jjt
 echo javacc - - - - - - - - - - - - - - - - -
 echo - - - -  - - - - - - - - - - - - - - - - -
-CALL javacc ExpressionParsing.jj
+CALL javacc NewJava.jj
 echo javac - - - - -- - - - - - - -  - - - - -
 echo - - - -  - - - - - - - - - - - - - - - - -
 CALL javac *.java
