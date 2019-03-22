@@ -12,15 +12,10 @@ import java.io.*;
 public class ExpressionParsing
 {
   public static void main(String args[]) throws ParseException {
-<<<<<<< Updated upstream
-    ExpressionParsing myJava = new ExpressionParsing(System.in);
-    SimpleNode root = myJava.Expression();
-=======
     String filePath = "exemplo2.jmm";
     String fileContents = fileToString(filePath);
     ExpressionParsing myJava = new ExpressionParsing(new ByteArrayInputStream(fileContents.getBytes()));
     SimpleNode root = myJava.Program();
->>>>>>> Stashed changes
     root.dump("");
 
     System.out.println("F*CK JAS");

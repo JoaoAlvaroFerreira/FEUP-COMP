@@ -10,4 +10,4 @@ echo - - - -  - - - - - - - - - - - - - - - - -
 CALL javac *.java
 echo execution - - - - - - - - - - - - - - - -
 echo - - - -  - - - - - - - - - - - - - - - - -
-CALL java ExpressionParsing
+CALL java NewJava
