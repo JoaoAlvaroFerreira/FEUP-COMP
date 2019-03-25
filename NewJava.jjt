@@ -13,7 +13,7 @@ public class NewJava
   public static int errorCount = 10;
 
   public static void main(String args[]) throws ParseException {
-    String filePath = "exemplo1.jmm";
+    String filePath = "exemplo3.jmm";
     String fileContents = fileToString(filePath);
     NewJava myJava = new NewJava(new ByteArrayInputStream(fileContents.getBytes()));
     SimpleNode root = myJava.Program();
@@ -119,23 +119,31 @@ SimpleNode Program(): {}
   ClassDeclaration() <EOF> {return jjtThis;}
 }
 
-void ClassDeclaration()#void:  {}
+void ClassDeclaration()#CLASS:  {Token t,ext = new Token();}
 {
-    <CLASS> <IDENTIFIER> (<EXTENDS> <IDENTIFIER>)? <CURLYBRACKETOPENED>(VarDeclaration())*(<PUBLIC> (MainDeclaration()|MethodDeclaration()))*<CURLYBRACKETCLOSED>
+    <CLASS> t=<IDENTIFIER> (<EXTENDS> ext=<IDENTIFIER>)? <CURLYBRACKETOPENED>(VarDeclaration())*(<PUBLIC> (MainDeclaration()|MethodDeclaration()))*<CURLYBRACKETCLOSED> {
+      jjtThis.symbol = t.image;
+      if(ext.image != null){
+        jjtThis.symbol += " EXTENDS " + ext.image;
+      }
+    }
 }
 
-void VarDeclaration()#void: {Token t;}
+void VarDeclaration()#VAR: {Token t;}
 {
     Type() t=<IDENTIFIER> <SEMICOLON>{
       jjtThis.symbol=t.image;
-    }#VAR
+    }
 }
 
-void Type()#void: {}
+void Type()#TYPE: {Token t;}
 {
-    <INT> [<BRACKETOPEN> <BRACKETCLOSE>]
-    | <BOOLEAN>
-    | <IDENTIFIER>
+    (t=<INT> [<BRACKETOPEN> <BRACKETCLOSE>{}]
+    | t=<BOOLEAN>
+    | t=<IDENTIFIER>)
+    {
+      jjtThis.symbol = t.image;
+    }
 }
 
 void MainDeclaration()#MAIN: {}
@@ -145,19 +153,30 @@ void MainDeclaration()#MAIN: {}
     <CURLYBRACKETCLOSED>
 }
 
-void MethodDeclaration()#FUNCTION: {Token name; }
+void MethodDeclaration()#FUNCTION: {Token name,ret,arg1,arg2; }
 {
-    Type() name=<IDENTIFIER> <ROUNDBRACKETOPEN> (Type() <IDENTIFIER> (<COMMA> Type() <IDENTIFIER>)*)? <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>
+    Type() name=<IDENTIFIER> <ROUNDBRACKETOPEN> ((Type() arg1=<IDENTIFIER>{
+      jjtThis.symbol = arg1.image;
+    }#VAR(1) (<COMMA> Type() arg2=<IDENTIFIER>{
+      jjtThis.symbol = arg2.image;
+    }#VAR(1))*)?){
+
+    }#ARGS(3) <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>
     (VarDeclaration()|Statement())*
-    <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>{}#RETURN(1)
+    <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>{
+    }#RETURN(1)
+    {
+      jjtThis.symbol = name.image;
+    }
 }
 
 void Statement()#void:{Token t=new Token();}
 {
   <CURLYBRACKETOPENED> (Statement())* <CURLYBRACKETCLOSED>
-  | <IF> IfStatement() 
+  | <IF> IfStatement()
   | <WHILE> WhileStatement()
   | Assert()
+  | Expression() <SEMICOLON>
 }
 
 void Assert() #ASSERT: {Token t;}
@@ -165,16 +184,18 @@ void Assert() #ASSERT: {Token t;}
   AssertAux() <ASSERT> Expression() <SEMICOLON>
 }
 
-void AssertAux() #void: {Token t;} 
+void AssertAux() #VAR: {Token t;}
 {
   t=<IDENTIFIER> [<BRACKETOPEN>  Expression() <BRACKETCLOSE>]{
     jjtThis.symbol = t.image;
-  }#VAR
+  }
 }
 
 void IfStatement()#IF:{}
 {
-  <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement() [<ELSE> Statement()]
+  <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement() ([<ELSE> Statement()]){
+
+  }#ELSE(1)
 }
 
 void WhileStatement()#WHILE: {Token t;}
@@ -189,14 +210,14 @@ void WhileStatement()#WHILE: {Token t;}
       do{
         t=NewJava.getNextToken();
       }while(t.image != ")");
-    
+
       errorCount--;
 
       Statement();
     }
 
   }
- 
+
 }
 
 void Expression()#void: {Token t = new Token();}
@@ -206,8 +227,10 @@ void Expression()#void: {Token t = new Token();}
 
 void Expr2()#void: {Token t;}
 {
-    <FULLSTOP> (<LENGTH> [Expr2()] |
-    <IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])
+    (<FULLSTOP> (t=<LENGTH> [Expr2()] |
+    t=<IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])){
+      jjtThis.symbol = t.image;
+    }#FULLSTOP(2)
     | t=<OPERATORS> Expression()
       {
         jjtThis.symbol = t.image;

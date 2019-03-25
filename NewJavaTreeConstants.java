@@ -2,35 +2,45 @@
 public interface NewJavaTreeConstants
 {
   public int JJTPROGRAM = 0;
-  public int JJTVOID = 1;
+  public int JJTCLASS = 1;
   public int JJTVAR = 2;
-  public int JJTMAIN = 3;
-  public int JJTFUNCTION = 4;
-  public int JJTRETURN = 5;
-  public int JJTASSERT = 6;
-  public int JJTIF = 7;
-  public int JJTWHILE = 8;
-  public int JJTOP = 9;
-  public int JJTVAL = 10;
-  public int JJTTEXT = 11;
-  public int JJTTRUE = 12;
-  public int JJTFALSE = 13;
-  public int JJTTHIS = 14;
-  public int JJTNEW = 15;
-  public int JJTNOT = 16;
-  public int JJTBRACKETS = 17;
+  public int JJTTYPE = 3;
+  public int JJTMAIN = 4;
+  public int JJTFUNCTION = 5;
+  public int JJTARGS = 6;
+  public int JJTRETURN = 7;
+  public int JJTVOID = 8;
+  public int JJTASSERT = 9;
+  public int JJTIF = 10;
+  public int JJTELSE = 11;
+  public int JJTWHILE = 12;
+  public int JJTFULLSTOP = 13;
+  public int JJTOP = 14;
+  public int JJTVAL = 15;
+  public int JJTTEXT = 16;
+  public int JJTTRUE = 17;
+  public int JJTFALSE = 18;
+  public int JJTTHIS = 19;
+  public int JJTNEW = 20;
+  public int JJTNOT = 21;
+  public int JJTBRACKETS = 22;
 
 
   public String[] jjtNodeName = {
     "Program",
-    "void",
+    "CLASS",
     "VAR",
+    "TYPE",
     "MAIN",
     "FUNCTION",
+    "ARGS",
     "RETURN",
+    "void",
     "ASSERT",
     "IF",
+    "ELSE",
     "WHILE",
+    "FULLSTOP",
     "OP",
     "VAL",
     "TEXT",
@@ -42,4 +52,4 @@ public interface NewJavaTreeConstants
     "BRACKETS",
   };
 }
-/* JavaCC - OriginalChecksum=932a82bf036ae4fcff3fd4d33194db00 (do not edit this line) */
+/* JavaCC - OriginalChecksum=9f8af0be9ad88b2c07cbc64c74f39e25 (do not edit this line) */
