@@ -226,15 +226,20 @@ void Expression()#void: {Token t = new Token();}
 
 void Expr2()#void: {Token t;}
 {
-    (<FULLSTOP> (t=<LENGTH> [Expr2()] |
-    t=<IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])){
-      jjtThis.symbol = t.image;
-    }#FULLSTOP(2)
+    FullStop(){}#FULLSTOP(2)
     | t=<OPERATORS> Expression()
       {
         jjtThis.symbol = t.image;
       }#OP(2)
     | <BRACKETOPEN> Expression() <BRACKETCLOSE> [Expr2()]
+}
+
+void FullStop()#PAREMETER: {Token t;}
+{
+  (<FULLSTOP> (t=<LENGTH> [Expr2()] |
+  t=<IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])){
+    jjtThis.symbol = t.image;
+  }
 }
 
 void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token();}

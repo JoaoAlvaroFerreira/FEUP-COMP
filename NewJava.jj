@@ -596,27 +596,24 @@ void Expression()     : {Token t = new Token();}
 
 void Expr2()     : {Token t;}
 {
-    (<FULLSTOP> (t=<LENGTH> [Expr2()] |
-    t=<IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()]))/*@bgen(jjtree) #FULLSTOP( 2) */
-                                                                                                             {
-                                                                                                               SimpleNode jjtn001 = new SimpleNode(JJTFULLSTOP);
-                                                                                                               boolean jjtc001 = true;
-                                                                                                               jjtree.openNodeScope(jjtn001);
-                                                                                                             }
-                                                                                                             try {
+    FullStop()/*@bgen(jjtree) #FULLSTOP( 2) */
+              {
+                SimpleNode jjtn001 = new SimpleNode(JJTFULLSTOP);
+                boolean jjtc001 = true;
+                jjtree.openNodeScope(jjtn001);
+              }
+              try {
 /*@egen*//*@bgen(jjtree)*/
-                                                                                                             {
-                                                                                                               jjtree.closeNodeScope(jjtn001,  2);
-                                                                                                               jjtc001 = false;
-                                                                                                             }
-/*@egen*/{
-      jjtn001.symbol = t.image;
-    }/*@bgen(jjtree)*/
-                                                                                                             } finally {
-                                                                                                               if (jjtc001) {
-                                                                                                                 jjtree.closeNodeScope(jjtn001,  2);
-                                                                                                               }
-                                                                                                             }
+              {
+                jjtree.closeNodeScope(jjtn001,  2);
+                jjtc001 = false;
+              }
+/*@egen*/{}/*@bgen(jjtree)*/
+              } finally {
+                if (jjtc001) {
+                  jjtree.closeNodeScope(jjtn001,  2);
+                }
+              }
 /*@egen*/            
     | t=<OPERATORS> Expression()/*@bgen(jjtree) #OP( 2) */
       {
@@ -641,6 +638,45 @@ void Expr2()     : {Token t;}
       }
 /*@egen*/      
     | <BRACKETOPEN> Expression() <BRACKETCLOSE> [Expr2()]
+}
+
+void FullStop()          : {/*@bgen(jjtree) PAREMETER */
+                            SimpleNode jjtn000 = new SimpleNode(JJTPAREMETER);
+                            boolean jjtc000 = true;
+                            jjtree.openNodeScope(jjtn000);
+/*@egen*/Token t;}
+{/*@bgen(jjtree) PAREMETER */
+  try {
+/*@egen*/
+  (<FULLSTOP> (t=<LENGTH> [Expr2()] |
+  t=<IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()]))/*@bgen(jjtree)*/
+                                                                                                           {
+                                                                                                             jjtree.closeNodeScope(jjtn000, true);
+                                                                                                             jjtc000 = false;
+                                                                                                           }
+/*@egen*/{
+    jjtn000.symbol = t.image;
+  }/*@bgen(jjtree)*/
+  } catch (Throwable jjte000) {
+    if (jjtc000) {
+      jjtree.clearNodeScope(jjtn000);
+      jjtc000 = false;
+    } else {
+      jjtree.popNode();
+    }
+    if (jjte000 instanceof RuntimeException) {
+      throw (RuntimeException)jjte000;
+    }
+    if (jjte000 instanceof ParseException) {
+      throw (ParseException)jjte000;
+    }
+    throw (Error)jjte000;
+  } finally {
+    if (jjtc000) {
+      jjtree.closeNodeScope(jjtn000, true);
+    }
+  }
+/*@egen*/
 }
 
 void VarTerm()     : {Token t;Token open = new Token();Token close = new Token();}
