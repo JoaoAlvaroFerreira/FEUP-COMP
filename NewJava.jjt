@@ -93,7 +93,7 @@ TOKEN:
   | < ROUNDBRACKETCLOSED: ")" >
   | < CURLYBRACKETOPENED: "{" >
   | < CURLYBRACKETCLOSED: "}" >
-  | < ASSERT: "=">
+  | < ASSIGN: "=">
   | < TRUE: "true" >
   | < FALSE: "false" >
   | < THIS: "this" >
@@ -174,8 +174,8 @@ void Statement()#void:{Token t=new Token();}
   <CURLYBRACKETOPENED> (Statement())* <CURLYBRACKETCLOSED>
   | <IF> IfStatement()
   | <WHILE> WhileStatement()
-  | Assert()
   | Expression() <SEMICOLON>
+  | Assign()
 }
 
 void Assert() #void: {Token t;}
@@ -183,7 +183,7 @@ void Assert() #void: {Token t;}
   AssertAux() [<ASSERT> Expression(){}#AST(2)] <SEMICOLON>
 }
 
-void AssertAux() #VAR: {Token t;}
+void AssignAux() #VAR: {Token t;}
 {
   t=<IDENTIFIER> [<BRACKETOPEN>  Expression() <BRACKETCLOSE>{}#ARRINDEX(1)]{
     jjtThis.symbol = t.image;

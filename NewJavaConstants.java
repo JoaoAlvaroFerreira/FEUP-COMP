@@ -41,7 +41,7 @@ public interface NewJavaConstants {
   /** RegularExpression Id. */
   int CURLYBRACKETCLOSED = 25;
   /** RegularExpression Id. */
-  int ASSERT = 26;
+  int ASSIGN = 26;
   /** RegularExpression Id. */
   int TRUE = 27;
   /** RegularExpression Id. */

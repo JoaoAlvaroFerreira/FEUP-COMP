@@ -10,6 +10,7 @@ public interface NewJavaTreeConstants
   public int JJTARGS = 6;
   public int JJTRETURN = 7;
   public int JJTVOID = 8;
+<<<<<<< HEAD
   public int JJTAST = 9;
   public int JJTARRINDEX = 10;
   public int JJTIF = 11;
@@ -26,6 +27,23 @@ public interface NewJavaTreeConstants
   public int JJTNEW = 22;
   public int JJTNOT = 23;
   public int JJTBRACKETS = 24;
+=======
+  public int JJTASSIGN = 9;
+  public int JJTIF = 10;
+  public int JJTELSE = 11;
+  public int JJTWHILE = 12;
+  public int JJTFULLSTOP = 13;
+  public int JJTOP = 14;
+  public int JJTPAREMETER = 15;
+  public int JJTVAL = 16;
+  public int JJTTEXT = 17;
+  public int JJTTRUE = 18;
+  public int JJTFALSE = 19;
+  public int JJTTHIS = 20;
+  public int JJTNEW = 21;
+  public int JJTNOT = 22;
+  public int JJTBRACKETS = 23;
+>>>>>>> master
 
 
   public String[] jjtNodeName = {
@@ -38,8 +56,12 @@ public interface NewJavaTreeConstants
     "ARGS",
     "RETURN",
     "void",
+<<<<<<< HEAD
     "AST",
     "ARRINDEX",
+=======
+    "ASSIGN",
+>>>>>>> master
     "IF",
     "ELSE",
     "WHILE",
@@ -56,4 +78,8 @@ public interface NewJavaTreeConstants
     "BRACKETS",
   };
 }
+<<<<<<< HEAD
 /* JavaCC - OriginalChecksum=aade3187fefcc2cc63fc29496498fa88 (do not edit this line) */
+=======
+/* JavaCC - OriginalChecksum=3c542617b3df6d86f09f7a505e2e0613 (do not edit this line) */
+>>>>>>> master
