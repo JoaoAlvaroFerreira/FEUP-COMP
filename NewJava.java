@@ -15,7 +15,6 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
     SimpleNode root = myJava.Program();
     root.dump("");
 
-    System.out.println("F*CK JAS");
   }
 
   private static String fileToString(String filePath)
