@@ -178,14 +178,14 @@ void Statement()#void:{Token t=new Token();}
   | Expression() <SEMICOLON>
 }
 
-void Assert() #ASSERT: {Token t;}
+void Assert() #void: {Token t;}
 {
-  AssertAux() <ASSERT> Expression() <SEMICOLON>
+  AssertAux() [<ASSERT> Expression(){}#AST(2)] <SEMICOLON>
 }
 
 void AssertAux() #VAR: {Token t;}
 {
-  t=<IDENTIFIER> [<BRACKETOPEN>  Expression() <BRACKETCLOSE>]{
+  t=<IDENTIFIER> [<BRACKETOPEN>  Expression() <BRACKETCLOSE>{}#ARRINDEX(1)]{
     jjtThis.symbol = t.image;
   }
 }
