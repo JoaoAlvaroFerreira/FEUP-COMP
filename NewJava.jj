@@ -417,16 +417,15 @@ void Statement()     :{Token t=new Token();}
   <CURLYBRACKETOPENED> (Statement())* <CURLYBRACKETCLOSED>
   | <IF> IfStatement()
   | <WHILE> WhileStatement()
-  | Expression() <SEMICOLON>
   | Assign()
+  | Expression() <SEMICOLON>
 }
 
-<<<<<<< HEAD
-void Assert()      : {Token t;}
+void Assign()      : {Token t;}
 {
-  AssertAux() [<ASSERT> Expression()/*@bgen(jjtree) #AST( 2) */
+  AssignAux() [<ASSIGN> Expression()/*@bgen(jjtree) #ASSIGN( 2) */
                                     {
-                                      SimpleNode jjtn001 = new SimpleNode(JJTAST);
+                                      SimpleNode jjtn001 = new SimpleNode(JJTASSIGN);
                                       boolean jjtc001 = true;
                                       jjtree.openNodeScope(jjtn001);
                                     }
@@ -442,38 +441,7 @@ void Assert()      : {Token t;}
                                         jjtree.closeNodeScope(jjtn001,  2);
                                       }
                                     }
-/*@egen*/       ] <SEMICOLON>
-=======
-void Assign()        : {/*@bgen(jjtree) ASSIGN */
-                        SimpleNode jjtn000 = new SimpleNode(JJTASSIGN);
-                        boolean jjtc000 = true;
-                        jjtree.openNodeScope(jjtn000);
-/*@egen*/Token t;}
-{/*@bgen(jjtree) ASSIGN */
-  try {
-/*@egen*/
-  AssignAux() <ASSIGN> Expression() <SEMICOLON>/*@bgen(jjtree)*/
-  } catch (Throwable jjte000) {
-    if (jjtc000) {
-      jjtree.clearNodeScope(jjtn000);
-      jjtc000 = false;
-    } else {
-      jjtree.popNode();
-    }
-    if (jjte000 instanceof RuntimeException) {
-      throw (RuntimeException)jjte000;
-    }
-    if (jjte000 instanceof ParseException) {
-      throw (ParseException)jjte000;
-    }
-    throw (Error)jjte000;
-  } finally {
-    if (jjtc000) {
-      jjtree.closeNodeScope(jjtn000, true);
-    }
-  }
-/*@egen*/
->>>>>>> master
+/*@egen*/          ] <SEMICOLON>
 }
 
 void AssignAux()     : {/*@bgen(jjtree) VAR */

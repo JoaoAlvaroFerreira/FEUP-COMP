@@ -174,13 +174,13 @@ void Statement()#void:{Token t=new Token();}
   <CURLYBRACKETOPENED> (Statement())* <CURLYBRACKETCLOSED>
   | <IF> IfStatement()
   | <WHILE> WhileStatement()
-  | Expression() <SEMICOLON>
   | Assign()
+  | Expression() <SEMICOLON>
 }
 
-void Assert() #void: {Token t;}
+void Assign() #void: {Token t;}
 {
-  AssertAux() [<ASSERT> Expression(){}#AST(2)] <SEMICOLON>
+  AssignAux() [<ASSIGN> Expression(){}#ASSIGN(2)] <SEMICOLON>
 }
 
 void AssignAux() #VAR: {Token t;}

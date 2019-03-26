@@ -389,32 +389,22 @@ if (jjtc000) {
       jj_consume_token(WHILE);
       WhileStatement();
     } else if (jj_2_22(2)) {
+      Assign();
+    } else if (jj_2_23(2)) {
       Expression();
       jj_consume_token(SEMICOLON);
-    } else if (jj_2_23(2)) {
-      Assign();
     } else {
       jj_consume_token(-1);
       throw new ParseException();
     }
   }
 
-<<<<<<< HEAD
-  static final public void Assert() throws ParseException {Token t;
-    AssertAux();
+  static final public void Assign() throws ParseException {Token t;
+    AssignAux();
     if (jj_2_24(2)) {
-      jj_consume_token(ASSERT);
-=======
-  static final public void Assign() throws ParseException {/*@bgen(jjtree) ASSIGN */
-                        SimpleNode jjtn000 = new SimpleNode(JJTASSIGN);
-                        boolean jjtc000 = true;
-                        jjtree.openNodeScope(jjtn000);Token t;
-    try {
-      AssignAux();
       jj_consume_token(ASSIGN);
->>>>>>> master
       Expression();
-SimpleNode jjtn001 = new SimpleNode(JJTAST);
+SimpleNode jjtn001 = new SimpleNode(JJTASSIGN);
                                       boolean jjtc001 = true;
                                       jjtree.openNodeScope(jjtn001);
       try {
@@ -1226,30 +1216,26 @@ if (jjtc009) {
     return false;
   }
 
-  static private boolean jj_3R_16()
+  static private boolean jj_3R_15()
  {
-<<<<<<< HEAD
     if (jj_3R_19()) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_24()) jj_scanpos = xsp;
     if (jj_scan_token(SEMICOLON)) return true;
-=======
-    if (jj_3R_20()) return true;
-    if (jj_scan_token(ASSIGN)) return true;
->>>>>>> master
     return false;
   }
 
   static private boolean jj_3_23()
  {
     if (jj_3R_16()) return true;
+    if (jj_scan_token(SEMICOLON)) return true;
     return false;
   }
 
   static private boolean jj_3_34()
  {
-    if (jj_3R_15()) return true;
+    if (jj_3R_16()) return true;
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
@@ -1261,7 +1247,6 @@ if (jjtc009) {
   static private boolean jj_3_22()
  {
     if (jj_3R_15()) return true;
-    if (jj_scan_token(SEMICOLON)) return true;
     return false;
   }
 
@@ -1282,14 +1267,14 @@ if (jjtc009) {
   static private boolean jj_3_47()
  {
     if (jj_scan_token(ROUNDBRACKETOPEN)) return true;
-    if (jj_3R_15()) return true;
+    if (jj_3R_16()) return true;
     return false;
   }
 
   static private boolean jj_3_46()
  {
     if (jj_scan_token(NOT)) return true;
-    if (jj_3R_15()) return true;
+    if (jj_3R_16()) return true;
     return false;
   }
 
@@ -1434,7 +1419,7 @@ if (jjtc009) {
     return false;
   }
 
-  static private boolean jj_3R_19()
+  static private boolean jj_3R_20()
  {
     Token xsp;
     xsp = jj_scanpos;
@@ -1562,7 +1547,7 @@ if (jjtc009) {
   static private boolean jj_3_31()
  {
     if (jj_scan_token(BRACKETOPEN)) return true;
-    if (jj_3R_15()) return true;
+    if (jj_3R_16()) return true;
     return false;
   }
 
@@ -1589,7 +1574,7 @@ if (jjtc009) {
   static private boolean jj_3_30()
  {
     if (jj_scan_token(OPERATORS)) return true;
-    if (jj_3R_15()) return true;
+    if (jj_3R_16()) return true;
     return false;
   }
 
@@ -1626,9 +1611,9 @@ if (jjtc009) {
     return false;
   }
 
-  static private boolean jj_3R_15()
+  static private boolean jj_3R_16()
  {
-    if (jj_3R_19()) return true;
+    if (jj_3R_20()) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_27()) jj_scanpos = xsp;
@@ -1657,7 +1642,7 @@ if (jjtc009) {
   static private boolean jj_3_25()
  {
     if (jj_scan_token(BRACKETOPEN)) return true;
-    if (jj_3R_15()) return true;
+    if (jj_3R_16()) return true;
     return false;
   }
 
@@ -1681,7 +1666,7 @@ if (jjtc009) {
 
   static private boolean jj_3_24()
  {
-    if (jj_scan_token(ASSERT)) return true;
+    if (jj_scan_token(ASSIGN)) return true;
     if (jj_3R_16()) return true;
     return false;
   }
@@ -1695,11 +1680,11 @@ if (jjtc009) {
   static private boolean jj_3_33()
  {
     if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_15()) return true;
+    if (jj_3R_16()) return true;
     return false;
   }
 
-  static private boolean jj_3R_20()
+  static private boolean jj_3R_19()
  {
     if (jj_scan_token(IDENTIFIER)) return true;
     Token xsp;
