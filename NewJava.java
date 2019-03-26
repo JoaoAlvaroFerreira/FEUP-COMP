@@ -389,23 +389,23 @@ if (jjtc000) {
       jj_consume_token(WHILE);
       WhileStatement();
     } else if (jj_2_22(2)) {
-      Assert();
-    } else if (jj_2_23(2)) {
       Expression();
       jj_consume_token(SEMICOLON);
+    } else if (jj_2_23(2)) {
+      Assign();
     } else {
       jj_consume_token(-1);
       throw new ParseException();
     }
   }
 
-  static final public void Assert() throws ParseException {/*@bgen(jjtree) ASSERT */
-                        SimpleNode jjtn000 = new SimpleNode(JJTASSERT);
+  static final public void Assign() throws ParseException {/*@bgen(jjtree) ASSIGN */
+                        SimpleNode jjtn000 = new SimpleNode(JJTASSIGN);
                         boolean jjtc000 = true;
                         jjtree.openNodeScope(jjtn000);Token t;
     try {
-      AssertAux();
-      jj_consume_token(ASSERT);
+      AssignAux();
+      jj_consume_token(ASSIGN);
       Expression();
       jj_consume_token(SEMICOLON);
     } catch (Throwable jjte000) {
@@ -429,7 +429,7 @@ if (jjtc000) {
     }
   }
 
-  static final public void AssertAux() throws ParseException {/*@bgen(jjtree) VAR */
+  static final public void AssignAux() throws ParseException {/*@bgen(jjtree) VAR */
                         SimpleNode jjtn000 = new SimpleNode(JJTVAR);
                         boolean jjtc000 = true;
                         jjtree.openNodeScope(jjtn000);Token t;
@@ -1203,23 +1203,22 @@ if (jjtc009) {
     return false;
   }
 
-  static private boolean jj_3R_15()
+  static private boolean jj_3R_16()
  {
-    if (jj_3R_19()) return true;
-    if (jj_scan_token(ASSERT)) return true;
+    if (jj_3R_20()) return true;
+    if (jj_scan_token(ASSIGN)) return true;
     return false;
   }
 
   static private boolean jj_3_23()
  {
     if (jj_3R_16()) return true;
-    if (jj_scan_token(SEMICOLON)) return true;
     return false;
   }
 
   static private boolean jj_3_33()
  {
-    if (jj_3R_16()) return true;
+    if (jj_3R_15()) return true;
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
@@ -1231,6 +1230,7 @@ if (jjtc009) {
   static private boolean jj_3_22()
  {
     if (jj_3R_15()) return true;
+    if (jj_scan_token(SEMICOLON)) return true;
     return false;
   }
 
@@ -1251,14 +1251,14 @@ if (jjtc009) {
   static private boolean jj_3_46()
  {
     if (jj_scan_token(ROUNDBRACKETOPEN)) return true;
-    if (jj_3R_16()) return true;
+    if (jj_3R_15()) return true;
     return false;
   }
 
   static private boolean jj_3_45()
  {
     if (jj_scan_token(NOT)) return true;
-    if (jj_3R_16()) return true;
+    if (jj_3R_15()) return true;
     return false;
   }
 
@@ -1403,7 +1403,7 @@ if (jjtc009) {
     return false;
   }
 
-  static private boolean jj_3R_20()
+  static private boolean jj_3R_19()
  {
     Token xsp;
     xsp = jj_scanpos;
@@ -1531,7 +1531,7 @@ if (jjtc009) {
   static private boolean jj_3_30()
  {
     if (jj_scan_token(BRACKETOPEN)) return true;
-    if (jj_3R_16()) return true;
+    if (jj_3R_15()) return true;
     return false;
   }
 
@@ -1558,7 +1558,7 @@ if (jjtc009) {
   static private boolean jj_3_29()
  {
     if (jj_scan_token(OPERATORS)) return true;
-    if (jj_3R_16()) return true;
+    if (jj_3R_15()) return true;
     return false;
   }
 
@@ -1595,9 +1595,9 @@ if (jjtc009) {
     return false;
   }
 
-  static private boolean jj_3R_16()
+  static private boolean jj_3R_15()
  {
-    if (jj_3R_20()) return true;
+    if (jj_3R_19()) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_26()) jj_scanpos = xsp;
@@ -1626,7 +1626,7 @@ if (jjtc009) {
   static private boolean jj_3_24()
  {
     if (jj_scan_token(BRACKETOPEN)) return true;
-    if (jj_3R_16()) return true;
+    if (jj_3R_15()) return true;
     return false;
   }
 
@@ -1657,11 +1657,11 @@ if (jjtc009) {
   static private boolean jj_3_32()
  {
     if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_16()) return true;
+    if (jj_3R_15()) return true;
     return false;
   }
 
-  static private boolean jj_3R_19()
+  static private boolean jj_3R_20()
  {
     if (jj_scan_token(IDENTIFIER)) return true;
     Token xsp;

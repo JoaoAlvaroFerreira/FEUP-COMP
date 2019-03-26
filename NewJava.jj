@@ -97,7 +97,7 @@ TOKEN:
   | < ROUNDBRACKETCLOSED: ")" >
   | < CURLYBRACKETOPENED: "{" >
   | < CURLYBRACKETCLOSED: "}" >
-  | < ASSERT: "=">
+  | < ASSIGN: "=">
   | < TRUE: "true" >
   | < FALSE: "false" >
   | < THIS: "this" >
@@ -417,19 +417,19 @@ void Statement()     :{Token t=new Token();}
   <CURLYBRACKETOPENED> (Statement())* <CURLYBRACKETCLOSED>
   | <IF> IfStatement()
   | <WHILE> WhileStatement()
-  | Assert()
   | Expression() <SEMICOLON>
+  | Assign()
 }
 
-void Assert()        : {/*@bgen(jjtree) ASSERT */
-                        SimpleNode jjtn000 = new SimpleNode(JJTASSERT);
+void Assign()        : {/*@bgen(jjtree) ASSIGN */
+                        SimpleNode jjtn000 = new SimpleNode(JJTASSIGN);
                         boolean jjtc000 = true;
                         jjtree.openNodeScope(jjtn000);
 /*@egen*/Token t;}
-{/*@bgen(jjtree) ASSERT */
+{/*@bgen(jjtree) ASSIGN */
   try {
 /*@egen*/
-  AssertAux() <ASSERT> Expression() <SEMICOLON>/*@bgen(jjtree)*/
+  AssignAux() <ASSIGN> Expression() <SEMICOLON>/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);
@@ -452,7 +452,7 @@ void Assert()        : {/*@bgen(jjtree) ASSERT */
 /*@egen*/
 }
 
-void AssertAux()     : {/*@bgen(jjtree) VAR */
+void AssignAux()     : {/*@bgen(jjtree) VAR */
                         SimpleNode jjtn000 = new SimpleNode(JJTVAR);
                         boolean jjtc000 = true;
                         jjtree.openNodeScope(jjtn000);

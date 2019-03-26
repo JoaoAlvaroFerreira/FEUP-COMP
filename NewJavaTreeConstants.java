@@ -10,7 +10,7 @@ public interface NewJavaTreeConstants
   public int JJTARGS = 6;
   public int JJTRETURN = 7;
   public int JJTVOID = 8;
-  public int JJTASSERT = 9;
+  public int JJTASSIGN = 9;
   public int JJTIF = 10;
   public int JJTELSE = 11;
   public int JJTWHILE = 12;
@@ -37,7 +37,7 @@ public interface NewJavaTreeConstants
     "ARGS",
     "RETURN",
     "void",
-    "ASSERT",
+    "ASSIGN",
     "IF",
     "ELSE",
     "WHILE",
@@ -54,4 +54,4 @@ public interface NewJavaTreeConstants
     "BRACKETS",
   };
 }
-/* JavaCC - OriginalChecksum=c51c2e4b699eb122586cc66f3451dde2 (do not edit this line) */
+/* JavaCC - OriginalChecksum=3c542617b3df6d86f09f7a505e2e0613 (do not edit this line) */
