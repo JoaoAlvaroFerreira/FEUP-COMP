@@ -82,7 +82,10 @@ TOKEN:
 {
   < CLASS: "class" >
   | < EXTENDS: "extends" >
-  | < OPERATORS: "&&" | "<" | "+" | "-" | "*" | "/" >
+  | < AND: "&&">
+  | < MINOR: "<">
+  | < OPERATORSLOW: "+" | "-" >
+  | < OPERATORSHIGH: "*" | "/" >
   | < BRACKETOPEN: "[" >
   | < BRACKETCLOSE: "]" >
   | < FULLSTOP: "." >
@@ -202,8 +205,11 @@ void WhileStatement()#WHILE: {Token t;}
   try {
     <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()
 
-  } catch (Exception e) {
-    e.printStackTrace();
+  } catch (ParseException e) {
+    //e.printStackTrace();
+    System.out.println("Não sabes fazer whiles? " + e.currentToken.image);
+
+
 
     if(errorCount > 0){
       do{
@@ -227,11 +233,38 @@ void Expression()#void: {Token t = new Token();}
 void Expr2()#void: {Token t;}
 {
     FullStop(){}#FULLSTOP(2)
-    | t=<OPERATORS> Expression()
+    | t=<AND> VarTerm() [Expr2()]
       {
         jjtThis.symbol = t.image;
-      }#OP(2)
+      }#OP2(2)
     | <BRACKETOPEN> Expression() <BRACKETCLOSE> [Expr2()]
+    | Expr3()[Expr2()]
+}
+
+void Expr3()#void: {Token t;}
+{
+     t=<MINOR>VarTerm()[Expr3()]
+      {
+        jjtThis.symbol = t.image;
+      }#OP3(2)
+      | Expr4()[Expr3()]
+}
+
+void Expr4()#void: {Token t;}
+{
+     t=<OPERATORSLOW>VarTerm()[Expr4()]
+      {
+        jjtThis.symbol = t.image;
+      }#OP4(2)
+      | Expr5()[Expr4()]
+}
+
+void Expr5()#void: {Token t;}
+{
+     t=<OPERATORSHIGH>VarTerm()
+      {
+        jjtThis.symbol = t.image;
+      }#OP5(2)
 }
 
 void FullStop()#PAREMETER: {Token t;}
@@ -264,5 +297,5 @@ void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token()
     }#NEW
     )
     | <NOT> Expression() #NOT(1)
-    | <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> #BRACKETS(1)
+    | <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED>
 }

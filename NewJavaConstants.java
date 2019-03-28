@@ -19,65 +19,71 @@ public interface NewJavaConstants {
   /** RegularExpression Id. */
   int EXTENDS = 14;
   /** RegularExpression Id. */
-  int OPERATORS = 15;
+  int AND = 15;
   /** RegularExpression Id. */
-  int BRACKETOPEN = 16;
+  int MINOR = 16;
   /** RegularExpression Id. */
-  int BRACKETCLOSE = 17;
+  int OPERATORSLOW = 17;
   /** RegularExpression Id. */
-  int FULLSTOP = 18;
+  int OPERATORSHIGH = 18;
   /** RegularExpression Id. */
-  int COMMA = 19;
+  int BRACKETOPEN = 19;
   /** RegularExpression Id. */
-  int SEMICOLON = 20;
+  int BRACKETCLOSE = 20;
   /** RegularExpression Id. */
-  int NOT = 21;
+  int FULLSTOP = 21;
   /** RegularExpression Id. */
-  int ROUNDBRACKETOPEN = 22;
+  int COMMA = 22;
   /** RegularExpression Id. */
-  int ROUNDBRACKETCLOSED = 23;
+  int SEMICOLON = 23;
   /** RegularExpression Id. */
-  int CURLYBRACKETOPENED = 24;
+  int NOT = 24;
   /** RegularExpression Id. */
-  int CURLYBRACKETCLOSED = 25;
+  int ROUNDBRACKETOPEN = 25;
   /** RegularExpression Id. */
-  int ASSIGN = 26;
+  int ROUNDBRACKETCLOSED = 26;
   /** RegularExpression Id. */
-  int TRUE = 27;
+  int CURLYBRACKETOPENED = 27;
   /** RegularExpression Id. */
-  int FALSE = 28;
+  int CURLYBRACKETCLOSED = 28;
   /** RegularExpression Id. */
-  int THIS = 29;
+  int ASSIGN = 29;
   /** RegularExpression Id. */
-  int NEW = 30;
+  int TRUE = 30;
   /** RegularExpression Id. */
-  int LENGTH = 31;
+  int FALSE = 31;
   /** RegularExpression Id. */
-  int INT = 32;
+  int THIS = 32;
   /** RegularExpression Id. */
-  int PUBLIC = 33;
+  int NEW = 33;
   /** RegularExpression Id. */
-  int STATIC = 34;
+  int LENGTH = 34;
   /** RegularExpression Id. */
-  int VOID = 35;
+  int INT = 35;
   /** RegularExpression Id. */
-  int MAIN = 36;
+  int PUBLIC = 36;
   /** RegularExpression Id. */
-  int RETURN = 37;
+  int STATIC = 37;
   /** RegularExpression Id. */
-  int STRING = 38;
+  int VOID = 38;
   /** RegularExpression Id. */
-  int BOOLEAN = 39;
+  int MAIN = 39;
   /** RegularExpression Id. */
-  int IF = 40;
+  int RETURN = 40;
   /** RegularExpression Id. */
-  int ELSE = 41;
+  int STRING = 41;
   /** RegularExpression Id. */
-  int WHILE = 42;
+  int BOOLEAN = 42;
   /** RegularExpression Id. */
-  int INTEGERLITERAL = 43;
+  int IF = 43;
   /** RegularExpression Id. */
-  int IDENTIFIER = 44;
+  int ELSE = 44;
+  /** RegularExpression Id. */
+  int WHILE = 45;
+  /** RegularExpression Id. */
+  int INTEGERLITERAL = 46;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 47;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -105,7 +111,10 @@ public interface NewJavaConstants {
     "<token of kind 12>",
     "\"class\"",
     "\"extends\"",
-    "<OPERATORS>",
+    "\"&&\"",
+    "\"<\"",
+    "<OPERATORSLOW>",
+    "<OPERATORSHIGH>",
     "\"[\"",
     "\"]\"",
     "\".\"",

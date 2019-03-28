@@ -16,16 +16,18 @@ public interface NewJavaTreeConstants
   public int JJTELSE = 12;
   public int JJTWHILE = 13;
   public int JJTFULLSTOP = 14;
-  public int JJTOP = 15;
-  public int JJTPAREMETER = 16;
-  public int JJTVAL = 17;
-  public int JJTTEXT = 18;
-  public int JJTTRUE = 19;
-  public int JJTFALSE = 20;
-  public int JJTTHIS = 21;
-  public int JJTNEW = 22;
-  public int JJTNOT = 23;
-  public int JJTBRACKETS = 24;
+  public int JJTOP2 = 15;
+  public int JJTOP3 = 16;
+  public int JJTOP4 = 17;
+  public int JJTOP5 = 18;
+  public int JJTPAREMETER = 19;
+  public int JJTVAL = 20;
+  public int JJTTEXT = 21;
+  public int JJTTRUE = 22;
+  public int JJTFALSE = 23;
+  public int JJTTHIS = 24;
+  public int JJTNEW = 25;
+  public int JJTNOT = 26;
 
 
   public String[] jjtNodeName = {
@@ -44,7 +46,10 @@ public interface NewJavaTreeConstants
     "ELSE",
     "WHILE",
     "FULLSTOP",
-    "OP",
+    "OP2",
+    "OP3",
+    "OP4",
+    "OP5",
     "PAREMETER",
     "VAL",
     "TEXT",
@@ -53,7 +58,6 @@ public interface NewJavaTreeConstants
     "THIS",
     "NEW",
     "NOT",
-    "BRACKETS",
   };
 }
-/* JavaCC - OriginalChecksum=4b471476cf6956fa472c3bc19d9dad67 (do not edit this line) */
+/* JavaCC - OriginalChecksum=3b4fbbcd1407aae243237626c0ce21b9 (do not edit this line) */

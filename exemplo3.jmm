@@ -16,5 +16,9 @@ class Fac {
     nuno.length;
     i[2];
     i[4]=4;
+
+    nuno.fodasse(2 * 3 + 3 * 2 - 3 && 3);
+
+    while(e<) {}
   }
 }

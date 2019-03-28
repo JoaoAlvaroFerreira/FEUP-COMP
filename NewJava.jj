@@ -86,7 +86,10 @@ TOKEN:
 {
   < CLASS: "class" >
   | < EXTENDS: "extends" >
-  | < OPERATORS: "&&" | "<" | "+" | "-" | "*" | "/" >
+  | < AND: "&&">
+  | < MINOR: "<">
+  | < OPERATORSLOW: "+" | "-" >
+  | < OPERATORSHIGH: "*" | "/" >
   | < BRACKETOPEN: "[" >
   | < BRACKETCLOSE: "]" >
   | < FULLSTOP: "." >
@@ -562,8 +565,11 @@ void WhileStatement()      : {/*@bgen(jjtree) WHILE */
   try {
     <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()
 
-  } catch (Exception e) {
-    e.printStackTrace();
+  } catch (ParseException e) {
+    //e.printStackTrace();
+    System.out.println("N\u00e3o sabes fazer whiles? " + e.currentToken.image);
+
+
 
     if(errorCount > 0){
       do{
@@ -625,9 +631,9 @@ void Expr2()     : {Token t;}
                 }
               }
 /*@egen*/            
-    | t=<OPERATORS> Expression()/*@bgen(jjtree) #OP( 2) */
+    | t=<AND> VarTerm() [Expr2()]/*@bgen(jjtree) #OP2( 2) */
       {
-        SimpleNode jjtn002 = new SimpleNode(JJTOP);
+        SimpleNode jjtn002 = new SimpleNode(JJTOP2);
         boolean jjtc002 = true;
         jjtree.openNodeScope(jjtn002);
       }
@@ -646,8 +652,89 @@ void Expr2()     : {Token t;}
           jjtree.closeNodeScope(jjtn002,  2);
         }
       }
-/*@egen*/      
+/*@egen*/       
     | <BRACKETOPEN> Expression() <BRACKETCLOSE> [Expr2()]
+    | Expr3()[Expr2()]
+}
+
+void Expr3()     : {Token t;}
+{
+     t=<MINOR>VarTerm()[Expr3()]/*@bgen(jjtree) #OP3( 2) */
+      {
+        SimpleNode jjtn001 = new SimpleNode(JJTOP3);
+        boolean jjtc001 = true;
+        jjtree.openNodeScope(jjtn001);
+      }
+      try {
+/*@egen*//*@bgen(jjtree)*/
+      {
+        jjtree.closeNodeScope(jjtn001,  2);
+        jjtc001 = false;
+      }
+/*@egen*/
+      {
+        jjtn001.symbol = t.image;
+      }/*@bgen(jjtree)*/
+      } finally {
+        if (jjtc001) {
+          jjtree.closeNodeScope(jjtn001,  2);
+        }
+      }
+/*@egen*/       
+      | Expr4()[Expr3()]
+}
+
+void Expr4()     : {Token t;}
+{
+     t=<OPERATORSLOW>VarTerm()[Expr4()]/*@bgen(jjtree) #OP4( 2) */
+      {
+        SimpleNode jjtn001 = new SimpleNode(JJTOP4);
+        boolean jjtc001 = true;
+        jjtree.openNodeScope(jjtn001);
+      }
+      try {
+/*@egen*//*@bgen(jjtree)*/
+      {
+        jjtree.closeNodeScope(jjtn001,  2);
+        jjtc001 = false;
+      }
+/*@egen*/
+      {
+        jjtn001.symbol = t.image;
+      }/*@bgen(jjtree)*/
+      } finally {
+        if (jjtc001) {
+          jjtree.closeNodeScope(jjtn001,  2);
+        }
+      }
+/*@egen*/       
+      | Expr5()[Expr4()]
+}
+
+void Expr5()     : {Token t;}
+{
+     t=<OPERATORSHIGH>VarTerm()/*@bgen(jjtree) #OP5( 2) */
+      {
+        SimpleNode jjtn001 = new SimpleNode(JJTOP5);
+        boolean jjtc001 = true;
+        jjtree.openNodeScope(jjtn001);
+      }
+      try {
+/*@egen*//*@bgen(jjtree)*/
+      {
+        jjtree.closeNodeScope(jjtn001,  2);
+        jjtc001 = false;
+      }
+/*@egen*/
+      {
+        jjtn001.symbol = t.image;
+      }/*@bgen(jjtree)*/
+      } finally {
+        if (jjtc001) {
+          jjtree.closeNodeScope(jjtn001,  2);
+        }
+      }
+/*@egen*/       
 }
 
 void FullStop()          : {/*@bgen(jjtree) PAREMETER */
@@ -849,18 +936,5 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
               }
             }
 /*@egen*/        
-    | <ROUNDBRACKETOPEN> Expression()/*@bgen(jjtree) #BRACKETS( 1) */
-                                      {
-                                        SimpleNode jjtn009 = new SimpleNode(JJTBRACKETS);
-                                        boolean jjtc009 = true;
-                                        jjtree.openNodeScope(jjtn009);
-                                      }
-                                      try {
-/*@egen*/ <ROUNDBRACKETCLOSED>/*@bgen(jjtree)*/
-                                      } finally {
-                                        if (jjtc009) {
-                                          jjtree.closeNodeScope(jjtn009,  1);
-                                        }
-                                      }
-/*@egen*/             
+    | <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED>
 }
