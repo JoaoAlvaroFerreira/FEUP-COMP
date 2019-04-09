@@ -1,7 +1,7 @@
-jjtree $1.jjt
+jjtree NewJava.jjt
 echo -----------------------------------
-javacc $1.jj
+javacc NewJava.jj
 echo -----------------------------------
 javac *.java
 echo -----------------------------------
-java $1
+java NewJava $1
