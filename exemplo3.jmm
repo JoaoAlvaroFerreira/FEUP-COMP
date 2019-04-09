@@ -1,8 +1,8 @@
-class Fac {
+class Fac extends Nuno {
   /*
   ComputeFac function
   */
-  public int ComputeFac(int num,int texts,int texts2){
+  public void ComputeFac(){
     int num_aux ;
     if (!(num < 1))
     num_aux = 1;
@@ -11,14 +11,16 @@ class Fac {
     return num_aux;
   }
   public static void main(String[] a){
+    int countador;
     io.println(new Fac().ComputeFac(10)); //assuming the existence
     // of the classfile io.class
     nuno.length;
+
     i[2];
     i[4]=4;
 
     nuno.fodasse(2 * 3 + 3 * 2 - 3 && 3);
 
-    while(e<) {}
+    while(e<true) {}
   }
 }
