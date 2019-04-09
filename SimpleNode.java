@@ -82,6 +82,14 @@ class SimpleNode implements Node {
   public int getId() {
     return id;
   }
+
+  public String getSymbol() {
+  	return symbol;
+  }
+
+  public Object getValue() {
+  	return value;
+  }
 }
 
 /* JavaCC - OriginalChecksum=9eef391808ffa9c1f856b164b9ceaad4 (do not edit this line) */

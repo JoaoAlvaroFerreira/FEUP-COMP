@@ -4,7 +4,8 @@ public class SymbolType{
   enum Type{
     INT,
     INT_ARR,
-    BOOLEAN
+    BOOLEAN,
+    VOID
   }
   String symbol;
   Type type;
