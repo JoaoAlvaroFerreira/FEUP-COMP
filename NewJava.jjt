@@ -13,7 +13,7 @@ public class NewJava
   public static int errorCount = 10;
 
   public static void main(String args[]) throws ParseException {
-    String filePath = "exemplo3.jmm";
+    String filePath = args[0];
     String fileContents = fileToString(filePath);
     NewJava myJava = new NewJava(new ByteArrayInputStream(fileContents.getBytes()));
     SimpleNode root = myJava.Program();
@@ -123,11 +123,8 @@ SimpleNode Program(): {}
 
 void ClassDeclaration()#CLASS:  {Token t,ext = new Token();}
 {
-    <CLASS> t=<IDENTIFIER> (<EXTENDS> ext=<IDENTIFIER>)? <CURLYBRACKETOPENED>(VarDeclaration())*(<PUBLIC> (MainDeclaration()|MethodDeclaration()))*<CURLYBRACKETCLOSED> {
+    <CLASS> t=<IDENTIFIER> (<EXTENDS> ext=<IDENTIFIER>{jjtThis.symbol = ext.image;}#EXTENDS)? <CURLYBRACKETOPENED>(VarDeclaration())*(<PUBLIC> (MainDeclaration()|MethodDeclaration()))*<CURLYBRACKETCLOSED> {
       jjtThis.symbol = t.image;
-      if(ext.image != null){
-        jjtThis.symbol += " EXTENDS " + ext.image;
-      }
     }
 }
 
@@ -142,7 +139,8 @@ void Type()#TYPE: {Token t;}
 {
     (t=<INT> [<BRACKETOPEN> <BRACKETCLOSE>{}]
     | t=<BOOLEAN>
-    | t=<IDENTIFIER>)
+    | t=<IDENTIFIER>
+    | t=<VOID>)
     {
       jjtThis.symbol = t.image;
     }
@@ -151,25 +149,30 @@ void Type()#TYPE: {Token t;}
 void MainDeclaration()#MAIN: {}
 {
     <STATIC> <VOID> <MAIN> <ROUNDBRACKETOPEN> <STRING> <BRACKETOPEN> <BRACKETCLOSE> <IDENTIFIER> <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>
-    (VarDeclaration()|Statement())*
+    (VarDeclaration())* (Statement())*
     <CURLYBRACKETCLOSED>
 }
 
-void MethodDeclaration()#FUNCTION: {Token name,ret,arg1,arg2; }
+void MethodDeclaration()#FUNCTION: {Token name,ret; }
 {
-    Type() name=<IDENTIFIER> <ROUNDBRACKETOPEN> ((Type() arg1=<IDENTIFIER>{
-      jjtThis.symbol = arg1.image;
-    }#VAR(1) (<COMMA> Type() arg2=<IDENTIFIER>{
-      jjtThis.symbol = arg2.image;
-    }#VAR(1))*)?){
-
-    }#ARGS(3) <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>
-    (VarDeclaration()|Statement())*
+    Type() name=<IDENTIFIER> <ROUNDBRACKETOPEN>
+    Args()
+     <ROUNDBRACKETCLOSED> <CURLYBRACKETOPENED>
+    (VarDeclaration())*(Statement())*
     <RETURN> Expression() <SEMICOLON> <CURLYBRACKETCLOSED>{
     }#RETURN(1)
     {
       jjtThis.symbol = name.image;
     }
+}
+
+void Args()#ARGS:{Token arg1,arg2;}
+{
+  (Type() arg1=<IDENTIFIER>{
+    jjtThis.symbol = arg1.image;
+  }#VAR(1) (<COMMA> Type() arg2=<IDENTIFIER>{
+    jjtThis.symbol = arg2.image;
+  }#VAR(1))*)?
 }
 
 void Statement()#void:{Token t=new Token();}
