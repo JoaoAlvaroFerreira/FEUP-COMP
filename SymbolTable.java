@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 
 public class SymbolTable{
-    static String[] variables = {"int", "int[]", "bool"};
+
     ArrayList<SymbolTableEntry> entries = new ArrayList<SymbolTableEntry>();
 
     //fazer construtor symbol table

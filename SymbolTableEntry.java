@@ -1,26 +1,33 @@
 import java.util.ArrayList;
 
-import javafx.util.Pair;
+
 
 public class SymbolTableEntry{
     
-	Pair<String, Object> pair;
-	String returnDescriptor = "";
-	ArrayList<Node> nodelist;
+	SymbolType symboltype;
+	SymbolType returnDescriptor;
+	ArrayList<SimpleNode> nodelist;
+	ArrayList<SymbolType> params;
+	ArrayList<SimpleNode> aux;
+	
 	
 	public SymbolTableEntry(SimpleNode Node) {
 		
 		
-		pair = new Pair<>(Node.symbol, Node.value); //key, value
+		SymbolType symboltype = new SymbolType(Node.symbol, (String)Node.value); //key, value
 		
 		for(int i = 0; i < Node.jjtGetNumChildren(); i++ ) {
-		nodelist.add(Node.jjtGetChild(i));
+		nodelist.add((SimpleNode)Node.jjtGetChild(i));
 		}		
 		
-	}
-	
-	int getValue() {
-		return (int) pair.getValue();
+		returnDescriptor = new SymbolType(nodelist.get(0).getSymbol(), (String)nodelist.get(0).getValue());
+		
+		
+		for(int j = 0; j < nodelist.get(1).jjtGetNumChildren(); j++ ) {
+			aux.add((SimpleNode)nodelist.get(1).jjtGetChild(j));
+			params.add(new SymbolType(aux.get(j).getSymbol(), (String)aux.get(j).getValue()));
+			}		
+		
 	}
 	
 
