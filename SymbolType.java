@@ -1,3 +1,4 @@
+
 public class SymbolType{
 
   enum Type{
@@ -9,8 +10,15 @@ public class SymbolType{
   Type type;
 
 
-  SymbolType(String symbol,Type type){
+  SymbolType(String symbol,String value){
     this.symbol = symbol;
-    this.type = type;
+    this.type = value;
   }
+
+
+public int getValue() {
+	return type;
+}
+
+
 }
