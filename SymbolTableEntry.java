@@ -30,9 +30,5 @@ public class SymbolTableEntry{
 		
 	}
 	
-int getValue() {
-		return  symboltype.getValue();
-	}
-	
 
 }
