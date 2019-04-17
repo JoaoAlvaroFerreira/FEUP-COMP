@@ -3,42 +3,44 @@ public interface NewJavaTreeConstants
 {
   public int JJTPROGRAM = 0;
   public int JJTCLASS = 1;
-  public int JJTVAR = 2;
-  public int JJTTYPE = 3;
-  public int JJTMAIN = 4;
-  public int JJTFUNCTION = 5;
-  public int JJTARGS = 6;
+  public int JJTEXTENDS = 2;
+  public int JJTVAR = 3;
+  public int JJTTYPE = 4;
+  public int JJTMAIN = 5;
+  public int JJTFUNCTION = 6;
   public int JJTRETURN = 7;
-  public int JJTVOID = 8;
-  public int JJTASSIGN = 9;
-  public int JJTARRINDEX = 10;
-  public int JJTIF = 11;
-  public int JJTELSE = 12;
-  public int JJTWHILE = 13;
-  public int JJTFULLSTOP = 14;
-  public int JJTOP2 = 15;
-  public int JJTOP3 = 16;
-  public int JJTOP4 = 17;
-  public int JJTOP5 = 18;
-  public int JJTPAREMETER = 19;
-  public int JJTVAL = 20;
-  public int JJTTEXT = 21;
-  public int JJTTRUE = 22;
-  public int JJTFALSE = 23;
-  public int JJTTHIS = 24;
-  public int JJTNEW = 25;
-  public int JJTNOT = 26;
+  public int JJTARGS = 8;
+  public int JJTVOID = 9;
+  public int JJTASSIGN = 10;
+  public int JJTARRINDEX = 11;
+  public int JJTIF = 12;
+  public int JJTELSE = 13;
+  public int JJTWHILE = 14;
+  public int JJTFULLSTOP = 15;
+  public int JJTOP2 = 16;
+  public int JJTOP3 = 17;
+  public int JJTOP4 = 18;
+  public int JJTOP5 = 19;
+  public int JJTPAREMETER = 20;
+  public int JJTVAL = 21;
+  public int JJTTEXT = 22;
+  public int JJTTRUE = 23;
+  public int JJTFALSE = 24;
+  public int JJTTHIS = 25;
+  public int JJTNEW = 26;
+  public int JJTNOT = 27;
 
 
   public String[] jjtNodeName = {
     "Program",
     "CLASS",
+    "EXTENDS",
     "VAR",
     "TYPE",
     "MAIN",
     "FUNCTION",
-    "ARGS",
     "RETURN",
+    "ARGS",
     "void",
     "ASSIGN",
     "ARRINDEX",
@@ -60,4 +62,4 @@ public interface NewJavaTreeConstants
     "NOT",
   };
 }
-/* JavaCC - OriginalChecksum=3b4fbbcd1407aae243237626c0ce21b9 (do not edit this line) */
+/* JavaCC - OriginalChecksum=499e4b19b78e1bd74d1633c44d8696f8 (do not edit this line) */

@@ -18,7 +18,10 @@ public class NewJava
     NewJava myJava = new NewJava(new ByteArrayInputStream(fileContents.getBytes()));
     SimpleNode root = myJava.Program();
     root.dump("");
+
     //contrutor  symbol table
+    SymbolTable symbolTable = new SymbolTable(root);
+    symbolTable.dump();
 
   }
 
