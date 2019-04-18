@@ -1,16 +1,8 @@
-class Nuno extends sofia{
-  
-  /*public static void name() {
-    i=2;
-  }*/
+class Item {
 
   public static void main(String [] args){
-    while(i<){
-        while(i<<<<<<<){
-          while(i<){
-
-          }
-      }
-    }
+    int i;
+    i=2;
+    j=3;
   }
 }

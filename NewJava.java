@@ -19,6 +19,8 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
     SymbolTable symbolTable = new SymbolTable(root);
     symbolTable.dump();
 
+    root.visit(symbolTable);
+
   }
 
   private static String fileToString(String filePath)
@@ -565,7 +567,7 @@ if (jjtc000) {
         Statement();
       } catch (ParseException e) {
 //e.printStackTrace();
-    System.out.println("N\u00e3o sabes fazer whiles? " + e.currentToken.image);
+    System.out.println("N\u00c3\u00a3o sabes fazer whiles? " + e.currentToken.image);
 
 
 
@@ -1409,23 +1411,9 @@ if (jjtc008) {
     finally { jj_save(56, xla); }
   }
 
-  static private boolean jj_3_19()
+  static private boolean jj_3_45()
  {
-    if (jj_scan_token(IF)) return true;
-    if (jj_3R_15()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_14()
- {
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_15()
- {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_14()) return true;
+    if (jj_3R_19()) return true;
     return false;
   }
 
@@ -1458,12 +1446,6 @@ if (jjtc008) {
     }
     }
     }
-    return false;
-  }
-
-  static private boolean jj_3_45()
- {
-    if (jj_3R_19()) return true;
     return false;
   }
 
@@ -1982,6 +1964,26 @@ if (jjtc008) {
  {
     if (jj_scan_token(WHILE)) return true;
     if (jj_3R_16()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_19()
+ {
+    if (jj_scan_token(IF)) return true;
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_14()
+ {
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_15()
+ {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_14()) return true;
     return false;
   }
 

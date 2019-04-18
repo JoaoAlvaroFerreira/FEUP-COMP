@@ -23,6 +23,8 @@ public class NewJava
     SymbolTable symbolTable = new SymbolTable(root);
     symbolTable.dump();
 
+    root.visit(symbolTable);
+
   }
 
   private static String fileToString(String filePath)

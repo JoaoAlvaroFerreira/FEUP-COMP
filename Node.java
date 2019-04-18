@@ -4,8 +4,7 @@
    machinery for constructing the parent and child relationships
    between nodes. */
 
-public
-interface Node {
+public interface Node {
 
   /** This method is called after the node has been made the current
     node.  It indicates that child nodes can now be added to it. */
@@ -32,5 +31,7 @@ interface Node {
   public int jjtGetNumChildren();
 
   public int getId();
+
+  public Object visit(SymbolTable data);
 }
 /* JavaCC - OriginalChecksum=e09cb870a43170325db30df256073f70 (do not edit this line) */

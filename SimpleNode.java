@@ -90,6 +90,39 @@ class SimpleNode implements Node {
   public Object getValue() {
   	return value;
   }
+
+  @Override
+  public Object visit(SymbolTable data) {
+    System.out.println("entrei com id = " + this.getId() + ", name = " + this.getSymbol());
+    if (this.getId() == NewJava.JJTVAR) {
+      // NÃO ESTA A RETORNAR NADA, VER DEPOIS
+      String name = (String) this.getSymbol();
+
+      SymbolType.Type type = data.checkIfExists(name);
+
+      System.out.println("Error: var not declared");
+
+      return type.toString();
+    }
+
+    if (this.getId() == NewJava.JJTASSIGN) {
+      SymbolType.Type identifierType = (SymbolType.Type)this.jjtGetChild(0).visit(data);
+
+      if (identifierType == SymbolType.Type.ERROR) {
+        System.out.println("Error assignment -> identifier!");
+        return SymbolType.Type.ERROR.toString();
+      }
+
+      SymbolType.Type expressionType = (SymbolType.Type)this.jjtGetChild(1).visit(data);
+      if (identifierType != expressionType) {
+        System.out.println("Error assignment!");
+        return SymbolType.Type.ERROR.toString();
+      }
+    }
+
+    // ?????????? ver depois
+    return SymbolType.Type.SKIP.toString();
+  }
 }
 
 /* JavaCC - OriginalChecksum=9eef391808ffa9c1f856b164b9ceaad4 (do not edit this line) */

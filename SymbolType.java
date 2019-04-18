@@ -1,43 +1,59 @@
 
-public class SymbolType{
+public class SymbolType {
 
-  enum Type{
-    INT{
+  enum Type {
+    INT {
       @Override
       public String toString() {
         return "int";
       }
     },
-    INT_ARR{
+    INT_ARR {
       @Override
       public String toString() {
         return "int[]";
       }
     },
-    BOOLEAN{
+    BOOLEAN {
       @Override
       public String toString() {
         return "Boolean";
       }
     },
-    VOID{
+    VOID {
       @Override
       public String toString() {
         return "void";
       }
+    },
+    ERROR {
+      @Override
+      public String toString() {
+        return "error";
+      }
+    },
+    SKIP {
+      @Override
+      public String toString() {
+        return "skip";
+      }
     };
   }
 
-  public static Type getType(String varType){
-    switch(varType){
-      case "void":
-        return Type.VOID;
-      case "int":
-        return Type.INT;
-      case "boolean":
-        return Type.BOOLEAN;
-      default:
-        return Type.VOID;
+  public static Type getType(String varType) {
+    switch (varType) {
+    case "void":
+      return Type.VOID;
+    case "int":
+      return Type.INT;
+    case "boolean":
+      return Type.BOOLEAN;
+    case "int[]":
+      return Type.INT_ARR;
+    case "skip":
+      return Type.SKIP;
+    default:
+      return Type.ERROR;
     }
   }
 
@@ -45,20 +61,20 @@ public class SymbolType{
   Type type;
 
   @Override
-  public String toString(){
-    if(this.symbol == null){
+  public String toString() {
+    if (this.symbol == null) {
       return "  -> " + type.toString();
-    }else{
+    } else {
       return symbol + " -> " + type.toString();
     }
   }
 
-  SymbolType(String symbol,String varType){
+  SymbolType(String symbol, String varType) {
     this.symbol = symbol;
     this.type = getType(varType);
-    }
+  }
 
-  SymbolType(String varType){
+  SymbolType(String varType) {
     this.type = getType(varType);
-    }
+  }
 }
