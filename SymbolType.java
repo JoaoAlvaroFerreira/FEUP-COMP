@@ -17,7 +17,7 @@ public class SymbolType {
     BOOLEAN {
       @Override
       public String toString() {
-        return "Boolean";
+        return "boolean";
       }
     },
     VOID {
@@ -30,12 +30,6 @@ public class SymbolType {
       @Override
       public String toString() {
         return "error";
-      }
-    },
-    SKIP {
-      @Override
-      public String toString() {
-        return "skip";
       }
     };
   }
@@ -50,8 +44,6 @@ public class SymbolType {
       return Type.BOOLEAN;
     case "int[]":
       return Type.INT_ARR;
-    case "skip":
-      return Type.SKIP;
     default:
       return Type.ERROR;
     }

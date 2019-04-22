@@ -2,7 +2,15 @@ class Item {
 
   public static void main(String [] args){
     int i;
-    i=2;
-    j=3;
+   // i = 2;
+    boolean j;
+    i = 2;
+    k = 4;
+    j = 2;
+    i = true;
+  }
+
+  public int f1() {
+    return 1;
   }
 }

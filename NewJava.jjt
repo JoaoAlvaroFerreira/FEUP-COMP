@@ -11,9 +11,10 @@ import java.io.*;
 public class NewJava
 {
   public static int errorCount = 10;
+  public static String filePath;
 
   public static void main(String args[]) throws ParseException {
-    String filePath = args[0];
+    filePath = args[0];
     String fileContents = fileToString(filePath);
     NewJava myJava = new NewJava(new ByteArrayInputStream(fileContents.getBytes()));
     SimpleNode root = myJava.Program();
@@ -21,10 +22,6 @@ public class NewJava
 
     //contrutor  symbol table
     SymbolTable symbolTable = new SymbolTable(root);
-    symbolTable.dump();
-
-    root.visit(symbolTable);
-
   }
 
   private static String fileToString(String filePath)
@@ -131,6 +128,7 @@ void ClassDeclaration()#CLASS:  {Token t,ext = new Token();}
 {
     <CLASS> t=<IDENTIFIER> (<EXTENDS> ext=<IDENTIFIER>{jjtThis.symbol = ext.image;}#EXTENDS)? <CURLYBRACKETOPENED>(VarDeclaration())*(<PUBLIC> (MainDeclaration()|MethodDeclaration()))*<CURLYBRACKETCLOSED> {
       jjtThis.symbol = t.image;
+      jjtThis.line = t.beginLine;
     }
 }
 
@@ -138,6 +136,7 @@ void VarDeclaration()#VAR: {Token t;}
 {
     Type() t=<IDENTIFIER> <SEMICOLON>{
       jjtThis.symbol=t.image;
+      jjtThis.line = t.beginLine;
     }
 }
 
@@ -149,6 +148,7 @@ void Type()#TYPE: {Token t;}
     | t=<VOID>)
     {
       jjtThis.symbol = t.image;
+      jjtThis.line = t.beginLine;
     }
 }
 
@@ -169,6 +169,7 @@ void MethodDeclaration()#FUNCTION: {Token name,ret; }
     }#RETURN(1)
     {
       jjtThis.symbol = name.image;
+      jjtThis.line = name.beginLine;
     }
 }
 
@@ -176,8 +177,10 @@ void Args()#ARGS:{Token arg1,arg2;}
 {
   (Type() arg1=<IDENTIFIER>{
     jjtThis.symbol = arg1.image;
+    jjtThis.line = arg1.beginLine;
   }#VAR(1) (<COMMA> Type() arg2=<IDENTIFIER>{
     jjtThis.symbol = arg2.image;
+    jjtThis.line = arg2.beginLine;
   }#VAR(1))*)?
 }
 
@@ -199,6 +202,7 @@ void AssignAux() #VAR: {Token t;}
 {
   t=<IDENTIFIER> [<BRACKETOPEN>  Expression() <BRACKETCLOSE>{}#ARRINDEX(1)]{
     jjtThis.symbol = t.image;
+    jjtThis.line = t.beginLine;
   }
 }
 
@@ -245,6 +249,7 @@ void Expr2()#void: {Token t;}
     | t=<AND> VarTerm() [Expr2()]
       {
         jjtThis.symbol = t.image;
+        jjtThis.line = t.beginLine;
       }#OP2(2)
     | <BRACKETOPEN> Expression() <BRACKETCLOSE> [Expr2()]
     | Expr3()[Expr2()]
@@ -255,6 +260,7 @@ void Expr3()#void: {Token t;}
      t=<MINOR>VarTerm()[Expr3()]
       {
         jjtThis.symbol = t.image;
+        jjtThis.line = t.beginLine;
       }#OP3(2)
       | Expr4()[Expr3()]
 }
@@ -264,6 +270,7 @@ void Expr4()#void: {Token t;}
      t=<OPERATORSLOW>VarTerm()[Expr4()]
       {
         jjtThis.symbol = t.image;
+        jjtThis.line = t.beginLine;
       }#OP4(2)
       | Expr5()[Expr4()]
 }
@@ -273,6 +280,7 @@ void Expr5()#void: {Token t;}
      t=<OPERATORSHIGH>VarTerm()
       {
         jjtThis.symbol = t.image;
+        jjtThis.line = t.beginLine;
       }#OP5(2)
 }
 
@@ -281,6 +289,7 @@ void FullStop()#PAREMETER: {Token t;}
   (<FULLSTOP> (t=<LENGTH> [Expr2()] |
   t=<IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])){
     jjtThis.symbol = t.image;
+    jjtThis.line = t.beginLine;
   }
 }
 
@@ -289,20 +298,24 @@ void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token()
     t=<INTEGERLITERAL>
       {
         jjtThis.symbol = t.image;
+        jjtThis.line = t.beginLine;
       }#VAL
     | t=<IDENTIFIER>
       {
         jjtThis.symbol = t.image;
+        jjtThis.line = t.beginLine;
       }#TEXT
     | <TRUE> #TRUE
     | <FALSE> #FALSE
     | <THIS> #THIS
     | <NEW> (t=<INT> open=<BRACKETOPEN> Expression() close=<BRACKETCLOSE> {
       jjtThis.symbol = t.image;
+      jjtThis.line = t.beginLine;
     }#NEW(1)
     | t=<IDENTIFIER> open=<ROUNDBRACKETOPEN> close=<ROUNDBRACKETCLOSED>
     {
       jjtThis.symbol = t.image;
+      jjtThis.line = t.beginLine;
     }#NEW
     )
     | <NOT> Expression() #NOT(1)

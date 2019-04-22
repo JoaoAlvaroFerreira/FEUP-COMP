@@ -53,7 +53,7 @@ public class SymbolTableEntry {
 	}
 
 	public void dump() {
-		System.out.println("Function: " + name);
+		System.out.println("\nFunction: " + name);
 		System.out.println("Return: " + returnDescriptor.toString());
 		System.out.println("Arguments:");
 		for (SymbolType arg : params) {

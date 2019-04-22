@@ -15,9 +15,10 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
 
 /*@egen*/
   public static int errorCount = 10;
+  public static String filePath;
 
   public static void main(String args[]) throws ParseException {
-    String filePath = args[0];
+    filePath = args[0];
     String fileContents = fileToString(filePath);
     NewJava myJava = new NewJava(new ByteArrayInputStream(fileContents.getBytes()));
     SimpleNode root = myJava.Program();
@@ -25,10 +26,6 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
 
     //contrutor  symbol table
     SymbolTable symbolTable = new SymbolTable(root);
-    symbolTable.dump();
-
-    root.visit(symbolTable);
-
   }
 
   private static String fileToString(String filePath)
@@ -195,6 +192,7 @@ void ClassDeclaration()      :  {/*@bgen(jjtree) CLASS */
                                                                                                                                                                                                              }
 /*@egen*/ {
       jjtn000.symbol = t.image;
+      jjtn000.line = t.beginLine;
     }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
@@ -233,6 +231,7 @@ void VarDeclaration()    : {/*@bgen(jjtree) VAR */
                                      }
 /*@egen*/{
       jjtn000.symbol=t.image;
+      jjtn000.line = t.beginLine;
     }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
@@ -275,6 +274,7 @@ void Type()     : {/*@bgen(jjtree) TYPE */
 /*@egen*/
     {
       jjtn000.symbol = t.image;
+      jjtn000.line = t.beginLine;
     }/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
@@ -356,6 +356,7 @@ void MethodDeclaration()         : {/*@bgen(jjtree) FUNCTION */
 /*@egen*/
     {
       jjtn000.symbol = name.image;
+      jjtn000.line = name.beginLine;
     }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
@@ -401,6 +402,7 @@ void Args()     :{/*@bgen(jjtree) ARGS */
                            }
 /*@egen*/{
     jjtn001.symbol = arg1.image;
+    jjtn001.line = arg1.beginLine;
   }/*@bgen(jjtree)*/
                            } finally {
                              if (jjtc001) {
@@ -421,6 +423,7 @@ void Args()     :{/*@bgen(jjtree) ARGS */
                                             }
 /*@egen*/{
     jjtn002.symbol = arg2.image;
+    jjtn002.line = arg2.beginLine;
   }/*@bgen(jjtree)*/
                                             } finally {
                                               if (jjtc002) {
@@ -515,6 +518,7 @@ void AssignAux()     : {/*@bgen(jjtree) VAR */
                                                                            }
 /*@egen*/{
     jjtn000.symbol = t.image;
+    jjtn000.line = t.beginLine;
   }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -681,6 +685,7 @@ void Expr2()     : {Token t;}
 /*@egen*/
       {
         jjtn002.symbol = t.image;
+        jjtn002.line = t.beginLine;
       }/*@bgen(jjtree)*/
       } finally {
         if (jjtc002) {
@@ -709,6 +714,7 @@ void Expr3()     : {Token t;}
 /*@egen*/
       {
         jjtn001.symbol = t.image;
+        jjtn001.line = t.beginLine;
       }/*@bgen(jjtree)*/
       } finally {
         if (jjtc001) {
@@ -736,6 +742,7 @@ void Expr4()     : {Token t;}
 /*@egen*/
       {
         jjtn001.symbol = t.image;
+        jjtn001.line = t.beginLine;
       }/*@bgen(jjtree)*/
       } finally {
         if (jjtc001) {
@@ -763,6 +770,7 @@ void Expr5()     : {Token t;}
 /*@egen*/
       {
         jjtn001.symbol = t.image;
+        jjtn001.line = t.beginLine;
       }/*@bgen(jjtree)*/
       } finally {
         if (jjtc001) {
@@ -788,6 +796,7 @@ void FullStop()          : {/*@bgen(jjtree) PAREMETER */
                                                                                                            }
 /*@egen*/{
     jjtn000.symbol = t.image;
+    jjtn000.line = t.beginLine;
   }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -828,6 +837,7 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
 /*@egen*/
       {
         jjtn001.symbol = t.image;
+        jjtn001.line = t.beginLine;
       }/*@bgen(jjtree)*/
       } finally {
         if (jjtc001) {
@@ -850,6 +860,7 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
 /*@egen*/
       {
         jjtn002.symbol = t.image;
+        jjtn002.line = t.beginLine;
       }/*@bgen(jjtree)*/
       } finally {
         if (jjtc002) {
@@ -913,6 +924,7 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
                                                                           }
 /*@egen*/ {
       jjtn006.symbol = t.image;
+      jjtn006.line = t.beginLine;
     }/*@bgen(jjtree)*/
                                                                           } finally {
                                                                             if (jjtc006) {
@@ -935,6 +947,7 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
 /*@egen*/
     {
       jjtn007.symbol = t.image;
+      jjtn007.line = t.beginLine;
     }/*@bgen(jjtree)*/
     } finally {
       if (jjtc007) {

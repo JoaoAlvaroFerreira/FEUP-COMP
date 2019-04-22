@@ -33,5 +33,7 @@ public interface Node {
   public int getId();
 
   public Object visit(SymbolTable data);
+
+  public int getLineNumber();
 }
 /* JavaCC - OriginalChecksum=e09cb870a43170325db30df256073f70 (do not edit this line) */
