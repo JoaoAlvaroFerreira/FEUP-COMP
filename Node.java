@@ -32,7 +32,7 @@ public interface Node {
 
   public int getId();
 
-  public Object visit(SymbolTable data);
+  public Object visit(SymbolTable data, int functionNum);
 
   public int getLineNumber();
 }

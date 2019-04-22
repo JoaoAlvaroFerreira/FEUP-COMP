@@ -121,12 +121,53 @@ public class SimpleNode implements Node {
   }
 
   @Override
-  public Object visit(SymbolTable data) {
-    //System.out.println("id = " + this.id + ", symbol = " + this.symbol);
+  public Object visit(SymbolTable data, int functionNum) {
+    // System.out.println("id = " + this.id + ", symbol = " + this.symbol);
 
     if (id == NewJava.JJTVAR) {
       String name = (String) this.getSymbol();
-      Object type = data.checkIfExists(name);
+      String type = data.checkIfExists(name, functionNum);
+
+      // variable does not have unique name
+      if (type.contains("/")) {
+        String[] responseArr = type.split("/");
+
+        int lineNum = Integer.parseInt(responseArr[0]);
+
+        // node with repeated variable name
+        if (lineNum == this.line) {
+          String args;
+          args = "(";
+
+          int index;
+          while ((index = responseArr[2].indexOf("->")) != -1) {
+            if (args.length() > 1) {
+              args += ", ";
+            }
+
+            int finalIndex = responseArr[2].indexOf(",");
+            if (finalIndex == -1) {
+              finalIndex = responseArr[2].indexOf("]");
+            }
+
+            args += responseArr[2].substring(index + 3, finalIndex);
+            responseArr[2] = responseArr[2].substring(finalIndex + 1);
+          }
+          args += ")";
+
+          System.out.println("\n" + NewJava.filePath + ":" + lineNum + ": error: variable " + this.symbol
+              + " is already defined in method " + responseArr[1] + args);
+
+          try (Stream<String> lines = Files.lines(Paths.get(NewJava.filePath))) {
+            System.out.println(lines.skip(lineNum - 1).findFirst().get());
+            System.out.println("    ^");
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+
+          return SymbolType.Type.ERROR.toString();
+        }
+      }
 
       return type.toString();
     }
@@ -140,7 +181,7 @@ public class SimpleNode implements Node {
     }
 
     if (id == NewJava.JJTASSIGN) {
-      Object identifierType = this.jjtGetChild(0).visit(data);
+      Object identifierType = this.jjtGetChild(0).visit(data, functionNum);
 
       if (identifierType.equals(SymbolType.Type.ERROR.toString())) {
         int lineNum = this.jjtGetChild(0).getLineNumber();
@@ -153,16 +194,17 @@ public class SimpleNode implements Node {
           e.printStackTrace();
         }
 
-        System.out.println("    symbol: variable " + ((SimpleNode)this.jjtGetChild(0)).getSymbol());
+        System.out.println("    symbol:   variable " + ((SimpleNode) this.jjtGetChild(0)).getSymbol());
         System.out.println("    location: file " + NewJava.filePath + "\n");
         return SymbolType.Type.ERROR.toString();
       }
 
-      Object expressionType = this.jjtGetChild(1).visit(data);
+      Object expressionType = this.jjtGetChild(1).visit(data, functionNum);
 
       if (!identifierType.equals(expressionType)) {
         int lineNum = this.jjtGetChild(0).getLineNumber();
-        System.out.println("\n" + NewJava.filePath + ":" + lineNum + ": error: incompatible types: " + expressionType + " cannot be converted to " + identifierType);
+        System.out.println("\n" + NewJava.filePath + ":" + lineNum + ": error: incompatible types: " + expressionType
+            + " cannot be converted to " + identifierType);
 
         try (Stream<String> lines = Files.lines(Paths.get(NewJava.filePath))) {
           System.out.println(lines.skip(lineNum - 1).findFirst().get());
@@ -178,36 +220,32 @@ public class SimpleNode implements Node {
     // Function type must match return type
 
     /*
-    // function type
-    if (this.id == NewJava.JJTTYPE) {
-      Object identifierType = this.symbol;
-
-      System.out.println("function!!! = " + identifierType);
-    }
-
-    if (this.id == NewJava.JJTRETURN) {
-      System.out.println("return = " + this.symbol + ", value = " + this.value);
-      System.out.println("coisas = " + data.checkReturnValue());
-    }
-    */
-
+     * // function type if (this.id == NewJava.JJTTYPE) { Object identifierType =
+     * this.symbol;
+     * 
+     * System.out.println("function!!! = " + identifierType); }
+     * 
+     * if (this.id == NewJava.JJTRETURN) { System.out.println("return = " +
+     * this.symbol + ", value = " + this.value); System.out.println("coisas = " +
+     * data.checkReturnValue()); }
+     */
 
     // ------------------------------------------------------------------------------
     // Function call -> must exist
-    //               -> must have right number of args of right types
+    // -> must have right number of args of right types
 
     /**
      * to do
      */
 
-     // ------------------------------------------------------------------------------
-     // Function (if not void) must have return statement
+    // ------------------------------------------------------------------------------
+    // Function (if not void) must have return statement
 
-     /**
-      * to do
-      */
+    /**
+     * to do
+     */
 
-      return "stuff";
+    return "stuff";
   }
 }
 /*

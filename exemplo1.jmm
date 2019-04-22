@@ -10,7 +10,9 @@ class Item {
     i = true;
   }
 
-  public int f1() {
+  public int f1(int arg1, boolean arg2, int arg3) {
+    int counter;
+    boolean counter;
     return 1;
   }
 }
