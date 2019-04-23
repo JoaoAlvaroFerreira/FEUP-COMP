@@ -2,18 +2,19 @@ import java.util.ArrayList;
 
 public class SymbolTable {
   ArrayList<SymbolTableEntry> entries = new ArrayList<SymbolTableEntry>();
+  String className;
 
   // fazer construtor symbol table
   public SymbolTable(SimpleNode root) {
     int numSemanticErrors = 0;
     SimpleNode classe = (SimpleNode) root.jjtGetChild(0);
 
-   // System.out.println("yooo " + classe.symbol);
+    className = classe.symbol;
 
     // para cada filho da classe extrair apenas funcoes e main
     for (int i = 0; i < classe.jjtGetNumChildren(); i++) {
       if ((classe.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) || (classe.jjtGetChild(i).getId() == NewJava.JJTMAIN)) {
-        entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i), root.symbol));
+        entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i)));
 
         if (classe.jjtGetChild(i).visit(this, i).toString().equals("error")) {
           numSemanticErrors++;
@@ -63,6 +64,7 @@ public class SymbolTable {
     for (int i = 0; i < entries.get(functionNum).nodelist.size(); i++) {
       if (entries.get(functionNum).nodelist.get(i).symbol != null) {
         if (entries.get(functionNum).nodelist.get(i).symbol.equals(entryName)) {
+          // duplicate identifiers
           if (method.isEmpty()) {
             ident = searchIdentType(entries.get(functionNum).nodelist.get(i).symbol, functionNum);
             method = entries.get(functionNum).name + "/" + entries.get(functionNum).params;
@@ -76,7 +78,17 @@ public class SymbolTable {
     return ident;
   }
 
-  public Object checkReturnValue() {
-    return entries.get(1).returnDescriptor;
+  public String searchParam(String symbol, int functionNum) {
+    for (int i = 0; i < entries.get(functionNum).params.size(); i++) {
+      String param = entries.get(functionNum).params.get(i).toString();
+
+      int index = param.indexOf("->");
+      String name = param.substring(0, index - 1);
+
+      if(name.equals(symbol)) {
+        return param.substring(index + 3);
+      }
+    }
+    return "error";
   }
 };

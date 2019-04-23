@@ -21,7 +21,6 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
   public static ArrayList<SimpleNode> classes = new ArrayList<SimpleNode>();
 
   public static void main(String args[]) throws ParseException {
-
     NewJava myJava = null;
 
     for (int i = 0; i < args.length; i++) {
@@ -43,6 +42,10 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
       //contrutor  symbol table
       SymbolTable symbolTable = new SymbolTable(root);
     }
+
+    //Jasmin Generator
+    JasminParser jasminParser = new JasminParser("test");
+    jasminParser.generate();
   }
 
   private static String fileToString(String filePath)
@@ -624,7 +627,7 @@ void WhileStatement()      : {/*@bgen(jjtree) WHILE */
 
   } catch (ParseException e) {
     //e.printStackTrace();
-    System.out.println("N\u00e3o sabes fazer whiles? " + e.currentToken.image);
+    System.out.println("N\u00c3\u00a3o sabes fazer whiles? " + e.currentToken.image);
 
 
 

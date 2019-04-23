@@ -2,27 +2,40 @@ class Item {
 
   public static void main(String [] args){
     int i;
-    // i = 2;
     boolean j;
+    Item item;            // CORRIGIR SYMBOL TABLE -> TYPE = Item
+
     i = 2;
-    k = 4;
-    j = 2;
-    i = true;
+    item.f2();
+
+    //k = 4;
+    //j = 2;
+    //i = true;
   }
 
   public int f1(int arg1, boolean arg2, int arg3) {
     int counter;
     Item item;
+    boolean cenas;
+    //Haha haha;
+
     //int[] a;
     //Item item;
 
-    //this.f2();
+
 
     //counter = new Item();
     //item = new Item();
 
-    boolean counter;
+    //boolean counter;
+    haha.callMe();
+    counter = arg1;
+    cenas = arg2;
 
     return 1;
+  }
+
+  public boolean cenas() {
+    return true;
   }
 }
