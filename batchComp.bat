@@ -11,4 +11,4 @@ echo - - - -  - - - - - - - - - - - - - - - - -
 CALL javac *.java
 echo execution - - - - - - - - - - - - - - - -
 echo - - - -  - - - - - - - - - - - - - - - - -
-CALL java NewJava exemplo1.jmm
+CALL java NewJava exemplo1.jmm exemplo2.jmm

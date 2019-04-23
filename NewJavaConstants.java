@@ -71,15 +71,15 @@ public interface NewJavaConstants {
   /** RegularExpression Id. */
   int RETURN = 40;
   /** RegularExpression Id. */
-  int STRING = 41;
+  int BOOLEAN = 41;
   /** RegularExpression Id. */
-  int BOOLEAN = 42;
+  int IF = 42;
   /** RegularExpression Id. */
-  int IF = 43;
+  int ELSE = 43;
   /** RegularExpression Id. */
-  int ELSE = 44;
+  int WHILE = 44;
   /** RegularExpression Id. */
-  int WHILE = 45;
+  int STRING = 45;
   /** RegularExpression Id. */
   int INTEGERLITERAL = 46;
   /** RegularExpression Id. */
@@ -137,11 +137,11 @@ public interface NewJavaConstants {
     "\"void\"",
     "\"main\"",
     "\"return\"",
-    "\"String\"",
     "\"boolean\"",
     "\"if\"",
     "\"else\"",
     "\"while\"",
+    "\"String\"",
     "<INTEGERLITERAL>",
     "<IDENTIFIER>",
   };

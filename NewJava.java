@@ -4,20 +4,37 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.*;
+import java.util.ArrayList;
 
 public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaConstants {/*@bgen(jjtree)*/
   protected static JJTNewJavaState jjtree = new JJTNewJavaState();public static int errorCount = 10;
   public static String filePath;
+  public static ArrayList<String> filePaths = new ArrayList<String>();
+  public static ArrayList<SimpleNode> classes = new ArrayList<SimpleNode>();
 
   public static void main(String args[]) throws ParseException {
-    filePath = args[0];
-    String fileContents = fileToString(filePath);
-    NewJava myJava = new NewJava(new ByteArrayInputStream(fileContents.getBytes()));
-    SimpleNode root = myJava.Program();
-    root.dump("");
 
-    //contrutor  symbol table
-    SymbolTable symbolTable = new SymbolTable(root);
+    NewJava myJava = null;
+
+    for (int i = 0; i < args.length; i++) {
+      filePath = args[0];
+      filePaths.add(args[i]);
+      String fileContents = fileToString(args[i]);
+      ByteArrayInputStream stream = new ByteArrayInputStream(fileContents.getBytes());
+      if (myJava == null) {
+        myJava = new NewJava(stream);
+      } else {
+        myJava.ReInit(stream);
+      }
+      SimpleNode root = myJava.Program();
+
+
+      classes.add(root);
+      root.dump("");
+
+      //contrutor  symbol table
+      SymbolTable symbolTable = new SymbolTable(root);
+    }
   }
 
   private static String fileToString(String filePath)
@@ -122,7 +139,7 @@ if (jjtc001) {
       }
       jj_consume_token(CURLYBRACKETCLOSED);
 jjtree.closeNodeScope(jjtn000, true);
-                                                                                                                                                                                                               jjtc000 = false;
+                                                                                                                                                                                                                 jjtc000 = false;
 jjtn000.symbol = t.image;
       jjtn000.line = t.beginLine;
     } catch (Throwable jjte000) {
@@ -1424,25 +1441,6 @@ if (jjtc008) {
     finally { jj_save(56, xla); }
   }
 
-  static private boolean jj_3_12()
- {
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_16()
- {
-    if (jj_3R_14()) return true;
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_13()
- {
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_12()
  {
     if (jj_3R_14()) return true;
@@ -1504,6 +1502,13 @@ if (jjtc008) {
     return false;
   }
 
+  static private boolean jj_3_43()
+ {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_14()
  {
     Token xsp;
@@ -1518,13 +1523,6 @@ if (jjtc008) {
     }
     }
     }
-    return false;
-  }
-
-  static private boolean jj_3_43()
- {
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_18()) return true;
     return false;
   }
 
@@ -1672,16 +1670,16 @@ if (jjtc008) {
     return false;
   }
 
+  static private boolean jj_3_5()
+ {
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
   static private boolean jj_3_47()
  {
     if (jj_scan_token(IDENTIFIER)) return true;
     if (jj_scan_token(ROUNDBRACKETOPEN)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_5()
- {
-    if (jj_3R_12()) return true;
     return false;
   }
 
@@ -1759,15 +1757,15 @@ if (jjtc008) {
     return false;
   }
 
-  static private boolean jj_3_4()
- {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
   static private boolean jj_3_37()
  {
     if (jj_3R_23()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_4()
+ {
+    if (jj_3R_11()) return true;
     return false;
   }
 
@@ -1997,6 +1995,25 @@ if (jjtc008) {
     }
     }
     }
+    return false;
+  }
+
+  static private boolean jj_3_12()
+ {
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_16()
+ {
+    if (jj_3R_14()) return true;
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_13()
+ {
+    if (jj_3R_10()) return true;
     return false;
   }
 

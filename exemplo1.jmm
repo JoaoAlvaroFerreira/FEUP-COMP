@@ -2,7 +2,7 @@ class Item {
 
   public static void main(String [] args){
     int i;
-   // i = 2;
+    // i = 2;
     boolean j;
     i = 2;
     k = 4;
@@ -12,7 +12,17 @@ class Item {
 
   public int f1(int arg1, boolean arg2, int arg3) {
     int counter;
+    Item item;
+    //int[] a;
+    //Item item;
+
+    //this.f2();
+
+    //counter = new Item();
+    //item = new Item();
+
     boolean counter;
+
     return 1;
   }
 }

@@ -8,10 +8,12 @@ public class SymbolTable {
     int numSemanticErrors = 0;
     SimpleNode classe = (SimpleNode) root.jjtGetChild(0);
 
+   // System.out.println("yooo " + classe.symbol);
+
     // para cada filho da classe extrair apenas funcoes e main
     for (int i = 0; i < classe.jjtGetNumChildren(); i++) {
       if ((classe.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) || (classe.jjtGetChild(i).getId() == NewJava.JJTMAIN)) {
-        entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i)));
+        entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i), root.symbol));
 
         if (classe.jjtGetChild(i).visit(this, i).toString().equals("error")) {
           numSemanticErrors++;
@@ -29,9 +31,9 @@ public class SymbolTable {
       System.out.println(numSemanticErrors + " errors");
     } else if (numSemanticErrors == 1) {
       System.out.println("1 error");
-    } //else {
+    } else {
       this.dump();
-    //}
+    }
   }
 
   // fazer prints symbol table
@@ -44,6 +46,7 @@ public class SymbolTable {
   public String searchIdentType(String entryName, int functionNum) {
     String type = "";
     for (int i = 0; i < entries.get(functionNum).vars.size(); i++) {
+
       if (entryName.equals(entries.get(functionNum).vars.get(i).symbol)) {
         type = entries.get(functionNum).vars.get(i).type.toString();
         break;

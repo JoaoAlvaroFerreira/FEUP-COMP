@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.*;
+import java.util.ArrayList;
 
 public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
 {/*@bgen(jjtree)*/
@@ -16,16 +17,32 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
 /*@egen*/
   public static int errorCount = 10;
   public static String filePath;
+  public static ArrayList<String> filePaths = new ArrayList<String>();
+  public static ArrayList<SimpleNode> classes = new ArrayList<SimpleNode>();
 
   public static void main(String args[]) throws ParseException {
-    filePath = args[0];
-    String fileContents = fileToString(filePath);
-    NewJava myJava = new NewJava(new ByteArrayInputStream(fileContents.getBytes()));
-    SimpleNode root = myJava.Program();
-    root.dump("");
 
-    //contrutor  symbol table
-    SymbolTable symbolTable = new SymbolTable(root);
+    NewJava myJava = null;
+
+    for (int i = 0; i < args.length; i++) {
+      filePath = args[0];
+      filePaths.add(args[i]);
+      String fileContents = fileToString(args[i]);
+      ByteArrayInputStream stream = new ByteArrayInputStream(fileContents.getBytes()); 
+      if (myJava == null) {
+        myJava = new NewJava(stream);
+      } else {
+        myJava.ReInit(stream);
+      }
+      SimpleNode root = myJava.Program();
+
+
+      classes.add(root);
+      root.dump("");
+  
+      //contrutor  symbol table
+      SymbolTable symbolTable = new SymbolTable(root);
+    }
   }
 
   private static String fileToString(String filePath)
@@ -115,11 +132,11 @@ TOKEN:
   | < VOID: "void" >
   | < MAIN: "main" >
   | < RETURN: "return" >
-  | < STRING: "String" >
   | < BOOLEAN: "boolean" >
   | < IF: "if">
   | < ELSE: "else">
   | < WHILE: "while">
+  | < STRING: "String" >
   | < INTEGERLITERAL: (["0" - "9"])+ >
   | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* >
 }
@@ -185,11 +202,11 @@ void ClassDeclaration()      :  {/*@bgen(jjtree) CLASS */
                                                           jjtree.closeNodeScope(jjtn001, true);
                                                         }
                                                       }
-/*@egen*/        )? <CURLYBRACKETOPENED>(VarDeclaration())*(<PUBLIC> (MainDeclaration()|MethodDeclaration()))*<CURLYBRACKETCLOSED>/*@bgen(jjtree)*/
-                                                                                                                                                                                                             {
-                                                                                                                                                                                                               jjtree.closeNodeScope(jjtn000, true);
-                                                                                                                                                                                                               jjtc000 = false;
-                                                                                                                                                                                                             }
+/*@egen*/        )? <CURLYBRACKETOPENED>(VarDeclaration())*(<PUBLIC> (MainDeclaration() | MethodDeclaration()))*<CURLYBRACKETCLOSED>/*@bgen(jjtree)*/
+                                                                                                                                                                                                               {
+                                                                                                                                                                                                                 jjtree.closeNodeScope(jjtn000, true);
+                                                                                                                                                                                                                 jjtc000 = false;
+                                                                                                                                                                                                               }
 /*@egen*/ {
       jjtn000.symbol = t.image;
       jjtn000.line = t.beginLine;
@@ -263,10 +280,11 @@ void Type()     : {/*@bgen(jjtree) TYPE */
 {/*@bgen(jjtree) TYPE */
     try {
 /*@egen*/
-    (t=<INT> [<BRACKETOPEN> <BRACKETCLOSE>{}]
+    ( t=<INT> [<BRACKETOPEN> <BRACKETCLOSE>{}]
     | t=<BOOLEAN>
     | t=<IDENTIFIER>
-    | t=<VOID>)/*@bgen(jjtree)*/
+    | t=<VOID>
+    )/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;

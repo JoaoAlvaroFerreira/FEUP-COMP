@@ -122,11 +122,25 @@ public class SimpleNode implements Node {
 
   @Override
   public Object visit(SymbolTable data, int functionNum) {
-    // System.out.println("id = " + this.id + ", symbol = " + this.symbol);
+    //System.out.println("\n\nid = " + this.id + ", symbol = " + this.symbol);
+
+     /*
+     for (int i = 0; i < this.jjtGetNumChildren(); i++) {
+      System.out.println("cr id = " + this.jjtGetChild(i).getId() + ", symbol = " + this.jjtGetChild(i).getSymbol());
+     }
+     */
 
     if (id == NewJava.JJTVAR) {
       String name = (String) this.getSymbol();
       String type = data.checkIfExists(name, functionNum);
+
+      System.out.println("TYPE = " + type);
+
+      if (type.equals("error")) {
+        if (this.jjtGetNumChildren() > 0)
+        System.out.println("COISAS!!!! " + this.jjtGetChild(0).getSymbol());
+        //return this.jjtGetChild(0).getSymbol();
+      }
 
       // variable does not have unique name
       if (type.contains("/")) {
@@ -178,6 +192,10 @@ public class SimpleNode implements Node {
 
     if (id == NewJava.JJTVAL) {
       return "int";
+    }
+
+    if (id == NewJava.JJTNEW) {
+      return symbol;
     }
 
     if (id == NewJava.JJTASSIGN) {

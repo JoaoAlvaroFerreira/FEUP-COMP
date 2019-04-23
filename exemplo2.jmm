@@ -1,1 +1,12 @@
-nuno.length.ola(sofia,margarida.fuck(jas))
+class Haha {
+
+  public static void main(String [] args){
+    int i;
+    i = 2;
+    //boolean j;
+  }
+
+  public int callMe() {
+      return 2;
+  }
+}

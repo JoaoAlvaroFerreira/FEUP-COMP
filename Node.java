@@ -32,6 +32,8 @@ public interface Node {
 
   public int getId();
 
+  public String getSymbol();
+
   public Object visit(SymbolTable data, int functionNum);
 
   public int getLineNumber();
