@@ -22,6 +22,9 @@ public class NewJava
 
     //contrutor  symbol table
     SymbolTable symbolTable = new SymbolTable(root);
+    //Jasmin Generator
+    JasminParser jasminParser = new JasminParser("test");
+    jasminParser.generate();
   }
 
   private static String fileToString(String filePath)
