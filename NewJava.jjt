@@ -23,7 +23,7 @@ public class NewJava
       filePath = args[0];
       filePaths.add(args[i]);
       String fileContents = fileToString(args[i]);
-      ByteArrayInputStream stream = new ByteArrayInputStream(fileContents.getBytes()); 
+      ByteArrayInputStream stream = new ByteArrayInputStream(fileContents.getBytes());
       if (myJava == null) {
         myJava = new NewJava(stream);
       } else {
@@ -34,14 +34,14 @@ public class NewJava
 
       classes.add(root);
       root.dump("");
-  
+
       //contrutor  symbol table
       SymbolTable symbolTable = new SymbolTable(root);
-    }
 
-    //Jasmin Generator
-    JasminParser jasminParser = new JasminParser("test");
-    jasminParser.generate();
+      //Jasmin Generator
+      JasminParser jasminParser = new JasminParser(args[i],root);
+      jasminParser.generate();
+    }
   }
 
   private static String fileToString(String filePath)

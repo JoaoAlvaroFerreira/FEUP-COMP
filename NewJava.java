@@ -33,11 +33,11 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
 
       //contrutor  symbol table
       SymbolTable symbolTable = new SymbolTable(root);
-    }
 
-    //Jasmin Generator
-    JasminParser jasminParser = new JasminParser("test");
-    jasminParser.generate();
+      //Jasmin Generator
+      JasminParser jasminParser = new JasminParser(args[i],root);
+      jasminParser.generate();
+    }
   }
 
   private static String fileToString(String filePath)
@@ -591,7 +591,7 @@ if (jjtc000) {
         Statement();
       } catch (ParseException e) {
 //e.printStackTrace();
-    System.out.println("N\u00c3\u00a3o sabes fazer whiles? " + e.currentToken.image);
+    System.out.println("N\u00e3o sabes fazer whiles? " + e.currentToken.image);
 
 
 

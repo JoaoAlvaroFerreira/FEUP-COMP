@@ -16,6 +16,7 @@ public class SymbolTable {
       if ((classe.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) || (classe.jjtGetChild(i).getId() == NewJava.JJTMAIN)) {
         entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i)));
 
+        /*
         if (classe.jjtGetChild(i).visit(this, i).toString().equals("error")) {
           numSemanticErrors++;
         }
@@ -25,6 +26,7 @@ public class SymbolTable {
             numSemanticErrors++;
           }
         }
+        */
       }
     }
 
