@@ -39,7 +39,8 @@ public class JasminParser{
     String output = "";
     output += ".source "+sourceClass+"."+sourceFileExtension+"\n";
     output += ".class " + accessspec + " " + classname + "\n";
-    output += ".super " + supername + "\n";
+    if(supername!= null)
+      output += ".super " + supername + "\n";
 
     File file = new File(sourceClass+".j");
 
