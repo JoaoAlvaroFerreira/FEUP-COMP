@@ -132,7 +132,15 @@ public class SimpleNode implements Node {
       // TO-DO: ACEITAR CLASSES DE OUTROS FICHEIROS ;_________________;
       if (type.equals("error")) {
         if (this.jjtGetNumChildren() > 0) {
-          if (!this.jjtGetChild(0).getSymbol().equals(data.className)) {
+          boolean found = false;
+
+          for(int i = 0; i < data.classNames.size(); i++){
+            if(data.classNames.get(i).equals(this.jjtGetChild(0).getSymbol())){
+              found = true;
+            }
+          }
+
+          if (!found) {
             int lineNum = this.jjtGetChild(0).getLineNumber();
             System.out.println("\n" + NewJava.filePath + ":" + lineNum + ": error: cannot find symbol");
 

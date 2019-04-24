@@ -30,18 +30,20 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
       myJava.ReInit(stream);
     }
 
+
     SimpleNode root = myJava.Program();
 
     root.dump("");
 
     //contrutor  symbol table
+
     table.startSymbolTable(root);
 
-    return table;
-
     //Jasmin Generator
-    //JasminParser jasminParser = new JasminParser("test");
+    //JasminParser jasminParser = new JasminParser(filePath,root);
     //jasminParser.generate();
+
+    return table;
   }
 
   private static String fileToString(String filePath)
@@ -1407,11 +1409,6 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
     finally { jj_save(56, xla); }
   }
 
-  static private boolean jj_3_11() {
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_11() {
     if (jj_scan_token(STATIC)) return true;
     if (jj_scan_token(VOID)) return true;
@@ -1907,6 +1904,11 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
   static private boolean jj_3R_12() {
     if (jj_3R_14()) return true;
     if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_11() {
+    if (jj_3R_10()) return true;
     return false;
   }
 

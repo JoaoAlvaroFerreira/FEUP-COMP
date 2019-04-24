@@ -15,25 +15,12 @@ boolean nuno;
   }
 
   public int f1(int arg1, boolean arg2, int arg3) {
-    int counter;
-    Item item;
-    boolean cenas;
+    int i;
     Haha haha;
 
-    //int[] a;
-    //Item item;
+    i = 2;
 
-
-
-    //counter = new Item();
-    //item = new Item();
-
-    //boolean counter;
-    haha.callMe();
-    counter = arg1;
-    cenas = arg2;
-
-    return 1;
+    return i;
   }
 
   public boolean cenas() {
