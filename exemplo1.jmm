@@ -1,5 +1,6 @@
 class Item {
 
+boolean nuno;
   public static void main(String [] args){
     int i;
     boolean j;

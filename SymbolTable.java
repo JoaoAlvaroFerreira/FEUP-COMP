@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 public class SymbolTable {
   ArrayList<SymbolTableEntry> entries = new ArrayList<SymbolTableEntry>();
+  ArrayList<SymbolType> globals = new ArrayList<SymbolType>();
   String className;
 
   // fazer construtor symbol table
@@ -16,6 +17,7 @@ public class SymbolTable {
       if ((classe.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) || (classe.jjtGetChild(i).getId() == NewJava.JJTMAIN)) {
         entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i)));
 
+        /*
         if (classe.jjtGetChild(i).visit(this, i).toString().equals("error")) {
           numSemanticErrors++;
         }
@@ -25,8 +27,14 @@ public class SymbolTable {
             numSemanticErrors++;
           }
         }
+        */
+      }else  if ((classe.jjtGetChild(i).getId() == NewJava.JJTVAR)
+          && (((SimpleNode) classe.jjtGetChild(i).jjtGetChild(0)).getId() == NewJava.JJTTYPE)) {
+        globals.add(new SymbolType(classe.jjtGetChild(i).getSymbol(),
+            ((SimpleNode) classe.jjtGetChild(i).jjtGetChild(0)).getSymbol()));
       }
     }
+
 
     if (numSemanticErrors > 1) {
       System.out.println(numSemanticErrors + " errors");
@@ -39,6 +47,10 @@ public class SymbolTable {
 
   // fazer prints symbol table
   public void dump() {
+    System.out.println("Globals:");
+    for (SymbolType globalVar : globals) {
+      System.out.println(" " + globalVar);
+    }
     for (SymbolTableEntry tableEntry : entries) {
       tableEntry.dump();
     }
