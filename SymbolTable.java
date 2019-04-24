@@ -29,6 +29,7 @@ public class SymbolTable {
         */
       }
     }
+    
 
     if (numSemanticErrors > 1) {
       System.out.println(numSemanticErrors + " errors");

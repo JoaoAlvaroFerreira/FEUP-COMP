@@ -42,12 +42,16 @@ public class JasminParser{
     output += ".source "+sourceClass+"."+sourceFileExtension+"\n";
     output += ".class " + accessspec + " " + classname + "\n";
     if(supername!= null)
-      output += ".super " + supername + "\n\n";
+    output += ".super " + supername + "\n\n";
 
 
     //methods
-    output += this.generateMethod((SimpleNode)(fileClass.jjtGetChild(1)));
-
+    for(int i=0;i<fileClass.jjtGetNumChildren();i++){
+      if((fileClass.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) ||
+         (fileClass.jjtGetChild(i).getId() == NewJava.JJTMAIN)){
+        output += this.generateMethod((SimpleNode)(fileClass.jjtGetChild(i)));
+      }
+    }
 
     //File Output
     File file = new File(sourceClass+".j");
@@ -80,23 +84,29 @@ public class JasminParser{
   public String generateMethod(SimpleNode method){
     String ret = "";
 
-    ret += ".method public " + method.getSymbol() + "(";
+    //se for main, method e sempre igual
+    if(method.getId() == NewJava.JJTMAIN){
+      ret += ".method public static main([Ljava/lang/String;)V\n";
+    }else{
+      ret += ".method public " + method.getSymbol() + "(";
 
-    SymbolTableEntry methodSymbols = new SymbolTableEntry(method);
+      SymbolTableEntry methodSymbols = new SymbolTableEntry(method);
 
-    for(int i=0;i<methodSymbols.params.size();i++){
-      ret+=this.getJasminType(methodSymbols.params.get(i)) + ",";
+      //argumentos funcao
+      for(int i=0;i<methodSymbols.params.size();i++){
+        ret+=this.getJasminType(methodSymbols.params.get(i)) + ";";
+      }
+      //remove ultimo ponto e virgula
+      if (ret != null && ret.length() > 0 && ret.charAt(ret.length() - 1) == ';') {
+        ret = ret.substring(0, ret.length() - 1);
+      }
+
+      //tipo de retorno
+      ret+= ")" + this.getJasminType(methodSymbols.returnDescriptor) + "\n";
     }
-    //remove ultima virgula
-    if (ret != null && ret.length() > 0 && ret.charAt(ret.length() - 1) == ',') {
-      ret = ret.substring(0, ret.length() - 1);
-    }
-
-    ret+= ")" + this.getJasminType(methodSymbols.returnDescriptor) + "\n";
-
     //inserir statements
 
-    ret += ".end method\n";
+    ret += ".end method\n\n";
 
 
     return ret;
@@ -105,15 +115,15 @@ public class JasminParser{
   public String getJasminType(SymbolType varType){
     switch(varType.type){
       case INT:
-        return "I";
+      return "I";
       case INT_ARR:
-        return "[I";
+      return "[I";
       case BOOLEAN:
-        return "Z";
+      return "Z";
       case VOID:
-        return "V";
+      return "V";
       default:
-        return "";
+      return "";
     }
   }
 }
