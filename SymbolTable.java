@@ -4,26 +4,31 @@ public class SymbolTable {
   ArrayList<SymbolTableEntry> entries = new ArrayList<SymbolTableEntry>();
   ArrayList<SymbolType> globals = new ArrayList<SymbolType>();
   String className;
+  int functionNum = 0;
+  
+  int numSemanticErrors = 0;
 
   // fazer construtor symbol table
-  public SymbolTable(SimpleNode root) {
-    int numSemanticErrors = 0;
+  public SymbolTable() {}
+
+  public void startSymbolTable(SimpleNode root){
+
     SimpleNode classe = (SimpleNode) root.jjtGetChild(0);
 
     className = classe.symbol;
 
     // para cada filho da classe extrair apenas funcoes e main
     for (int i = 0; i < classe.jjtGetNumChildren(); i++) {
+     
       if ((classe.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) || (classe.jjtGetChild(i).getId() == NewJava.JJTMAIN)) {
         entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i)));
 
-        /*
-        if (classe.jjtGetChild(i).visit(this, i).toString().equals("error")) {
+        if (classe.jjtGetChild(i).visit(this, functionNum).toString().equals("error")) {
           numSemanticErrors++;
         }
 
         for (int j = 0; j < classe.jjtGetChild(i).jjtGetNumChildren(); j++) {
-          if (classe.jjtGetChild(i).jjtGetChild(j).visit(this, i).toString().equals("error")) {
+          if (classe.jjtGetChild(i).jjtGetChild(j).visit(this, functionNum).toString().equals("error")) {
             numSemanticErrors++;
           }
         }
@@ -33,15 +38,8 @@ public class SymbolTable {
         globals.add(new SymbolType(classe.jjtGetChild(i).getSymbol(),
             ((SimpleNode) classe.jjtGetChild(i).jjtGetChild(0)).getSymbol()));
       }
-    }
 
-
-    if (numSemanticErrors > 1) {
-      System.out.println(numSemanticErrors + " errors");
-    } else if (numSemanticErrors == 1) {
-      System.out.println("1 error");
-    } else {
-      this.dump();
+      functionNum++;
     }
   }
 
@@ -73,19 +71,18 @@ public class SymbolTable {
     String method = "";
     String ident = SymbolType.Type.ERROR.toString();
 
-    for (int i = 0; i < entries.get(functionNum).nodelist.size(); i++) {
+      for (int i = 0; i < entries.get(functionNum).nodelist.size(); i++) {
       if (entries.get(functionNum).nodelist.get(i).symbol != null) {
         if (entries.get(functionNum).nodelist.get(i).symbol.equals(entryName)) {
-          // duplicate identifiers
           if (method.isEmpty()) {
             ident = searchIdentType(entries.get(functionNum).nodelist.get(i).symbol, functionNum);
             method = entries.get(functionNum).name + "/" + entries.get(functionNum).params;
-          } else {
+          } else { // duplicate identifiers
             return entries.get(functionNum).nodelist.get(i).getLineNumber() + "/" + method;
           }
         }
-      }
     }
+  }
 
     return ident;
   }
@@ -103,4 +100,9 @@ public class SymbolTable {
     }
     return "error";
   }
+
+  public String getReturn(int functionNum) {
+    return entries.get(functionNum).returnDescriptor.toString();
+  }
+
 };

@@ -18,7 +18,7 @@ boolean nuno;
     int counter;
     Item item;
     boolean cenas;
-    //Haha haha;
+    Haha haha;
 
     //int[] a;
     //Item item;
@@ -37,6 +37,10 @@ boolean nuno;
   }
 
   public boolean cenas() {
-    return true;
+    boolean oi;
+
+    oi = false;
+
+    return oi;
   }
 }

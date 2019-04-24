@@ -252,16 +252,14 @@ public class SimpleNode implements Node {
 
     // Function type must match return type
 
-    /*
-     * // function type if (this.id == NewJava.JJTTYPE) { Object identifierType =
-     * this.symbol;
-     * 
-     * System.out.println("function!!! = " + identifierType); }
-     * 
-     * if (this.id == NewJava.JJTRETURN) { System.out.println("return = " +
-     * this.symbol + ", value = " + this.value); System.out.println("coisas = " +
-     * data.checkReturnValue()); }
-     */
+    if (this.id == NewJava.JJTRETURN) { 
+        for (int i = 0; i < this.jjtGetNumChildren(); i++) {
+          System.out.println("cr " + this.jjtGetChild(i));
+        }
+        System.out.println("coisas = " + data.getReturn(functionNum));
+        
+    }
+     
 
     // ------------------------------------------------------------------------------
     // Function call -> must exist
