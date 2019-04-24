@@ -17,11 +17,13 @@ public class JasminParser{
   private ArrayList<FieldDefinition> definitionlist;
   private int vars;
   private int stacklim;
+  private ArrayList<String> localVarList;
 
   public JasminParser(String file_path,SimpleNode root){
     this.source = file_path;
     this.root = root;
     this.fileClass = (SimpleNode) root.jjtGetChild(0);
+    this.localVarList = new ArrayList<>();
 
     if(fileClass.getId() == NewJava.JJTCLASS){
       this.accessspec = "public";
@@ -87,6 +89,7 @@ public class JasminParser{
     //se for main, method e sempre igual
     if(method.getId() == NewJava.JJTMAIN){
       ret += ".method public static main([Ljava/lang/String;)V\n";
+      method.symbol = "main";
     }else{
       ret += ".method public " + method.getSymbol() + "(";
 
@@ -104,10 +107,73 @@ public class JasminParser{
       //tipo de retorno
       ret+= ")" + this.getJasminType(methodSymbols.returnDescriptor) + "\n";
     }
+
+
+    //local variables directive
+    ret += this.generateLocalVariables(method);
+
+    ret +="\n";
+    //label init
+    ret += method.getSymbol() + "_init:\n";
+
     //inserir statements
+    for(int i=0;i<method.jjtGetNumChildren();i++){
+      SimpleNode curStatement = (SimpleNode) method.jjtGetChild(i);
+      switch(curStatement.getId()){
+        case NewJava.JJTASSIGN:
+          ret+=this.generateAssign(curStatement);
+          break;
+        default:
+          break;
+      }
+    }
+
+    //label end
+    ret += method.getSymbol() + "_end:\n";
+
+    ret +="\n";
 
     ret += ".end method\n\n";
 
+
+    return ret;
+  }
+
+
+  public String generateLocalVariables(SimpleNode method){
+    String ret = "";
+    String localVar = "";
+    int varIndex = 0;
+    SymbolType varType;
+
+    for(int i=0; i<method.jjtGetNumChildren();i++){
+      if((method.jjtGetChild(i).getId() == NewJava.JJTVAR)
+          && (method.jjtGetChild(i).jjtGetChild(0).getId() == NewJava.JJTTYPE)){
+        varType = new SymbolType(method.jjtGetChild(i).getSymbol(), method.jjtGetChild(i).jjtGetChild(0).getSymbol());
+
+        localVarList.add(varType.symbol);
+
+        localVar += ".var " + Integer.toString(varIndex) + " is "
+            + varType.symbol + " "
+            + this.getJasminType(varType)
+            + " from " + method.getSymbol() + "_init to " + method.getSymbol() + "_end\n";
+
+        varIndex++;
+      }
+    }
+
+    ret += ".limit vars " + Integer.toString(varIndex) + "\n\n";
+    ret += localVar;
+
+    return ret;
+  }
+
+  public String generateAssign(SimpleNode statement){
+    String ret = "";
+
+    ret += " ; " + statement.jjtGetChild(0).getSymbol() + " = " + statement.jjtGetChild(1).getSymbol() + "\n";
+    ret += "bipush " + statement.jjtGetChild(1).getSymbol() + "\n";
+    ret += "astore " + Integer.toString(localVarList.indexOf(statement.jjtGetChild(0).getSymbol())-1) + "\n";
 
     return ret;
   }
