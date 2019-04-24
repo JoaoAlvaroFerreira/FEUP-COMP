@@ -7,6 +7,7 @@ public class SymbolType {
       public String toString() {
         return "int";
       }
+
     },
     INT_ARR {
       @Override

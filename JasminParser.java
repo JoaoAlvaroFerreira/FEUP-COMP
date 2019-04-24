@@ -10,6 +10,7 @@ public class JasminParser{
 
   private String source;
   private SimpleNode root;
+  private SimpleNode fileClass;
   private String accessspec;
   private String classname;
   private String supername;
@@ -20,13 +21,13 @@ public class JasminParser{
   public JasminParser(String file_path,SimpleNode root){
     this.source = file_path;
     this.root = root;
-    SimpleNode FileClass = (SimpleNode) root.jjtGetChild(0);
+    this.fileClass = (SimpleNode) root.jjtGetChild(0);
 
-    if(FileClass.getId() == NewJava.JJTCLASS){
+    if(fileClass.getId() == NewJava.JJTCLASS){
       this.accessspec = "public";
-      this.classname = FileClass.getSymbol();
-      if(FileClass.jjtGetChild(0).getId() == NewJava.JJTEXTENDS){
-        supername = FileClass.jjtGetChild(0).getSymbol();
+      this.classname = fileClass.getSymbol();
+      if(fileClass.jjtGetChild(0).getId() == NewJava.JJTEXTENDS){
+        supername = fileClass.jjtGetChild(0).getSymbol();
       }
     }
   }
@@ -36,12 +37,19 @@ public class JasminParser{
     String sourceClass = sourceInfo[0];
     String sourceFileExtension = sourceInfo[1];
 
+    //initial directives
     String output = "";
     output += ".source "+sourceClass+"."+sourceFileExtension+"\n";
     output += ".class " + accessspec + " " + classname + "\n";
     if(supername!= null)
-      output += ".super " + supername + "\n";
+      output += ".super " + supername + "\n\n";
 
+
+    //methods
+    output += this.generateMethod((SimpleNode)(fileClass.jjtGetChild(1)));
+
+
+    //File Output
     File file = new File(sourceClass+".j");
 
 
@@ -67,5 +75,45 @@ public class JasminParser{
       ex.printStackTrace();
     }
 
+  }
+
+  public String generateMethod(SimpleNode method){
+    String ret = "";
+
+    ret += ".method public " + method.getSymbol() + "(";
+
+    SymbolTableEntry methodSymbols = new SymbolTableEntry(method);
+
+    for(int i=0;i<methodSymbols.params.size();i++){
+      ret+=this.getJasminType(methodSymbols.params.get(i)) + ",";
+    }
+    //remove ultima virgula
+    if (ret != null && ret.length() > 0 && ret.charAt(ret.length() - 1) == ',') {
+      ret = ret.substring(0, ret.length() - 1);
+    }
+
+    ret+= ")" + this.getJasminType(methodSymbols.returnDescriptor) + "\n";
+
+    //inserir statements
+
+    ret += ".end method\n";
+
+
+    return ret;
+  }
+
+  public String getJasminType(SymbolType varType){
+    switch(varType.type){
+      case INT:
+        return "I";
+      case INT_ARR:
+        return "[I";
+      case BOOLEAN:
+        return "Z";
+      case VOID:
+        return "V";
+      default:
+        return "";
+    }
   }
 }
