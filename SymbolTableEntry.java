@@ -33,11 +33,6 @@ public class SymbolTableEntry {
 					if (Node.jjtGetChild(i).jjtGetChild(j).getId() == NewJava.JJTTRUE || Node.jjtGetChild(i).jjtGetChild(j).getId() == NewJava.JJTFALSE) {
 						returnType = "boolean";
 					}
-
-					// identificador
-					if (Node.jjtGetChild(i).jjtGetChild(j).getId() == NewJava.JJTTEXT) {
-						
-					}
 				}
 			}
 		}

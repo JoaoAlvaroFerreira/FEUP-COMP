@@ -10,12 +10,10 @@ class Haha {
   }
 
   public boolean coisas() {
-    return true;
-  }
-
-  public int teste() {
     int i;
-    i = 0;
+
+    i = 2;
+
     return i;
   }
 }

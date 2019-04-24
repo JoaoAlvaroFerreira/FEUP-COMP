@@ -252,12 +252,35 @@ public class SimpleNode implements Node {
 
     // Function type must match return type
 
-    if (this.id == NewJava.JJTRETURN) { 
-        for (int i = 0; i < this.jjtGetNumChildren(); i++) {
-          System.out.println("cr " + this.jjtGetChild(i));
+    if (this.id == NewJava.JJTRETURN) {
+      for(int i = 0; i < this.jjtGetNumChildren(); i++){
+        SimpleNode aux = (SimpleNode)this.jjtGetChild(0);
+
+        String type = new String();
+
+        if (aux.getId() == NewJava.JJTVAL) {
+          type = "int";
         }
-        System.out.println("coisas = " + data.getReturn(functionNum));
-        
+
+        if (aux.getId() == NewJava.JJTTRUE || aux.getId() == NewJava.JJTFALSE) {
+          type = "boolean";
+        }
+
+        if(aux.getId() == NewJava.JJTTEXT){
+          type = data.checkIfExists(aux.getSymbol(), functionNum);
+        }
+
+        String dataTypeBroken = data.getReturn(functionNum);
+
+        int index = dataTypeBroken.indexOf("->");
+
+        String dataType = dataTypeBroken.substring(index + 3, dataTypeBroken.length());
+
+        if(!type.equals(dataType)){
+          System.out.println("\n" + NewJava.filePath + ":" + this.jjtGetChild(i).getLineNumber() + ": Wrong return type ");
+          return SymbolType.Type.ERROR.toString();
+        }
+      }
     }
      
 
