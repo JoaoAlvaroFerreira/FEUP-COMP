@@ -7,7 +7,7 @@ public class SymbolTableEntry {
 	ArrayList<SymbolType> params;
 	ArrayList<SimpleNode> aux;
 	ArrayList<SymbolType> vars;
-	String actualReturn;
+	String returnType;
 	String name;
 
 	public SymbolTableEntry(SimpleNode Node) {
@@ -27,16 +27,16 @@ public class SymbolTableEntry {
 			if (Node.jjtGetChild(i).getId() == NewJava.JJTRETURN) {
 				for (int j = 0; j < Node.jjtGetChild(i).jjtGetNumChildren(); j++) {
 					if (Node.jjtGetChild(i).jjtGetChild(j).getId() == NewJava.JJTVAL) {
-						actualReturn = "int";
+						returnType = "int";
 					}
 
 					if (Node.jjtGetChild(i).jjtGetChild(j).getId() == NewJava.JJTTRUE || Node.jjtGetChild(i).jjtGetChild(j).getId() == NewJava.JJTFALSE) {
-						actualReturn = "boolean";
+						returnType = "boolean";
 					}
 
 					// identificador
 					if (Node.jjtGetChild(i).jjtGetChild(j).getId() == NewJava.JJTTEXT) {
-						actualReturn = "int";
+						
 					}
 				}
 			}
