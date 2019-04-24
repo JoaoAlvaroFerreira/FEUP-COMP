@@ -1,5 +1,4 @@
-class Item {
-
+class Item {  
   public static void main(String [] args){
     int i;
     boolean j;
@@ -8,7 +7,7 @@ class Item {
     i = 2;
     item.f2();
 
-    k = 4;
+    //k = 4;
     //j = 2;
     //i = true;
   }
@@ -17,7 +16,7 @@ class Item {
     int counter;
     Item item;
     boolean cenas;
-    //Haha haha;
+    Haha haha;
 
     //int[] a;
     //Item item;
@@ -36,6 +35,10 @@ class Item {
   }
 
   public boolean cenas() {
-    return true;
+    boolean oi;
+
+    oi = false;
+
+    return oi;
   }
 }

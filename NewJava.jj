@@ -631,10 +631,7 @@ void WhileStatement()      : {/*@bgen(jjtree) WHILE */
     <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()
 
   } catch (ParseException e) {
-    //e.printStackTrace();
-    System.out.println("N\u00e3o sabes fazer whiles? " + e.currentToken.image);
-
-
+    System.out.println(e.currentToken.image);
 
     if(errorCount > 0){
       do{

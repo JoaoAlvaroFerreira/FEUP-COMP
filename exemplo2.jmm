@@ -1,12 +1,15 @@
 class Haha {
 
   public static void main(String [] args){
-    int i;
-    i = 2;
-    //boolean j;
+    int l;
+    l = 2;
   }
 
   public int callMe() {
       return 2;
+  }
+
+  public boolean coisas() {
+    return true;
   }
 }

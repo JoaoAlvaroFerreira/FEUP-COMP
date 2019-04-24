@@ -11,5 +11,14 @@ public class Main {
             symbolTable = parser.start();
             
         }
+
+        
+    if (symbolTable.numSemanticErrors > 1) {
+        System.out.println(symbolTable.numSemanticErrors + " errors");
+      } else if (symbolTable.numSemanticErrors == 1) {
+        System.out.println("1 error");
+      } else {
+        symbolTable.dump();
+      }
     }
 }
