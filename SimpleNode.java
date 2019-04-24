@@ -218,11 +218,21 @@ public class SimpleNode implements Node {
 
     // type of arguments
     if (id == NewJava.JJTTEXT) {
-      return data.searchParam(symbol, functionNum);
+      String type = data.checkIfExists(this.getSymbol(), functionNum);
+
+      if(type.equals("error")){
+        return data.searchParam(symbol, functionNum);
+      }
+
+      return type;
     }
 
     if (id == NewJava.JJTASSIGN) {
+
+      //Lado esquerdo assign
       Object identifierType = this.jjtGetChild(0).visit(data, functionNum);
+
+      //VERIFICAR QUANDO È int[] lado esquerdo assign
 
       if (identifierType.equals(SymbolType.Type.ERROR.toString())) {
         int lineNum = this.jjtGetChild(0).getLineNumber();
@@ -240,9 +250,23 @@ public class SimpleNode implements Node {
         return SymbolType.Type.ERROR.toString();
       }
 
-      Object expressionType = this.jjtGetChild(1).visit(data, functionNum);
+      //Lado direito assign
+      Object expressionType = new Object();
+      boolean ok = true;
 
-      if (!identifierType.equals(expressionType)) {
+      System.out.println(this.jjtGetChild(1).getId());;
+
+      if((this.jjtGetChild(1).getId() == NewJava.JJTOP2) || (this.jjtGetChild(1).getId() == NewJava.JJTOP3) || (this.jjtGetChild(1).getId() == NewJava.JJTOP4) || (this.jjtGetChild(1).getId() == NewJava.JJTOP5)){
+        System.out.println("HI BITCHESSSSSSS");
+        expressionType = "int";
+        ok = checkOpType((SimpleNode)this.jjtGetChild(1), data, functionNum);
+      } else{
+        expressionType = this.jjtGetChild(1).visit(data, functionNum);
+      }
+       
+
+      if (!identifierType.equals(expressionType) || !ok) {
+
         int lineNum = this.jjtGetChild(0).getLineNumber();
         System.out.println("\n" + NewJava.filePath + ":" + lineNum + ": error: incompatible types: " + expressionType
             + " cannot be converted to " + identifierType);
@@ -298,12 +322,44 @@ public class SimpleNode implements Node {
 
     // existe .length
     if (id == NewJava.JJTFULLSTOP) {
-      System.out.println("sou funcaozinha");
+      //System.out.println("sou funcaozinha");
     }
 
     return "stuff";
   }
+
+  private boolean checkOpType(SimpleNode startOP, SymbolTable data, int functionNum) {
+    if(startOP.jjtGetNumChildren() != 2){
+      return false;
+    }
+    
+    //ramo esquerdo
+    //se nao for op, verifica se e inteiro
+    if(startOP.jjtGetChild(0).getId() != NewJava.JJTOP2 && startOP.jjtGetChild(0).getId() != NewJava.JJTOP3 && startOP.jjtGetChild(0).getId() != NewJava.JJTOP4 && startOP.jjtGetChild(0).getId() != NewJava.JJTOP5){
+      String type = (String)startOP.jjtGetChild(0).visit(data, functionNum);
+      System.out.println("TYPE: " + type);
+      if(!type.equals("int")){
+        return false;
+      }   
+    //se for op, verifica se e vailda 
+    }else if(!checkOpType((SimpleNode)startOP.jjtGetChild(0), data, functionNum))
+      return false;
+
+    //ramo direito
+    if(startOP.jjtGetChild(1).getId() != NewJava.JJTOP2 && startOP.jjtGetChild(1).getId() != NewJava.JJTOP3 && startOP.jjtGetChild(1).getId() != NewJava.JJTOP4 && startOP.jjtGetChild(1).getId() != NewJava.JJTOP5){
+      String type = (String)startOP.jjtGetChild(1).visit(data, functionNum);
+      System.out.println("TYPE: " + type);
+      if(!type.equals("int")){
+        return false;
+      }    
+    }else if(!checkOpType((SimpleNode)startOP.jjtGetChild(1), data, functionNum))
+      return false;
+
+
+    return true;
+  }
 }
+
 /*
  * JavaCC - OriginalChecksum=9eef391808ffa9c1f856b164b9ceaad4 (do not edit this
  * line)
