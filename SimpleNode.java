@@ -123,16 +123,11 @@ public class SimpleNode implements Node {
 
   @Override
   public Object visit(SymbolTable data, int functionNum) {
-    System.out.println("\n\nid = " + this.id + ", symbol = " + this.symbol);
+    //System.out.println("\n\nid = " + this.id + ", symbol = " + this.symbol);
 
     if (id == NewJava.JJTVAR) {
       String name = (String) this.getSymbol();
-
-      System.out.println("Name: " + name);
-
       String type = data.checkIfExists(name, functionNum);
-
-      System.out.println("Type: " + type);
 
       // TO-DO: ACEITAR CLASSES DE OUTROS FICHEIROS ;_________________;
       if (type.equals("error")) {
