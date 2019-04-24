@@ -3,10 +3,14 @@ import java.util.ArrayList;
 public class SymbolTable {
   ArrayList<SymbolTableEntry> entries = new ArrayList<SymbolTableEntry>();
   String className;
+  int numSemanticErrors = 0;
+
 
   // fazer construtor symbol table
-  public SymbolTable(SimpleNode root) {
-    int numSemanticErrors = 0;
+  public SymbolTable() {}
+
+  public void startSymbolTable(SimpleNode root){
+
     SimpleNode classe = (SimpleNode) root.jjtGetChild(0);
 
     className = classe.symbol;

@@ -12,36 +12,41 @@ import java.util.ArrayList;
 public class NewJava
 {
   public static int errorCount = 10;
+  public static SymbolTable table;
   public static String filePath;
-  public static ArrayList<String> filePaths = new ArrayList<String>();
-  public static ArrayList<SimpleNode> classes = new ArrayList<SimpleNode>();
 
-  public static void main(String args[]) throws ParseException {
+  public NewJava(SymbolTable table, String path) {
+    this.filePath = path;
+    this.table = table;
+  }
+
+  public SymbolTable start() throws ParseException{
     NewJava myJava = null;
 
-    for (int i = 0; i < args.length; i++) {
-      filePath = args[0];
-      filePaths.add(args[i]);
-      String fileContents = fileToString(args[i]);
-      ByteArrayInputStream stream = new ByteArrayInputStream(fileContents.getBytes()); 
-      if (myJava == null) {
-        myJava = new NewJava(stream);
-      } else {
-        myJava.ReInit(stream);
-      }
-      SimpleNode root = myJava.Program();
+    System.out.println("Path: " + filePath);
 
-
-      classes.add(root);
-      root.dump("");
-  
-      //contrutor  symbol table
-      SymbolTable symbolTable = new SymbolTable(root);
+    String fileContents = fileToString(filePath);
+    ByteArrayInputStream stream = new ByteArrayInputStream(fileContents.getBytes());
+    
+    if (table == null){
+      table = new SymbolTable();
+      myJava = new NewJava(stream);
+    }else{
+      myJava.ReInit(stream);
     }
 
+    SimpleNode root = myJava.Program();
+
+    root.dump("");
+
+    //contrutor  symbol table
+    table.startSymbolTable(root);
+
+    return table;
+
     //Jasmin Generator
-    JasminParser jasminParser = new JasminParser("test");
-    jasminParser.generate();
+    //JasminParser jasminParser = new JasminParser("test");
+    //jasminParser.generate();
   }
 
   private static String fileToString(String filePath)
@@ -240,10 +245,7 @@ void WhileStatement()#WHILE: {Token t;}
     <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()
 
   } catch (ParseException e) {
-    //e.printStackTrace();
-    System.out.println("Não sabes fazer whiles? " + e.currentToken.image);
-
-
+    System.out.println(e.currentToken.image);
 
     if(errorCount > 0){
       do{

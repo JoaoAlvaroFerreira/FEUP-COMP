@@ -8,7 +8,7 @@ class Item {
     i = 2;
     item.f2();
 
-    //k = 4;
+    k = 4;
     //j = 2;
     //i = true;
   }
