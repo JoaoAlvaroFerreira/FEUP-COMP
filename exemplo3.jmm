@@ -10,6 +10,19 @@ class Fac extends Nuno {
     num_aux = num * (this.ComputeFac(num-1));
     return num_aux;
   }
+
+  public int add(){
+    int num1;
+    int num2;
+    int res;
+
+    num1=5;
+    num2=4;
+    res=num1+num2;
+
+    return res;
+  }
+
   public static void main(String[] a){
     int countador;
     boolean teste;
