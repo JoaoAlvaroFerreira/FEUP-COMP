@@ -129,6 +129,7 @@ public class SimpleNode implements Node {
 
   @Override
   public Object visit(SymbolTable data, int functionNum) {
+    System.out.println("id = " + id + ", symbol = " + symbol);
 
     if (id == NewJava.JJTVAR) {
       String name = (String) this.getSymbol();
@@ -365,7 +366,8 @@ public class SimpleNode implements Node {
 
     // existe .length
     if (id == NewJava.JJTFULLSTOP) {
-      //System.out.println("id = " + this.id + ", symbol = " + this.symbol);
+      //for (int i = 0; i < this.jjtGetNumChildren(); i++)
+      //System.out.println("symbol = " + this.jjtGetChild(i));
     }
 
     return "nothing";

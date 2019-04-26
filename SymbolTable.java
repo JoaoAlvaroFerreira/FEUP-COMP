@@ -87,15 +87,11 @@ public class SymbolTable {
   }
 
   public String searchParam(String symbol, int functionNum) {
-    System.out.println("Symbol: " + symbol);
-
     for (int i = 0; i < entries.get(functionNum).params.size(); i++) {
       String param = entries.get(functionNum).params.get(i).toString();
 
       int index = param.indexOf("->");
       String name = param.substring(0, index - 1);
-
-      System.out.println("Name: ");
 
       if(name.equals(symbol)) {
         return param.substring(index + 3);
