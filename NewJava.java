@@ -31,11 +31,13 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
       myJava.ReInit(stream);
     }
 
+
     SimpleNode root = myJava.Program();
 
     root.dump("");
 
     //contrutor  symbol table
+
     table.startSymbolTable(root);
 
     //Jasmin Generator

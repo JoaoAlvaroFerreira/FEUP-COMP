@@ -35,11 +35,13 @@ public class NewJava
       myJava.ReInit(stream);
     }
 
+
     SimpleNode root = myJava.Program();
 
     root.dump("");
 
     //contrutor  symbol table
+
     table.startSymbolTable(root);
 
     //Jasmin Generator

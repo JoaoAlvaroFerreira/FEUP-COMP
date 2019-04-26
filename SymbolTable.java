@@ -3,26 +3,27 @@ import java.util.ArrayList;
 public class SymbolTable {
   ArrayList<SymbolTableEntry> entries = new ArrayList<SymbolTableEntry>();
   ArrayList<SymbolType> globals = new ArrayList<SymbolType>();
-  String className;
-  int functionNum = 0;
-
+  ArrayList<String> classNames = new ArrayList<String>();
+  int functionNum;
   int numSemanticErrors = 0;
 
   // fazer construtor symbol table
-  public SymbolTable() {}
+  public SymbolTable() {
+    this.functionNum = 0;
+  }
 
   public void startSymbolTable(SimpleNode root){
 
     SimpleNode classe = (SimpleNode) root.jjtGetChild(0);
 
-    className = classe.symbol;
+    classNames.add(classe.symbol);
 
     // para cada filho da classe extrair apenas funcoes e main
     for (int i = 0; i < classe.jjtGetNumChildren(); i++) {
 
       if ((classe.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) || (classe.jjtGetChild(i).getId() == NewJava.JJTMAIN)) {
         entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i)));
-
+        
         if (classe.jjtGetChild(i).visit(this, functionNum).toString().equals("error")) {
           numSemanticErrors++;
         }
@@ -41,6 +42,8 @@ public class SymbolTable {
 
       functionNum++;
     }
+
+    functionNum--;
   }
 
   // fazer prints symbol table
@@ -71,7 +74,7 @@ public class SymbolTable {
     String method = "";
     String ident = SymbolType.Type.ERROR.toString();
 
-      for (int i = 0; i < entries.get(functionNum).nodelist.size(); i++) {
+    for (int i = 0; i < entries.get(functionNum).nodelist.size(); i++) {
       if (entries.get(functionNum).nodelist.get(i).symbol != null) {
         if (entries.get(functionNum).nodelist.get(i).symbol.equals(entryName)) {
           if (method.isEmpty()) {
@@ -88,11 +91,15 @@ public class SymbolTable {
   }
 
   public String searchParam(String symbol, int functionNum) {
+    System.out.println("Symbol: " + symbol);
+
     for (int i = 0; i < entries.get(functionNum).params.size(); i++) {
       String param = entries.get(functionNum).params.get(i).toString();
 
       int index = param.indexOf("->");
       String name = param.substring(0, index - 1);
+
+      System.out.println("Name: ");
 
       if(name.equals(symbol)) {
         return param.substring(index + 3);
