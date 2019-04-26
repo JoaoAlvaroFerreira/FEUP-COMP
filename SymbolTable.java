@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 public class SymbolTable {
   ArrayList<SymbolTableEntry> entries = new ArrayList<SymbolTableEntry>();
+  ArrayList<String> initializedVariables = new ArrayList<String>();
   ArrayList<SymbolType> globals = new ArrayList<SymbolType>();
   String className;
   String filePath;

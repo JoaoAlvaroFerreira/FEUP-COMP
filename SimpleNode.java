@@ -126,46 +126,53 @@ public class SimpleNode implements Node {
     return column;
   }
 
+  public void dumpLineError(String filePath, int lineNum, int col) {
+    try (Stream<String> lines = Files.lines(Paths.get(filePath))) {
+      System.out.println(lines.skip(lineNum - 1).findFirst().get());
+      while (col > 1) {
+        System.out.print(" ");
+        col--;
+      }
+      System.out.print("^");
+      System.out.println();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
   @Override
   public Object visit(SymbolTable data, int functionNum) {
     if (id == NewJava.JJTVAR) {
       String name = (String) this.getSymbol();
-      String type = data.checkIfExists(name, functionNum);  //checkar locais
+      String type = data.checkIfExists(name, functionNum); // checkar locais
 
-      if(type.equals("error")){
-        type = data.searchParam(name, functionNum);         //checkar params
+      if (type.equals("error")) {
+        type = data.searchParam(name, functionNum); // checkar params
       }
 
-      if(type.equals("error")){
-        type = data.checkIfExistGlobals(name);             //checkar globais
+      if (type.equals("error")) {
+        type = data.checkIfExistGlobals(name); // checkar globais
       }
 
-      if((!type.equals("int") && !type.equals("boolean")) || type.equals("error")){   
-        if (this.jjtGetNumChildren() > 0) {
-          if (!Main.tables.containsKey(this.jjtGetChild(0).getSymbol())) {         //checkar se é outra classe
+      if (!type.contains("/")) { // variable has unique name
+        if ((!type.equals("int") && !type.equals("boolean")) || type.equals("error")) {
+          if (this.jjtGetNumChildren() > 0) {
+            if (!Main.tables.containsKey(this.jjtGetChild(0).getSymbol())) { // checkar se é outra classe
 
-            int lineNum = this.jjtGetChild(0).getLineNumber();
-            System.out.println("\n" + data.filePath + ":" + lineNum + ": error: cannot find symbol");
+              int lineNum = this.jjtGetChild(0).getLineNumber();
+              System.out.println("\n" + data.filePath + ":" + lineNum + ": error: cannot find symbol");
 
-            try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
-              System.out.println(lines.skip(lineNum - 1).findFirst().get());
-              System.out.println("    ^");
-            } catch (IOException e) {
-              e.printStackTrace();
+              dumpLineError(data.filePath, lineNum, ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
+
+              System.out.println("    symbol:   class " + ((SimpleNode) this.jjtGetChild(0)).getSymbol());
+              System.out.println("    location: class " + data.className + "\n");
+              return "error";
+            } else {
+              return this.jjtGetChild(0).getSymbol();
             }
-
-            System.out.println("    symbol:   class " + ((SimpleNode) this.jjtGetChild(0)).getSymbol());
-            System.out.println("    location: file " + data.filePath + "\n");
-            return "error";
-          } else {
-            return this.jjtGetChild(0).getSymbol();
           }
-        } 
-      }
-
-      // variable does not have unique name
-      if (type.contains("/")) {
+        }
+      } else {
         String[] responseArr = type.split("/");
 
         int lineNum = Integer.parseInt(responseArr[0]);
@@ -194,17 +201,11 @@ public class SimpleNode implements Node {
           System.out.println("\n" + data.filePath + ":" + lineNum + ": error: variable " + this.symbol
               + " is already defined in method " + responseArr[1] + args);
 
-          try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
-            System.out.println(lines.skip(lineNum - 1).findFirst().get());
-            System.out.println("    ^");
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
+          dumpLineError(data.filePath, lineNum, this.getColumnNumber());
 
           return "error";
         }
       }
-
       return type.toString();
     }
 
@@ -224,72 +225,54 @@ public class SimpleNode implements Node {
     if (id == NewJava.JJTTEXT) {
       String type = data.checkIfExists(this.getSymbol(), functionNum);
 
-      if(type.equals("error")){
-        return data.searchParam(symbol, functionNum);
+      if (type.equals("error")) {
+        type = data.searchParam(symbol, functionNum);
       }
 
-      if(type.equals("error")){
+      if (type.equals("error")) {
         type = data.checkIfExistGlobals(symbol);
       }
-
 
       return type;
     }
 
-    if (id == NewJava.JJTASSIGN) {
+    if ((id == NewJava.JJTOP2) || (id == NewJava.JJTOP3) || (id == NewJava.JJTOP4) || (id == NewJava.JJTOP5)) {
+      boolean ok = checkOpType(this, data, functionNum);
+      if (!ok) {
+        System.out.println("\n" + data.filePath + ":" + line + ": error: bad operand types for binary operator '" + symbol + "'");
 
-      //Lado esquerdo assign
+        dumpLineError(data.filePath, line, column);
+        return "error";
+      }
+      return "int";
+    }
+
+    if (id == NewJava.JJTASSIGN) {
       Object identifierType = this.jjtGetChild(0).visit(data, functionNum);
 
+      // previous semantic error: already defined variable
+      if (((String) identifierType).contains("/")) {
+        return "error";
+      }
+
+      // Lado esquerdo assign
       if (identifierType.equals("error")) {
         int lineNum = this.jjtGetChild(0).getLineNumber();
         System.out.println("\n" + data.filePath + ":" + lineNum + ": error: cannot find symbol");
 
-        try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
-          System.out.println(lines.skip(lineNum - 1).findFirst().get());
-          System.out.println("    ^");
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
+        dumpLineError(data.filePath, lineNum, ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
 
         System.out.println("    symbol:   variable " + ((SimpleNode) this.jjtGetChild(0)).getSymbol());
         System.out.println("    location: file " + data.filePath + "\n");
+
         return "error";
       }
 
-      //Lado direito assign
-      Object expressionType = new Object();
-      boolean ok = true;
+      // Lado direito assign
+      String expressionType = (String) this.jjtGetChild(1).visit(data, functionNum);
 
-      if((this.jjtGetChild(1).getId() == NewJava.JJTOP2) || (this.jjtGetChild(1).getId() == NewJava.JJTOP3) || (this.jjtGetChild(1).getId() == NewJava.JJTOP4) || (this.jjtGetChild(1).getId() == NewJava.JJTOP5)){
-        expressionType = "int";
-        ok = checkOpType((SimpleNode)this.jjtGetChild(1), data, functionNum);
-
-      } else {
-        expressionType = this.jjtGetChild(1).visit(data, functionNum);
-      }
-
-      if (!ok){
-        int lineNum = this.jjtGetChild(0).getLineNumber();
-        System.out.println("\n" + data.filePath + ":" + lineNum + ": error: bad operand types for binary operator '" + this.jjtGetChild(1).getSymbol() + "'");
-
-        try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
-          String errorLine = lines.skip(lineNum - 1).findFirst().get();
-          System.out.println(errorLine);
-          int index = this.jjtGetChild(1).getColumnNumber();
-          if (index == 0) {
-            System.out.println("    ^");
-          } else {
-          while(index > 1) {
-            System.out.print(" ");
-            index--;
-          }
-          System.out.print("^\n");
-        }
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-
+      // previous semantic error: already defined variable
+      if (((String) expressionType).contains("/")) {
         return "error";
       }
 
@@ -298,108 +281,72 @@ public class SimpleNode implements Node {
         System.out.println("\n" + data.filePath + ":" + lineNum + ": error: incompatible types: " + expressionType
             + " cannot be converted to " + identifierType);
 
-        try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
-          System.out.println(lines.skip(lineNum - 1).findFirst().get());
-          int index = this.jjtGetChild(1).getColumnNumber();
-          if (index == 0) {
-            System.out.println("    ^");
-          } else {
-          while(index > 1) {
-            System.out.print(" ");
-            index--;
-          }
-          System.out.print("^\n");
-        }
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-
+        dumpLineError(data.filePath, lineNum, ((SimpleNode) this.jjtGetChild(1)).getColumnNumber());
         return "error";
       }
 
-
+      data.initializedVariables.add(((SimpleNode) this.jjtGetChild(0)).getSymbol());
     }
 
     // Function type must match return type
-
     if (this.id == NewJava.JJTRETURN) {
-      for(int i = 0; i < this.jjtGetNumChildren(); i++){
-        SimpleNode aux = (SimpleNode)this.jjtGetChild(0);
+      String type = (String) ((SimpleNode) this.jjtGetChild(0)).visit(data, functionNum);
+      String dataType = data.getReturn(functionNum);
 
-        String type = new String();
-
-        if (aux.getId() == NewJava.JJTVAL) {
-          type = "int";
-        }
-
-        if (aux.getId() == NewJava.JJTTRUE || aux.getId() == NewJava.JJTFALSE) {
-          type = "boolean";
-        }
-
-        if(aux.getId() == NewJava.JJTTEXT){
-          type = data.checkIfExists(aux.getSymbol(), functionNum);
-
-          if(type.equals("error")){
-            type = data.searchParam(aux.getSymbol(),functionNum);
-          }
-
-          if(type.equals("error")){
-            type = data.checkIfExistGlobals(aux.getSymbol());
-          }
-        }
-
-        String dataType = data.getReturn(functionNum);
-
-        if(!type.equals(dataType)){
-          int lineNum = this.jjtGetChild(i).getLineNumber();
-          System.out.println("\n" + data.filePath + ":" + lineNum + ":  error: incompatible types: " + type + " cannot be converted to " + dataType);
-          try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
-            System.out.println();
-            System.out.println(lines.skip(lineNum - 1).findFirst().get());
-            System.out.println("           ^");
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-          return "error";
-        }
+      if (!type.equals(dataType)) {
+        int lineNum = this.jjtGetChild(0).getLineNumber();
+        System.out.println("\n" + data.filePath + ":" + lineNum + ": error: incompatible types: " + type
+            + " cannot be converted to " + dataType);
+        dumpLineError(data.filePath, lineNum, ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
+        return "error";
       }
-
-
     }
-     
 
-    // ------------------------------------------------------------------------------
-    // Function call -> must exist
-    // -> must have right number of args of right types
-  
-  //  checkOype();
-
-    // existe .length
+    // check function calls (right param number or function exists)
     if (id == NewJava.JJTFULLSTOP) {
 
-      String type = (String)this.jjtGetChild(0).visit(data, functionNum);
+      String type = (String) this.jjtGetChild(0).visit(data, functionNum);
 
-      if(Main.tables.containsKey(type)){
-        SimpleNode rightSide = (SimpleNode)this.jjtGetChild(1);
+      if (Main.tables.containsKey(type)) {
+        SimpleNode rightSide = (SimpleNode) this.jjtGetChild(1);
         SymbolTable tableAux = Main.tables.get(type);
-      
+
         for (SymbolTableEntry var : tableAux.entries) {
-          if(var.name.equals(rightSide.getSymbol())){
-            if(var.params.size() != rightSide.jjtGetNumChildren()){
+          if (var.name.equals(rightSide.getSymbol())) {
+            if (var.params.size() != rightSide.jjtGetNumChildren()) {
               int lineNum = rightSide.getLineNumber();
 
-              System.out.println("\n" + data.filePath + ":" + lineNum + ":  error: method " + var.name + " in class " + data.className + " cannot be applied to given types;");
-              try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
-                System.out.println();
-                System.out.println(lines.skip(lineNum - 1).findFirst().get());
-                System.out.println("           ^");
-                System.out.println("required: ");
-                System.out.println("found: ");
-                System.out.println("reason: actual and formal argument lists differ in length");
-              } catch (IOException e) {
-                e.printStackTrace();
+              System.out.println("\n" + data.filePath + ":" + lineNum + ":  error: method " + var.name + " in class "
+                  + data.className + " cannot be applied to given types;");
+              dumpLineError(data.filePath, lineNum, rightSide.getColumnNumber());
+              System.out.print("    required: ");
+              for (int i = 0; i < var.params.size(); i++) {
+                System.out.print(var.params.get(i).type);
+                if (i < var.params.size() - 1) {
+                  System.out.print(",");
+                }
               }
+              System.out.print("\n    found: ");
+              for (int i = 0; i < rightSide.jjtGetNumChildren(); i++) {
+                String typeArg = (String) ((SimpleNode) rightSide.jjtGetChild(i)).visit(data, functionNum);
+                System.out.print(typeArg);
+                if (i < rightSide.jjtGetNumChildren() - 1) {
+                  System.out.print(",");
+                }
+              }
+              System.out.println("\n    reason: actual and formal argument lists differ in length");
               return "error";
+            } else {
+              for (int i = 0; i < var.params.size(); i++) {
+                String typeArg = (String) ((SimpleNode) rightSide.jjtGetChild(i)).visit(data, functionNum);
+                if (!var.params.get(i).type.equals(typeArg)) {
+                  int lineNum = this.jjtGetChild(0).getLineNumber();
+                  System.out.println("\n" + data.filePath + ":" + lineNum + ": error: incompatible types: " + typeArg
+                      + " cannot be converted to " + var.params.get(i).type);
+                  dumpLineError(data.filePath, lineNum, ((SimpleNode) rightSide.jjtGetChild(i)).getColumnNumber());
+                  return "error";
+                }
+              }
             }
 
             return var.returnDescriptor;
@@ -409,12 +356,7 @@ public class SimpleNode implements Node {
         int lineNum = this.jjtGetChild(0).getLineNumber();
         System.out.println("\n" + data.filePath + ":" + lineNum + ": error: cannot find symbol");
 
-        try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
-          System.out.println(lines.skip(lineNum - 1).findFirst().get());
-          System.out.println("    ^");
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
+        dumpLineError(data.filePath, lineNum, rightSide.getColumnNumber());
 
         System.out.println("    symbol: method " + rightSide.getSymbol() + "()");
         System.out.println("    location: file " + data.filePath + "\n");
@@ -422,38 +364,87 @@ public class SimpleNode implements Node {
       }
 
       return this.jjtGetParent().jjtGetChild(0).visit(data, functionNum);
+    }
 
+    if (id == NewJava.JJTIF || id == NewJava.JJTWHILE) {
+      String conditionType = (String) ((SimpleNode) this.jjtGetChild(0)).visit(data, functionNum);
+
+      if (!conditionType.equals("boolean") && !conditionType.equals("error")
+          && NewJava.JJTOP2 != this.jjtGetChild(0).getId() && NewJava.JJTOP3 != this.jjtGetChild(0).getId()) {
+        int lineNum = this.jjtGetChild(0).getLineNumber();
+        System.out.println("\n" + data.filePath + ":" + lineNum + ": error: incompatible types: " + conditionType
+            + " cannot be converted to boolean");
+
+        dumpLineError(data.filePath, lineNum, ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
+        return "error";
+      }
+
+      if (this.jjtGetChild(0).getId() == NewJava.JJTTEXT
+          && !data.initializedVariables.contains(this.jjtGetChild(0).getSymbol())) {
+        int lineNum = this.jjtGetChild(0).getLineNumber();
+        System.out.println("\n" + data.filePath + ":" + lineNum + ": error: variable " + this.jjtGetChild(0).getSymbol()
+            + " might not have been initialized");
+
+        dumpLineError(data.filePath, lineNum, this.jjtGetChild(0).getColumnNumber());
+        return "error";
+      }
     }
 
     return "";
   }
- 
+
   private boolean checkOpType(SimpleNode startOP, SymbolTable data, int functionNum) {
-    if(startOP.jjtGetNumChildren() != 2){
+    if (startOP.jjtGetNumChildren() != 2) {
       return false;
     }
-    
-    
-    //ramo esquerdo
-    //se nao for op, verifica se e inteiro
-    if(startOP.jjtGetChild(0).getId() != NewJava.JJTOP2 && startOP.jjtGetChild(0).getId() != NewJava.JJTOP3 && startOP.jjtGetChild(0).getId() != NewJava.JJTOP4 && startOP.jjtGetChild(0).getId() != NewJava.JJTOP5){
-      String type = (String)startOP.jjtGetChild(0).visit(data, functionNum);
-      if(!type.equals("int")){
-        return false;
-      }   
-    //se for op, verifica se e vailda 
-    } else if(!checkOpType((SimpleNode)startOP.jjtGetChild(0), data, functionNum))
-      return false;
 
-    //ramo direito
-    if(startOP.jjtGetChild(1).getId() != NewJava.JJTOP2 && startOP.jjtGetChild(1).getId() != NewJava.JJTOP3 && startOP.jjtGetChild(1).getId() != NewJava.JJTOP4 && startOP.jjtGetChild(1).getId() != NewJava.JJTOP5){
-      String type = (String)startOP.jjtGetChild(1).visit(data, functionNum);
-      if(!type.equals("int")){
-        return false;
-      }    
-    } else if(!checkOpType((SimpleNode)startOP.jjtGetChild(1), data, functionNum))
-      return false;
+    // check if variable is initialized
+    if (startOP.jjtGetChild(0).getId() == NewJava.JJTTEXT
+        && !data.initializedVariables.contains(startOP.jjtGetChild(0).getSymbol())) {
+      int lineNum = startOP.jjtGetChild(0).getLineNumber();
+      System.out.println("\n" + data.filePath + ":" + lineNum + ": error: variable "
+          + startOP.jjtGetChild(0).getSymbol() + " might not have been initialized");
 
+      dumpLineError(data.filePath, lineNum, startOP.jjtGetChild(0).getColumnNumber());
+      return true;
+    }
+
+    // ramo esquerdo
+    // se nao for op, verifica se e inteiro
+    if (startOP.jjtGetChild(0).getId() != NewJava.JJTOP2 && startOP.jjtGetChild(0).getId() != NewJava.JJTOP3
+        && startOP.jjtGetChild(0).getId() != NewJava.JJTOP4 && startOP.jjtGetChild(0).getId() != NewJava.JJTOP5) {
+      String type = (String) startOP.jjtGetChild(0).visit(data, functionNum);
+
+      if (!type.equals("int")) {
+        return false;
+      }
+      // se for op, verifica se e vailda
+    } else if (!checkOpType((SimpleNode) startOP.jjtGetChild(0), data, functionNum)) {
+      return false;
+    }
+
+    if (startOP.jjtGetChild(1).getId() == NewJava.JJTTEXT
+        && !data.initializedVariables.contains(startOP.jjtGetChild(1).getSymbol())) {
+      int lineNum = startOP.jjtGetChild(1).getLineNumber();
+      System.out.println("\n" + data.filePath + ":" + lineNum + ": error: variable "
+          + startOP.jjtGetChild(1).getSymbol() + " might not have been initialized");
+
+      dumpLineError(data.filePath, lineNum, startOP.jjtGetChild(1).getColumnNumber());
+
+      return true;
+    }
+
+    // ramo direito
+    if (startOP.jjtGetChild(1).getId() != NewJava.JJTOP2 && startOP.jjtGetChild(1).getId() != NewJava.JJTOP3
+        && startOP.jjtGetChild(1).getId() != NewJava.JJTOP4 && startOP.jjtGetChild(1).getId() != NewJava.JJTOP5) {
+      String type = (String) startOP.jjtGetChild(1).visit(data, functionNum);
+
+      if (!type.equals("int")) {
+        return false;
+      }
+    } else if (!checkOpType((SimpleNode) startOP.jjtGetChild(1), data, functionNum)) {
+      return false;
+    }
 
     return true;
   }

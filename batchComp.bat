@@ -11,4 +11,4 @@ echo - - - -  - - - - - - - - - - - - - - - - -
 CALL javac *.java
 echo execution - - - - - - - - - - - - - - - -
 echo - - - -  - - - - - - - - - - - - - - - - -
-CALL java NewJava MonteCarloPi.jmm
+CALL java Main exemplo2.jmm exemplo1.jmm

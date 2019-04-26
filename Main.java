@@ -18,15 +18,7 @@ public class Main {
       }
 
       for(Map.Entry<String, SymbolTable> entry : tables.entrySet()) {
-        SymbolTable table = entry.getValue();//
-       // table.dump();
-      }
-
-      for(Map.Entry<String, SymbolTable> entry : tables.entrySet()) {
-        String className = entry.getKey();
         SymbolTable table = entry.getValue();
-
-        System.out.println("class name = " + className);
         
         for (int i = 0; i < table.entries.size(); i++) {
           for (int j = 0; j < table.entries.get(i).nodelist.size(); j++) {
