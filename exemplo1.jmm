@@ -5,11 +5,11 @@ class Item {
   public static void main(String [] args){
     int i;
     boolean j;
-    Item item;            // CORRIGIR SYMBOL TABLE -> TYPE = Item
+    Item item;       
 
-    i = 2;
+    i = true;
     
-    item.f1(i,j,k);
+    item.nuno();
 
     k = 2;
   }
@@ -25,12 +25,18 @@ class Item {
 
   public boolean cenas() {
     boolean oi;
-    //Haha haha;
+    Haha haha;
     int i;
 
-    //haha.callMe();
+    haha.callMe();
     oi = true;
 
     return l;
+  }
+
+  public Haha ardeu() {
+    Haha haha;
+
+    return haha;
   }
 }

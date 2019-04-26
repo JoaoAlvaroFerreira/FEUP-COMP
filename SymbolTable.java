@@ -4,9 +4,10 @@ public class SymbolTable {
   ArrayList<SymbolTableEntry> entries = new ArrayList<SymbolTableEntry>();
   ArrayList<SymbolType> globals = new ArrayList<SymbolType>();
   String className;
+  String filePath;
 
   // fazer construtor symbol table
-  public SymbolTable() {}
+  public SymbolTable(String filePath) {this.filePath = filePath;}
 
   public void startSymbolTable(SimpleNode root){
 
@@ -16,7 +17,7 @@ public class SymbolTable {
 
     // para cada filho da classe extrair apenas funcoes e main
     for (int i = 0; i < classe.jjtGetNumChildren(); i++) {
-
+     
       if ((classe.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) || (classe.jjtGetChild(i).getId() == NewJava.JJTMAIN)) {
         entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i)));
       } else  if ((classe.jjtGetChild(i).getId() == NewJava.JJTVAR)
@@ -25,11 +26,15 @@ public class SymbolTable {
             ((SimpleNode) classe.jjtGetChild(i).jjtGetChild(0)).getSymbol()));
       }
     }
+    dump();
   }
 
   // fazer prints symbol table
   public void dump() {
-    System.out.println("Globals:");
+    System.out.println();
+    System.out.println("Class: " + className);
+    System.out.println();
+    System.out.println("Globals: ");
     for (SymbolType globalVar : globals) {
       System.out.println(" " + globalVar);
     }
@@ -53,7 +58,7 @@ public class SymbolTable {
 
   public String checkIfExists(String entryName, int functionNum) {
     String method = "";
-    String ident = SymbolType.Type.ERROR.toString();
+    String ident = "error";
 
     for (int i = 0; i < entries.get(functionNum).nodelist.size(); i++) {
       if (entries.get(functionNum).nodelist.get(i).symbol != null) {
@@ -65,8 +70,8 @@ public class SymbolTable {
             return entries.get(functionNum).nodelist.get(i).getLineNumber() + "/" + method;
           }
         }
+      }
     }
-  }
 
     return ident;
   }
@@ -81,7 +86,6 @@ public class SymbolTable {
         return typeAux;
       }
     }
-
 
     return "error";
   }

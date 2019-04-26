@@ -25,11 +25,11 @@ callMe_end:
 .method public coisas()Z
 .limit vars 1
 
-.var 0 is i I from coisas_init to coisas_end
+.var 0 is i Z from coisas_init to coisas_end
 
 coisas_init:
- ; i = 2
-bipush 2
+ ; i = null
+bipush null
 astore 0
 coisas_end:
 

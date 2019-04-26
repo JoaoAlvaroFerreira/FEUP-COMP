@@ -1,57 +1,12 @@
 
 public class SymbolType {
 
-  enum Type {
-    INT {
-      @Override
-      public String toString() {
-        return "int";
-      }
-
-    },
-    INT_ARR {
-      @Override
-      public String toString() {
-        return "int[]";
-      }
-    },
-    BOOLEAN {
-      @Override
-      public String toString() {
-        return "boolean";
-      }
-    },
-    VOID {
-      @Override
-      public String toString() {
-        return "void";
-      }
-    },
-    ERROR {
-      @Override
-      public String toString() {
-        return "error";
-      }
-    };
-  }
-
-  public static Type getType(String varType) {
-    switch (varType) {
-    case "void":
-      return Type.VOID;
-    case "int":
-      return Type.INT;
-    case "boolean":
-      return Type.BOOLEAN;
-    case "int[]":
-      return Type.INT_ARR;
-    default:
-      return Type.ERROR;
-    }
-  }
-
   String symbol;
-  Type type;
+  String type;
+
+  public String getType() {
+    return type;
+  }
 
   @Override
   public String toString() {
@@ -64,10 +19,10 @@ public class SymbolType {
 
   SymbolType(String symbol, String varType) {
     this.symbol = symbol;
-    this.type = getType(varType);
+    this.type = varType;
   }
 
   SymbolType(String varType) {
-    this.type = getType(varType);
+    this.type = varType;
   }
 }

@@ -5,15 +5,18 @@ class Haha {
     l = 2;
   }
 
-  public int callMe() {
+  public int callMe(int x) {
       return 2;
   }
 
   public boolean coisas() {
-    boolean i;
+    int[] a;
+    int b;
 
-    i = true;
+    a[0] = 2;
+    
+    b = a[0];
 
-    return i;
+    return true;
   }
 }

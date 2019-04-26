@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class SymbolTableEntry {
 
-	SymbolType returnDescriptor;
+	String returnDescriptor;
 	ArrayList<SimpleNode> nodelist;
 	ArrayList<SymbolType> params;
 	ArrayList<SimpleNode> aux;
@@ -26,11 +26,22 @@ public class SymbolTableEntry {
 		}
 
 		// return
-		if (Node.getId() == NewJava.JJTMAIN)
-			returnDescriptor = new SymbolType("void");
-		else
-			returnDescriptor = new SymbolType(nodelist.get(0).getSymbol());
-		
+		if (Node.getId() == NewJava.JJTMAIN) {
+			returnDescriptor = new SymbolType("void").toString();
+		} else {       
+			String type = new SymbolType(nodelist.get(0).getSymbol()).toString();
+
+			int index = type.indexOf("->");
+
+			String typeAux = type.substring(index + 3, type.length());
+
+			if (typeAux.toString().equals("error")){
+				returnDescriptor = nodelist.get(0).getSymbol();
+			} else {
+				returnDescriptor = typeAux.toString();
+			}
+		}
+
 		if (Node.getId() != NewJava.JJTMAIN){
 			// construir params
 			if (nodelist.get(1).getId() == NewJava.JJTARGS){
@@ -46,8 +57,7 @@ public class SymbolTableEntry {
 			// se nao for variavel, adicionar à lista
 			if (nodelist.get(i).getId() == NewJava.JJTVAR)
 				if(((SimpleNode) nodelist.get(i).jjtGetChild(0)).getId() == NewJava.JJTTYPE) {
-					vars.add(new SymbolType(nodelist.get(i).getSymbol(),
-						((SimpleNode) nodelist.get(i).jjtGetChild(0)).getSymbol()));
+					vars.add(new SymbolType(nodelist.get(i).getSymbol(), nodelist.get(i).jjtGetChild(0).getSymbol()));
 				}
 		}
 

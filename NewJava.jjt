@@ -29,10 +29,10 @@ public class NewJava
     ByteArrayInputStream stream = new ByteArrayInputStream(fileContents.getBytes());
 
     if (table == null) {
-      table = new SymbolTable();
+      table = new SymbolTable(filePath);
       myJava = new NewJava(stream);
     } else {
-      table= new SymbolTable();
+      table= new SymbolTable(filePath);
       myJava.ReInit(stream);
     }
 
@@ -46,8 +46,8 @@ public class NewJava
     table.startSymbolTable(root);
 
     //Jasmin Generator
-    JasminParser jasminParser = new JasminParser(filePath,root);
-    jasminParser.generate();
+    //JasminParser jasminParser = new JasminParser(filePath,root);
+    //jasminParser.generate();
 
     return table;
 

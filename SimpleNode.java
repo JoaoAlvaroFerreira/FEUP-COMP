@@ -129,8 +129,6 @@ public class SimpleNode implements Node {
 
   @Override
   public Object visit(SymbolTable data, int functionNum) {
-    System.out.println("id = " + id + ", symbol = " + symbol);
-
     if (id == NewJava.JJTVAR) {
       String name = (String) this.getSymbol();
       String type = data.checkIfExists(name, functionNum);  //checkar locais
@@ -143,13 +141,14 @@ public class SimpleNode implements Node {
         type = data.checkIfExistGlobals(name);             //checkar globais
       }
 
-      if (type.equals("error")) {
+      if((!type.equals("int") && !type.equals("boolean")) || type.equals("error")){   
         if (this.jjtGetNumChildren() > 0) {
           if (!Main.tables.containsKey(this.jjtGetChild(0).getSymbol())) {         //checkar se é outra classe
-            int lineNum = this.jjtGetChild(0).getLineNumber();
-            System.out.println("\n" + NewJava.filePath + ":" + lineNum + ": error: cannot find symbol");
 
-            try (Stream<String> lines = Files.lines(Paths.get(NewJava.filePath))) {
+            int lineNum = this.jjtGetChild(0).getLineNumber();
+            System.out.println("\n" + data.filePath + ":" + lineNum + ": error: cannot find symbol");
+
+            try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
               System.out.println(lines.skip(lineNum - 1).findFirst().get());
               System.out.println("    ^");
             } catch (IOException e) {
@@ -157,12 +156,12 @@ public class SimpleNode implements Node {
             }
 
             System.out.println("    symbol:   class " + ((SimpleNode) this.jjtGetChild(0)).getSymbol());
-            System.out.println("    location: file " + NewJava.filePath + "\n");
-            return SymbolType.Type.ERROR.toString();
+            System.out.println("    location: file " + data.filePath + "\n");
+            return "error";
           } else {
             return this.jjtGetChild(0).getSymbol();
           }
-        }
+        } 
       }
 
       // variable does not have unique name
@@ -192,17 +191,17 @@ public class SimpleNode implements Node {
           }
           args += ")";
 
-          System.out.println("\n" + NewJava.filePath + ":" + lineNum + ": error: variable " + this.symbol
+          System.out.println("\n" + data.filePath + ":" + lineNum + ": error: variable " + this.symbol
               + " is already defined in method " + responseArr[1] + args);
 
-          try (Stream<String> lines = Files.lines(Paths.get(NewJava.filePath))) {
+          try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
             System.out.println(lines.skip(lineNum - 1).findFirst().get());
             System.out.println("    ^");
           } catch (IOException e) {
             e.printStackTrace();
           }
 
-          return SymbolType.Type.ERROR.toString();
+          return "error";
         }
       }
 
@@ -233,6 +232,7 @@ public class SimpleNode implements Node {
         type = data.checkIfExistGlobals(symbol);
       }
 
+
       return type;
     }
 
@@ -241,11 +241,11 @@ public class SimpleNode implements Node {
       //Lado esquerdo assign
       Object identifierType = this.jjtGetChild(0).visit(data, functionNum);
 
-      if (identifierType.equals(SymbolType.Type.ERROR.toString())) {
+      if (identifierType.equals("error")) {
         int lineNum = this.jjtGetChild(0).getLineNumber();
-        System.out.println("\n" + NewJava.filePath + ":" + lineNum + ": error: cannot find symbol");
+        System.out.println("\n" + data.filePath + ":" + lineNum + ": error: cannot find symbol");
 
-        try (Stream<String> lines = Files.lines(Paths.get(NewJava.filePath))) {
+        try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
           System.out.println(lines.skip(lineNum - 1).findFirst().get());
           System.out.println("    ^");
         } catch (IOException e) {
@@ -253,8 +253,8 @@ public class SimpleNode implements Node {
         }
 
         System.out.println("    symbol:   variable " + ((SimpleNode) this.jjtGetChild(0)).getSymbol());
-        System.out.println("    location: file " + NewJava.filePath + "\n");
-        return SymbolType.Type.ERROR.toString();
+        System.out.println("    location: file " + data.filePath + "\n");
+        return "error";
       }
 
       //Lado direito assign
@@ -265,49 +265,59 @@ public class SimpleNode implements Node {
         expressionType = "int";
         ok = checkOpType((SimpleNode)this.jjtGetChild(1), data, functionNum);
 
-      } else{
+      } else {
         expressionType = this.jjtGetChild(1).visit(data, functionNum);
       }
 
       if (!ok){
         int lineNum = this.jjtGetChild(0).getLineNumber();
-        System.out.println("\n" + NewJava.filePath + ":" + lineNum + ": error: bad operand types for binary operator '" + this.jjtGetChild(1).getSymbol() + "'");
+        System.out.println("\n" + data.filePath + ":" + lineNum + ": error: bad operand types for binary operator '" + this.jjtGetChild(1).getSymbol() + "'");
 
-        try (Stream<String> lines = Files.lines(Paths.get(NewJava.filePath))) {
+        try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
           String errorLine = lines.skip(lineNum - 1).findFirst().get();
           System.out.println(errorLine);
           int index = this.jjtGetChild(1).getColumnNumber();
+          if (index == 0) {
+            System.out.println("    ^");
+          } else {
           while(index > 1) {
             System.out.print(" ");
             index--;
           }
           System.out.print("^\n");
+        }
         } catch (IOException e) {
           e.printStackTrace();
         }
 
-        return SymbolType.Type.ERROR.toString();
+        return "error";
       }
 
       if (!identifierType.equals(expressionType)) {
         int lineNum = this.jjtGetChild(0).getLineNumber();
-        System.out.println("\n" + NewJava.filePath + ":" + lineNum + ": error: incompatible types: " + expressionType
+        System.out.println("\n" + data.filePath + ":" + lineNum + ": error: incompatible types: " + expressionType
             + " cannot be converted to " + identifierType);
 
-        try (Stream<String> lines = Files.lines(Paths.get(NewJava.filePath))) {
+        try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
           System.out.println(lines.skip(lineNum - 1).findFirst().get());
           int index = this.jjtGetChild(1).getColumnNumber();
+          if (index == 0) {
+            System.out.println("    ^");
+          } else {
           while(index > 1) {
             System.out.print(" ");
             index--;
           }
           System.out.print("^\n");
+        }
         } catch (IOException e) {
           e.printStackTrace();
         }
 
-        return SymbolType.Type.ERROR.toString();
+        return "error";
       }
+
+
     }
 
     // Function type must match return type
@@ -338,39 +348,84 @@ public class SimpleNode implements Node {
           }
         }
 
-        String dataTypeBroken = data.getReturn(functionNum);
-
-        int index = dataTypeBroken.indexOf("->");
-
-        String dataType = dataTypeBroken.substring(index + 3, dataTypeBroken.length());
+        String dataType = data.getReturn(functionNum);
 
         if(!type.equals(dataType)){
           int lineNum = this.jjtGetChild(i).getLineNumber();
-          System.out.println("\n" + NewJava.filePath + ":" + lineNum + ":  error: incompatible types: " + type + " cannot be converted to " + dataType);
-          try (Stream<String> lines = Files.lines(Paths.get(NewJava.filePath))) {
+          System.out.println("\n" + data.filePath + ":" + lineNum + ":  error: incompatible types: " + type + " cannot be converted to " + dataType);
+          try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
             System.out.println();
             System.out.println(lines.skip(lineNum - 1).findFirst().get());
             System.out.println("           ^");
           } catch (IOException e) {
             e.printStackTrace();
           }
-          return SymbolType.Type.ERROR.toString();
+          return "error";
         }
       }
+
+
     }
      
 
     // ------------------------------------------------------------------------------
     // Function call -> must exist
     // -> must have right number of args of right types
+  
+  //  checkOype();
 
     // existe .length
     if (id == NewJava.JJTFULLSTOP) {
-      //for (int i = 0; i < this.jjtGetNumChildren(); i++)
-      //System.out.println("symbol = " + this.jjtGetChild(i));
+
+      String type = (String)this.jjtGetChild(0).visit(data, functionNum);
+
+      if(Main.tables.containsKey(type)){
+        SimpleNode rightSide = (SimpleNode)this.jjtGetChild(1);
+        SymbolTable tableAux = Main.tables.get(type);
+      
+        for (SymbolTableEntry var : tableAux.entries) {
+          if(var.name.equals(rightSide.getSymbol())){
+            if(var.params.size() != rightSide.jjtGetNumChildren()){
+              int lineNum = rightSide.getLineNumber();
+
+              System.out.println("\n" + data.filePath + ":" + lineNum + ":  error: method " + var.name + " in class " + data.className + " cannot be applied to given types;");
+              try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
+                System.out.println();
+                System.out.println(lines.skip(lineNum - 1).findFirst().get());
+                System.out.println("           ^");
+                System.out.println("required: ");
+                System.out.println("found: ");
+                System.out.println("reason: actual and formal argument lists differ in length");
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+              return "error";
+            }
+
+            return var.returnDescriptor;
+          }
+        }
+
+        int lineNum = this.jjtGetChild(0).getLineNumber();
+        System.out.println("\n" + data.filePath + ":" + lineNum + ": error: cannot find symbol");
+
+        try (Stream<String> lines = Files.lines(Paths.get(data.filePath))) {
+          System.out.println(lines.skip(lineNum - 1).findFirst().get());
+          System.out.println("    ^");
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+
+        System.out.println("    symbol: method " + rightSide.getSymbol() + "()");
+        System.out.println("    location: file " + data.filePath + "\n");
+        return "error";
+      }
+
+      return this.jjtGetParent().jjtGetChild(0).visit(data, functionNum);
+
     }
 
-    return "nothing";
+    return "";
   }
  
   private boolean checkOpType(SimpleNode startOP, SymbolTable data, int functionNum) {
