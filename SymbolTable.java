@@ -16,7 +16,7 @@ public class SymbolTable {
 
     // para cada filho da classe extrair apenas funcoes e main
     for (int i = 0; i < classe.jjtGetNumChildren(); i++) {
-     
+
       if ((classe.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) || (classe.jjtGetChild(i).getId() == NewJava.JJTMAIN)) {
         entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i)));
       } else  if ((classe.jjtGetChild(i).getId() == NewJava.JJTVAR)

@@ -50,10 +50,12 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
     table.startSymbolTable(root);
 
     //Jasmin Generator
-    //JasminParser jasminParser = new JasminParser(filePath,root);
-    //jasminParser.generate();
+    JasminParser jasminParser = new JasminParser(filePath,root);
+    jasminParser.generate();
 
     return table;
+
+
   }
 
   private static String fileToString(String filePath)
