@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class SymbolTable {
   ArrayList<SymbolTableEntry> entries = new ArrayList<SymbolTableEntry>();
   ArrayList<SymbolType> globals = new ArrayList<SymbolType>();
-  ArrayList<String> classNames = new ArrayList<String>();
+  String className;
   int functionNum;
   int numSemanticErrors = 0;
 
@@ -16,22 +16,22 @@ public class SymbolTable {
 
     SimpleNode classe = (SimpleNode) root.jjtGetChild(0);
 
-    classNames.add(classe.symbol);
+    className = classe.symbol;
 
     // para cada filho da classe extrair apenas funcoes e main
     for (int i = 0; i < classe.jjtGetNumChildren(); i++) {
      
       if ((classe.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) || (classe.jjtGetChild(i).getId() == NewJava.JJTMAIN)) {
         entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i)));
-        
+        /*
         if (classe.jjtGetChild(i).visit(this, functionNum).toString().equals("error")) {
           numSemanticErrors++;
-        }
+        }*/
 
         for (int j = 0; j < classe.jjtGetChild(i).jjtGetNumChildren(); j++) {
-          if (classe.jjtGetChild(i).jjtGetChild(j).visit(this, functionNum).toString().equals("error")) {
+         /* if (classe.jjtGetChild(i).jjtGetChild(j).visit(this, functionNum).toString().equals("error")) {
             numSemanticErrors++;
-          }
+          }*/
         }
         
       }else  if ((classe.jjtGetChild(i).getId() == NewJava.JJTVAR)
@@ -43,7 +43,7 @@ public class SymbolTable {
       functionNum++;
     }
 
-    functionNum--;
+    //functionNum--;
   }
 
   // fazer prints symbol table

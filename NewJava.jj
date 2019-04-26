@@ -220,6 +220,7 @@ void ClassDeclaration()      :  {/*@bgen(jjtree) CLASS */
 /*@egen*/ {
       jjtn000.symbol = t.image;
       jjtn000.line = t.beginLine;
+      jjtn000.column = t.beginColumn;
     }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
@@ -259,6 +260,7 @@ void VarDeclaration()    : {/*@bgen(jjtree) VAR */
 /*@egen*/{
       jjtn000.symbol=t.image;
       jjtn000.line = t.beginLine;
+      jjtn000.column = t.beginColumn;
     }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
@@ -303,6 +305,7 @@ void Type()     : {/*@bgen(jjtree) TYPE */
     {
       jjtn000.symbol = t.image;
       jjtn000.line = t.beginLine;
+      jjtn000.column = t.beginColumn;
     }/*@bgen(jjtree)*/
     } finally {
       if (jjtc000) {
@@ -385,6 +388,7 @@ void MethodDeclaration()         : {/*@bgen(jjtree) FUNCTION */
     {
       jjtn000.symbol = name.image;
       jjtn000.line = name.beginLine;
+      jjtn000.column = name.beginColumn;
     }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {
@@ -431,6 +435,7 @@ void Args()     :{/*@bgen(jjtree) ARGS */
 /*@egen*/{
     jjtn001.symbol = arg1.image;
     jjtn001.line = arg1.beginLine;
+    jjtn001.column = arg1.beginColumn;
   }/*@bgen(jjtree)*/
                            } finally {
                              if (jjtc001) {
@@ -452,6 +457,7 @@ void Args()     :{/*@bgen(jjtree) ARGS */
 /*@egen*/{
     jjtn002.symbol = arg2.image;
     jjtn002.line = arg2.beginLine;
+    jjtn002.column = arg2.beginColumn;
   }/*@bgen(jjtree)*/
                                             } finally {
                                               if (jjtc002) {
@@ -547,6 +553,7 @@ void AssignAux()     : {/*@bgen(jjtree) VAR */
 /*@egen*/{
     jjtn000.symbol = t.image;
     jjtn000.line = t.beginLine;
+    jjtn000.column = t.beginColumn;
   }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -711,6 +718,7 @@ void Expr2()     : {Token t;}
       {
         jjtn002.symbol = t.image;
         jjtn002.line = t.beginLine;
+        jjtn002.column = t.beginColumn;
       }/*@bgen(jjtree)*/
       } finally {
         if (jjtc002) {
@@ -740,6 +748,7 @@ void Expr3()     : {Token t;}
       {
         jjtn001.symbol = t.image;
         jjtn001.line = t.beginLine;
+        jjtn001.column = t.beginColumn;
       }/*@bgen(jjtree)*/
       } finally {
         if (jjtc001) {
@@ -768,6 +777,7 @@ void Expr4()     : {Token t;}
       {
         jjtn001.symbol = t.image;
         jjtn001.line = t.beginLine;
+        jjtn001.column = t.beginColumn;
       }/*@bgen(jjtree)*/
       } finally {
         if (jjtc001) {
@@ -796,6 +806,7 @@ void Expr5()     : {Token t;}
       {
         jjtn001.symbol = t.image;
         jjtn001.line = t.beginLine;
+        jjtn001.column = t.beginColumn;
       }/*@bgen(jjtree)*/
       } finally {
         if (jjtc001) {
@@ -822,6 +833,7 @@ void FullStop()          : {/*@bgen(jjtree) PAREMETER */
 /*@egen*/{
     jjtn000.symbol = t.image;
     jjtn000.line = t.beginLine;
+    jjtn000.column = t.beginColumn;
   }/*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
@@ -863,6 +875,7 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
       {
         jjtn001.symbol = t.image;
         jjtn001.line = t.beginLine;
+        jjtn001.column = t.beginColumn;
       }/*@bgen(jjtree)*/
       } finally {
         if (jjtc001) {
@@ -886,6 +899,7 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
       {
         jjtn002.symbol = t.image;
         jjtn002.line = t.beginLine;
+        jjtn002.column = t.beginColumn;
       }/*@bgen(jjtree)*/
       } finally {
         if (jjtc002) {
@@ -950,6 +964,7 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
 /*@egen*/ {
       jjtn006.symbol = t.image;
       jjtn006.line = t.beginLine;
+      jjtn006.column = t.beginColumn;
     }/*@bgen(jjtree)*/
                                                                           } finally {
                                                                             if (jjtc006) {
@@ -973,6 +988,7 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
     {
       jjtn007.symbol = t.image;
       jjtn007.line = t.beginLine;
+      jjtn007.column = t.beginColumn;
     }/*@bgen(jjtree)*/
     } finally {
       if (jjtc007) {

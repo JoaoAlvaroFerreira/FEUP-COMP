@@ -4,5 +4,5 @@ javacc NewJava.jj
 echo -----------------------------------
 javac *.java
 echo -----------------------------------
-java Main $1
+java Main exemplo2.jmm exemplo1.jmm
 

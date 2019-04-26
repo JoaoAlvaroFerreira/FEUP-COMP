@@ -12,20 +12,25 @@ class Item {
     //i = true;
   }
 
-  public int f1(int arg1, boolean arg2, int arg3) {
+  public Haha f1(int arg1, boolean arg2, int arg3) {
     int i;
-    //Haha haha;
+    Haha haha;
 
     i = 2;
 
-    return i;
+    return haha;
   }
 
   public boolean cenas() {
     boolean oi;
+    int i;
+    Haha haha;
 
+    i = 2 + false;
     oi = false;
 
-    return oi;
+    this.f1(i);        // erro no numero de argumentos
+
+    return i;
   }
 }

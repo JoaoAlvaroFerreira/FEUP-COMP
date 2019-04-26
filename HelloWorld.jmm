@@ -1,9 +1,6 @@
 class HelloWorld {
 	public static void main(String [] args) {
 		ioPlus.printHelloWorld();
-	}
-
-	public int f2(){
-		return 1;
+		
 	}
 }

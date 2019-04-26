@@ -37,5 +37,7 @@ public interface Node {
   public Object visit(SymbolTable data, int functionNum);
 
   public int getLineNumber();
+
+  public int getColumnNumber();
 }
 /* JavaCC - OriginalChecksum=e09cb870a43170325db30df256073f70 (do not edit this line) */

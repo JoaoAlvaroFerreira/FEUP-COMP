@@ -15,6 +15,7 @@ public class SimpleNode implements Node {
   protected NewJava parser;
   protected String symbol;
   protected int line;
+  protected int column;
 
   public SimpleNode(int i) {
     id = i;
@@ -121,6 +122,11 @@ public class SimpleNode implements Node {
     this.line = lineNumber;
   }
 
+  public int getColumnNumber() {
+    return column;
+  }
+
+
   @Override
   public Object visit(SymbolTable data, int functionNum) {
     //System.out.println("\n\nid = " + this.id + ", symbol = " + this.symbol);
@@ -134,11 +140,12 @@ public class SimpleNode implements Node {
         if (this.jjtGetNumChildren() > 0) {
           boolean found = false;
 
+          /*
           for(int i = 0; i < data.classNames.size(); i++){
-            if(data.classNames.get(i).equals(this.jjtGetChild(0).getSymbol())){
+            if(data.className.get(i).equals(this.jjtGetChild(0).getSymbol())){
               found = true;
             }
-          }
+          }*/
 
           if (!found) {
             int lineNum = this.jjtGetChild(0).getLineNumber();
@@ -254,19 +261,36 @@ public class SimpleNode implements Node {
       Object expressionType = new Object();
       boolean ok = true;
 
-      System.out.println(this.jjtGetChild(1).getId());;
-
       if((this.jjtGetChild(1).getId() == NewJava.JJTOP2) || (this.jjtGetChild(1).getId() == NewJava.JJTOP3) || (this.jjtGetChild(1).getId() == NewJava.JJTOP4) || (this.jjtGetChild(1).getId() == NewJava.JJTOP5)){
-        System.out.println("HI BITCHESSSSSSS");
         expressionType = "int";
         ok = checkOpType((SimpleNode)this.jjtGetChild(1), data, functionNum);
+
       } else{
         expressionType = this.jjtGetChild(1).visit(data, functionNum);
       }
+
+      if (!ok){
+        int lineNum = this.jjtGetChild(0).getLineNumber();
+        System.out.println("\n" + NewJava.filePath + ":" + lineNum + ": error: bad operand types for binary operator '" + this.jjtGetChild(1).getSymbol() + "'");
+
+        try (Stream<String> lines = Files.lines(Paths.get(NewJava.filePath))) {
+          String errorLine = lines.skip(lineNum - 1).findFirst().get();
+          System.out.println(errorLine);
+          int index = this.jjtGetChild(1).getColumnNumber();
+          while(index > 1) {
+            System.out.print(" ");
+            index--;
+          }
+          System.out.print("^\n");
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+
+        return SymbolType.Type.ERROR.toString();
+      }
        
 
-      if (!identifierType.equals(expressionType) || !ok) {
-
+      if (!identifierType.equals(expressionType)) {
         int lineNum = this.jjtGetChild(0).getLineNumber();
         System.out.println("\n" + NewJava.filePath + ":" + lineNum + ": error: incompatible types: " + expressionType
             + " cannot be converted to " + identifierType);
@@ -309,7 +333,15 @@ public class SimpleNode implements Node {
         String dataType = dataTypeBroken.substring(index + 3, dataTypeBroken.length());
 
         if(!type.equals(dataType)){
-          System.out.println("\n" + NewJava.filePath + ":" + this.jjtGetChild(i).getLineNumber() + ": Wrong return type ");
+          int lineNum = this.jjtGetChild(i).getLineNumber();
+          System.out.println("\n" + NewJava.filePath + ":" + lineNum + ":  error: incompatible types: " + type + " cannot be converted to " + dataType);
+          try (Stream<String> lines = Files.lines(Paths.get(NewJava.filePath))) {
+            System.out.println();
+            System.out.println(lines.skip(lineNum - 1).findFirst().get());
+            System.out.println("           ^");
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
           return SymbolType.Type.ERROR.toString();
         }
       }
@@ -322,10 +354,10 @@ public class SimpleNode implements Node {
 
     // existe .length
     if (id == NewJava.JJTFULLSTOP) {
-      //System.out.println("sou funcaozinha");
+      System.out.println("id = " + this.id + ", symbol = " + this.symbol);
     }
 
-    return "stuff";
+    return "nothing";
   }
 
   private boolean checkOpType(SimpleNode startOP, SymbolTable data, int functionNum) {
@@ -333,26 +365,25 @@ public class SimpleNode implements Node {
       return false;
     }
     
+    
     //ramo esquerdo
     //se nao for op, verifica se e inteiro
     if(startOP.jjtGetChild(0).getId() != NewJava.JJTOP2 && startOP.jjtGetChild(0).getId() != NewJava.JJTOP3 && startOP.jjtGetChild(0).getId() != NewJava.JJTOP4 && startOP.jjtGetChild(0).getId() != NewJava.JJTOP5){
       String type = (String)startOP.jjtGetChild(0).visit(data, functionNum);
-      System.out.println("TYPE: " + type);
       if(!type.equals("int")){
         return false;
       }   
     //se for op, verifica se e vailda 
-    }else if(!checkOpType((SimpleNode)startOP.jjtGetChild(0), data, functionNum))
+    } else if(!checkOpType((SimpleNode)startOP.jjtGetChild(0), data, functionNum))
       return false;
 
     //ramo direito
     if(startOP.jjtGetChild(1).getId() != NewJava.JJTOP2 && startOP.jjtGetChild(1).getId() != NewJava.JJTOP3 && startOP.jjtGetChild(1).getId() != NewJava.JJTOP4 && startOP.jjtGetChild(1).getId() != NewJava.JJTOP5){
       String type = (String)startOP.jjtGetChild(1).visit(data, functionNum);
-      System.out.println("TYPE: " + type);
       if(!type.equals("int")){
         return false;
       }    
-    }else if(!checkOpType((SimpleNode)startOP.jjtGetChild(1), data, functionNum))
+    } else if(!checkOpType((SimpleNode)startOP.jjtGetChild(1), data, functionNum))
       return false;
 
 
