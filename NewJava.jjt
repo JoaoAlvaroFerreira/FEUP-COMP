@@ -42,11 +42,13 @@ public class NewJava
     //contrutor  symbol table
     table.startSymbolTable(root);
 
-    return table;
-
     //Jasmin Generator
     JasminParser jasminParser = new JasminParser(filePath,root);
     jasminParser.generate();
+
+    return table;
+
+
   }
 
   private static String fileToString(String filePath)

@@ -31,7 +31,7 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
 
     String fileContents = fileToString(filePath);
     ByteArrayInputStream stream = new ByteArrayInputStream(fileContents.getBytes());
-    
+
     if (table == null){
       table = new SymbolTable();
       myJava = new NewJava(stream);
@@ -46,11 +46,13 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
     //contrutor  symbol table
     table.startSymbolTable(root);
 
+    //Jasmin Generator
+    JasminParser jasminParser = new JasminParser(filePath,root);
+    jasminParser.generate();
+
     return table;
 
-    //Jasmin Generator
-    //JasminParser jasminParser = new JasminParser("test");
-    //jasminParser.generate();
+
   }
 
   private static String fileToString(String filePath)

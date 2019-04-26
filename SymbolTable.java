@@ -5,7 +5,7 @@ public class SymbolTable {
   ArrayList<SymbolType> globals = new ArrayList<SymbolType>();
   String className;
   int functionNum = 0;
-  
+
   int numSemanticErrors = 0;
 
   // fazer construtor symbol table
@@ -19,7 +19,7 @@ public class SymbolTable {
 
     // para cada filho da classe extrair apenas funcoes e main
     for (int i = 0; i < classe.jjtGetNumChildren(); i++) {
-     
+
       if ((classe.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) || (classe.jjtGetChild(i).getId() == NewJava.JJTMAIN)) {
         entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i)));
 
@@ -32,7 +32,7 @@ public class SymbolTable {
             numSemanticErrors++;
           }
         }
-        */
+        
       }else  if ((classe.jjtGetChild(i).getId() == NewJava.JJTVAR)
           && (((SimpleNode) classe.jjtGetChild(i).jjtGetChild(0)).getId() == NewJava.JJTTYPE)) {
         globals.add(new SymbolType(classe.jjtGetChild(i).getSymbol(),
