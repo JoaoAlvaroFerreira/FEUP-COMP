@@ -1,4 +1,7 @@
 class Item {
+  int k;
+  boolean l;
+
   public static void main(String [] args){
     int i;
     boolean j;
@@ -7,9 +10,7 @@ class Item {
     i = 2;
     item.f2();
 
-    //k = 4;
-    //j = 2;
-    //i = true;
+    k = 2;
   }
 
   public int f1(int arg1, boolean arg2, int arg3) {
@@ -18,14 +19,17 @@ class Item {
 
     i = 2;
 
-    return i;
+    return arg1;
   }
 
   public boolean cenas() {
     boolean oi;
+    //Haha haha;
+    int i;
 
-    oi = false;
+    //haha.callMe();
+    oi = true;
 
-    return oi;
+    return l;
   }
 }

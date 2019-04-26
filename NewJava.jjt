@@ -28,10 +28,11 @@ public class NewJava
     String fileContents = fileToString(filePath);
     ByteArrayInputStream stream = new ByteArrayInputStream(fileContents.getBytes());
 
-    if (table == null){
+    if (table == null) {
       table = new SymbolTable();
       myJava = new NewJava(stream);
-    }else{
+    } else {
+      table= new SymbolTable();
       myJava.ReInit(stream);
     }
 
@@ -158,6 +159,7 @@ void ClassDeclaration()#CLASS:  {Token t,ext = new Token();}
     <CLASS> t=<IDENTIFIER> (<EXTENDS> ext=<IDENTIFIER>{jjtThis.symbol = ext.image;}#EXTENDS)? <CURLYBRACKETOPENED>(VarDeclaration())*(<PUBLIC> (MainDeclaration() | MethodDeclaration()))*<CURLYBRACKETCLOSED> {
       jjtThis.symbol = t.image;
       jjtThis.line = t.beginLine;
+      jjtThis.column = t.beginColumn;
     }
 }
 
@@ -166,6 +168,7 @@ void VarDeclaration()#VAR: {Token t;}
     Type() t=<IDENTIFIER> <SEMICOLON>{
       jjtThis.symbol=t.image;
       jjtThis.line = t.beginLine;
+      jjtThis.column = t.beginColumn;
     }
 }
 
@@ -179,6 +182,7 @@ void Type()#TYPE: {Token t;}
     {
       jjtThis.symbol = t.image;
       jjtThis.line = t.beginLine;
+      jjtThis.column = t.beginColumn;
     }
 }
 
@@ -200,6 +204,7 @@ void MethodDeclaration()#FUNCTION: {Token name,ret; }
     {
       jjtThis.symbol = name.image;
       jjtThis.line = name.beginLine;
+      jjtThis.column = name.beginColumn;
     }
 }
 
@@ -208,9 +213,11 @@ void Args()#ARGS:{Token arg1,arg2;}
   (Type() arg1=<IDENTIFIER>{
     jjtThis.symbol = arg1.image;
     jjtThis.line = arg1.beginLine;
+    jjtThis.column = arg1.beginColumn;
   }#VAR(1) (<COMMA> Type() arg2=<IDENTIFIER>{
     jjtThis.symbol = arg2.image;
     jjtThis.line = arg2.beginLine;
+    jjtThis.column = arg2.beginColumn;
   }#VAR(1))*)?
 }
 
@@ -233,6 +240,7 @@ void AssignAux() #VAR: {Token t;}
   t=<IDENTIFIER> [<BRACKETOPEN>  Expression() <BRACKETCLOSE>{}#ARRINDEX(1)]{
     jjtThis.symbol = t.image;
     jjtThis.line = t.beginLine;
+    jjtThis.column = t.beginColumn;
   }
 }
 
@@ -277,6 +285,7 @@ void Expr2()#void: {Token t;}
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
+        jjtThis.column = t.beginColumn;
       }#OP2(2)
     | <BRACKETOPEN> Expression() <BRACKETCLOSE> [Expr2()]
     | Expr3()[Expr2()]
@@ -288,6 +297,7 @@ void Expr3()#void: {Token t;}
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
+        jjtThis.column = t.beginColumn;
       }#OP3(2)
       | Expr4()[Expr3()]
 }
@@ -298,6 +308,7 @@ void Expr4()#void: {Token t;}
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
+        jjtThis.column = t.beginColumn;
       }#OP4(2)
       | Expr5()[Expr4()]
 }
@@ -308,6 +319,7 @@ void Expr5()#void: {Token t;}
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
+        jjtThis.column = t.beginColumn;
       }#OP5(2)
 }
 
@@ -317,6 +329,7 @@ void FullStop()#PAREMETER: {Token t;}
   t=<IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])){
     jjtThis.symbol = t.image;
     jjtThis.line = t.beginLine;
+    jjtThis.column = t.beginColumn;
   }
 }
 
@@ -326,11 +339,13 @@ void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token()
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
+        jjtThis.column = t.beginColumn;
       }#VAL
     | t=<IDENTIFIER>
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
+        jjtThis.column = t.beginColumn;
       }#TEXT
     | <TRUE> #TRUE
     | <FALSE> #FALSE
@@ -338,11 +353,13 @@ void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token()
     | <NEW> (t=<INT> open=<BRACKETOPEN> Expression() close=<BRACKETCLOSE> {
       jjtThis.symbol = t.image;
       jjtThis.line = t.beginLine;
+      jjtThis.column = t.beginColumn;
     }#NEW(1)
     | t=<IDENTIFIER> open=<ROUNDBRACKETOPEN> close=<ROUNDBRACKETCLOSED>
     {
       jjtThis.symbol = t.image;
       jjtThis.line = t.beginLine;
+      jjtThis.column = t.beginColumn;
     }#NEW
     )
     | <NOT> Expression() #NOT(1)
