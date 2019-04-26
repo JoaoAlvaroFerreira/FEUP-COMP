@@ -23,10 +23,11 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
     String fileContents = fileToString(filePath);
     ByteArrayInputStream stream = new ByteArrayInputStream(fileContents.getBytes());
 
-    if (table == null){
+    if (table == null) {
       table = new SymbolTable();
       myJava = new NewJava(stream);
-    }else{
+    } else {
+      table= new SymbolTable();
       myJava.ReInit(stream);
     }
 
@@ -1425,12 +1426,6 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
     finally { jj_save(56, xla); }
   }
 
-  static private boolean jj_3_6() {
-    if (jj_scan_token(BRACKETOPEN)) return true;
-    if (jj_scan_token(BRACKETCLOSE)) return true;
-    return false;
-  }
-
   static private boolean jj_3_43() {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_18()) return true;
@@ -1925,6 +1920,12 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
   static private boolean jj_3R_11() {
     if (jj_scan_token(STATIC)) return true;
     if (jj_scan_token(VOID)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_6() {
+    if (jj_scan_token(BRACKETOPEN)) return true;
+    if (jj_scan_token(BRACKETCLOSE)) return true;
     return false;
   }
 

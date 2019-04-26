@@ -1,4 +1,7 @@
 class Item {
+  int k;
+  boolean l;
+
   public static void main(String [] args){
     int i;
     boolean j;
@@ -7,30 +10,26 @@ class Item {
     i = 2;
     item.f2();
 
-    //k = 4;
-    //j = 2;
-    //i = true;
+    k = 2;
   }
 
-  public Haha f1(int arg1, boolean arg2, int arg3) {
+  public int f1(int arg1, boolean arg2, int arg3) {
     int i;
-    Haha haha;
+    //Haha haha;
 
     i = 2;
 
-    return haha;
+    return arg1;
   }
 
   public boolean cenas() {
     boolean oi;
+    //Haha haha;
     int i;
-    Haha haha;
 
-    i = 2 + false;
-    oi = false;
+    //haha.callMe();
+    oi = true;
 
-    this.f1(i);        // erro no numero de argumentos
-
-    return i;
+    return l;
   }
 }

@@ -32,10 +32,11 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
     String fileContents = fileToString(filePath);
     ByteArrayInputStream stream = new ByteArrayInputStream(fileContents.getBytes());
 
-    if (table == null){
+    if (table == null) {
       table = new SymbolTable();
       myJava = new NewJava(stream);
-    }else{
+    } else {
+      table= new SymbolTable();
       myJava.ReInit(stream);
     }
 

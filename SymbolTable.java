@@ -4,13 +4,9 @@ public class SymbolTable {
   ArrayList<SymbolTableEntry> entries = new ArrayList<SymbolTableEntry>();
   ArrayList<SymbolType> globals = new ArrayList<SymbolType>();
   String className;
-  int functionNum;
-  int numSemanticErrors = 0;
 
   // fazer construtor symbol table
-  public SymbolTable() {
-    this.functionNum = 0;
-  }
+  public SymbolTable() {}
 
   public void startSymbolTable(SimpleNode root){
 
@@ -23,27 +19,12 @@ public class SymbolTable {
      
       if ((classe.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) || (classe.jjtGetChild(i).getId() == NewJava.JJTMAIN)) {
         entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i)));
-        /*
-        if (classe.jjtGetChild(i).visit(this, functionNum).toString().equals("error")) {
-          numSemanticErrors++;
-        }*/
-
-        for (int j = 0; j < classe.jjtGetChild(i).jjtGetNumChildren(); j++) {
-         /* if (classe.jjtGetChild(i).jjtGetChild(j).visit(this, functionNum).toString().equals("error")) {
-            numSemanticErrors++;
-          }*/
-        }
-        
-      }else  if ((classe.jjtGetChild(i).getId() == NewJava.JJTVAR)
+      } else  if ((classe.jjtGetChild(i).getId() == NewJava.JJTVAR)
           && (((SimpleNode) classe.jjtGetChild(i).jjtGetChild(0)).getId() == NewJava.JJTTYPE)) {
         globals.add(new SymbolType(classe.jjtGetChild(i).getSymbol(),
             ((SimpleNode) classe.jjtGetChild(i).jjtGetChild(0)).getSymbol()));
       }
-
-      functionNum++;
     }
-
-    //functionNum--;
   }
 
   // fazer prints symbol table
@@ -88,6 +69,21 @@ public class SymbolTable {
   }
 
     return ident;
+  }
+
+
+  public String checkIfExistGlobals(String name){
+    for(int i = 0; i < globals.size(); i++){
+      String typeAux = globals.get(i).type.toString();
+      String symbolAux = globals.get(i).symbol;
+
+      if(symbolAux.equals(name)){
+        return typeAux;
+      }
+    }
+
+
+    return "error";
   }
 
   public String searchParam(String symbol, int functionNum) {

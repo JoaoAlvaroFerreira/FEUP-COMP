@@ -129,25 +129,22 @@ public class SimpleNode implements Node {
 
   @Override
   public Object visit(SymbolTable data, int functionNum) {
-    //System.out.println("\n\nid = " + this.id + ", symbol = " + this.symbol);
 
     if (id == NewJava.JJTVAR) {
       String name = (String) this.getSymbol();
-      String type = data.checkIfExists(name, functionNum);
+      String type = data.checkIfExists(name, functionNum);  //checkar locais
 
-      // TO-DO: ACEITAR CLASSES DE OUTROS FICHEIROS ;_________________;
+      if(type.equals("error")){
+        type = data.searchParam(name, functionNum);         //checkar params
+      }
+
+      if(type.equals("error")){
+        type = data.checkIfExistGlobals(name);             //checkar globais
+      }
+
       if (type.equals("error")) {
         if (this.jjtGetNumChildren() > 0) {
-          boolean found = false;
-
-          /*
-          for(int i = 0; i < data.classNames.size(); i++){
-            if(data.className.get(i).equals(this.jjtGetChild(0).getSymbol())){
-              found = true;
-            }
-          }*/
-
-          if (!found) {
+          if (!Main.tables.containsKey(this.jjtGetChild(0).getSymbol())) {         //checkar se é outra classe
             int lineNum = this.jjtGetChild(0).getLineNumber();
             System.out.println("\n" + NewJava.filePath + ":" + lineNum + ": error: cannot find symbol");
 
@@ -231,6 +228,10 @@ public class SimpleNode implements Node {
         return data.searchParam(symbol, functionNum);
       }
 
+      if(type.equals("error")){
+        type = data.checkIfExistGlobals(symbol);
+      }
+
       return type;
     }
 
@@ -238,8 +239,6 @@ public class SimpleNode implements Node {
 
       //Lado esquerdo assign
       Object identifierType = this.jjtGetChild(0).visit(data, functionNum);
-
-      //VERIFICAR QUANDO È int[] lado esquerdo assign
 
       if (identifierType.equals(SymbolType.Type.ERROR.toString())) {
         int lineNum = this.jjtGetChild(0).getLineNumber();
@@ -288,7 +287,6 @@ public class SimpleNode implements Node {
 
         return SymbolType.Type.ERROR.toString();
       }
-       
 
       if (!identifierType.equals(expressionType)) {
         int lineNum = this.jjtGetChild(0).getLineNumber();
@@ -297,7 +295,12 @@ public class SimpleNode implements Node {
 
         try (Stream<String> lines = Files.lines(Paths.get(NewJava.filePath))) {
           System.out.println(lines.skip(lineNum - 1).findFirst().get());
-          System.out.println("    ^");
+          int index = this.jjtGetChild(1).getColumnNumber();
+          while(index > 1) {
+            System.out.print(" ");
+            index--;
+          }
+          System.out.print("^\n");
         } catch (IOException e) {
           e.printStackTrace();
         }
@@ -324,6 +327,14 @@ public class SimpleNode implements Node {
 
         if(aux.getId() == NewJava.JJTTEXT){
           type = data.checkIfExists(aux.getSymbol(), functionNum);
+
+          if(type.equals("error")){
+            type = data.searchParam(aux.getSymbol(),functionNum);
+          }
+
+          if(type.equals("error")){
+            type = data.checkIfExistGlobals(aux.getSymbol());
+          }
         }
 
         String dataTypeBroken = data.getReturn(functionNum);
@@ -354,12 +365,12 @@ public class SimpleNode implements Node {
 
     // existe .length
     if (id == NewJava.JJTFULLSTOP) {
-      System.out.println("id = " + this.id + ", symbol = " + this.symbol);
+      //System.out.println("id = " + this.id + ", symbol = " + this.symbol);
     }
 
     return "nothing";
   }
-
+ 
   private boolean checkOpType(SimpleNode startOP, SymbolTable data, int functionNum) {
     if(startOP.jjtGetNumChildren() != 2){
       return false;
@@ -389,6 +400,7 @@ public class SimpleNode implements Node {
 
     return true;
   }
+
 }
 
 /*

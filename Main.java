@@ -20,23 +20,29 @@ public class Main {
       for(Map.Entry<String, SymbolTable> entry : tables.entrySet()) {
         String className = entry.getKey();
         SymbolTable table = entry.getValue();
-
-
+        
         for (int i = 0; i < table.entries.size(); i++) {
           for (int j = 0; j < table.entries.get(i).nodelist.size(); j++) {
-            if(table.entries.get(i).nodelist.get(j).visit(table, i).toString().equals("error"))
+            if (table.entries.get(i).nodelist.get(j).visit(table, i).toString().equals("error")) {
               numSemanticErrors++;
+            }
           }
         }
-      }
         
-      //NOOBICE A++  DA MARIANA!!!!!!!    
-      if (numSemanticErrors > 1) {
-        System.out.println(numSemanticErrors + " errors");
-      } else if (numSemanticErrors == 1) {
-        System.out.println(numSemanticErrors + " error");
+      }
+
+      if (numSemanticErrors > 0){
+        System.out.print(numSemanticErrors + " error");
+       
+        if (numSemanticErrors > 1) {
+          System.out.print("s");
+        } 
+
+        System.out.println();
+        System.out.println();
       } else {
         symbolTable.dump();
       }
+      
     }
 }
