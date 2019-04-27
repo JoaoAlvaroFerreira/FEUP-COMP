@@ -144,6 +144,7 @@ public class SimpleNode implements Node {
   public Object visit(SymbolTable data, int functionNum) {
     if (id == NewJava.JJTVAR) {
       String name = (String) this.getSymbol();
+
       String type = data.checkIfExists(name, functionNum); // checkar locais
 
       if (type.equals("error")) {
@@ -155,7 +156,7 @@ public class SimpleNode implements Node {
       }
 
       if (!type.contains("/")) { // variable has unique name
-        if ((!type.equals("int") && !type.equals("boolean")) || type.equals("error")) {
+        if ((!type.equals("int") && !type.equals("boolean") && !type.equals("int[]")) || type.equals("error")) {
           if (this.jjtGetNumChildren() > 0) {
             if (!Main.tables.containsKey(this.jjtGetChild(0).getSymbol())) { // checkar se é outra classe
 
@@ -248,8 +249,21 @@ public class SimpleNode implements Node {
     }
 
     if (id == NewJava.JJTASSIGN) {
-      Object identifierType = this.jjtGetChild(0).visit(data, functionNum);
+      
+      //Lado esquerdo
+      String identifierType = (String) this.jjtGetChild(0).visit(data, functionNum);
 
+      // Lado direito assign
+      String expressionType = (String) this.jjtGetChild(1).visit(data, functionNum);
+
+      if(identifierType.equals("int[]") && !expressionType.equals("int[]")){
+        identifierType = "int";
+      }
+
+      if(!identifierType.equals("int[]") && expressionType.equals("int[]")){
+        expressionType = "int";
+      }
+      
       // previous semantic error: already defined variable
       if (((String) identifierType).contains("/")) {
         return "error";
@@ -267,9 +281,6 @@ public class SimpleNode implements Node {
 
         return "error";
       }
-
-      // Lado direito assign
-      String expressionType = (String) this.jjtGetChild(1).visit(data, functionNum);
 
       // previous semantic error: already defined variable
       if (((String) expressionType).contains("/")) {
@@ -305,6 +316,9 @@ public class SimpleNode implements Node {
     // check function calls (right param number or function exists)
     if (id == NewJava.JJTFULLSTOP) {
 
+      if(this.jjtGetChild(1).getId() == NewJava.JJTPAREMETER){
+        return "int";
+      }
       String type = (String) this.jjtGetChild(0).visit(data, functionNum);
 
       if (Main.tables.containsKey(type)) {
@@ -369,21 +383,17 @@ public class SimpleNode implements Node {
     if (id == NewJava.JJTIF || id == NewJava.JJTWHILE) {
       String conditionType = (String) ((SimpleNode) this.jjtGetChild(0)).visit(data, functionNum);
 
-      if (!conditionType.equals("boolean") && !conditionType.equals("error")
-          && NewJava.JJTOP2 != this.jjtGetChild(0).getId() && NewJava.JJTOP3 != this.jjtGetChild(0).getId()) {
+      if (!conditionType.equals("boolean") && !conditionType.equals("int") && !conditionType.equals("error") && NewJava.JJTOP2 != this.jjtGetChild(0).getId() && NewJava.JJTOP3 != this.jjtGetChild(0).getId()) {
         int lineNum = this.jjtGetChild(0).getLineNumber();
-        System.out.println("\n" + data.filePath + ":" + lineNum + ": error: incompatible types: " + conditionType
-            + " cannot be converted to boolean");
+        System.out.println("\n" + data.filePath + ":" + lineNum + ": error: incompatible types: " + conditionType + " cannot be converted to boolean");
 
         dumpLineError(data.filePath, lineNum, ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
         return "error";
       }
 
-      if (this.jjtGetChild(0).getId() == NewJava.JJTTEXT
-          && !data.initializedVariables.contains(this.jjtGetChild(0).getSymbol())) {
+      if (this.jjtGetChild(0).getId() == NewJava.JJTTEXT && !data.initializedVariables.contains(this.jjtGetChild(0).getSymbol())) {
         int lineNum = this.jjtGetChild(0).getLineNumber();
-        System.out.println("\n" + data.filePath + ":" + lineNum + ": error: variable " + this.jjtGetChild(0).getSymbol()
-            + " might not have been initialized");
+        System.out.println("\n" + data.filePath + ":" + lineNum + ": error: variable " + this.jjtGetChild(0).getSymbol() + " might not have been initialized");
 
         dumpLineError(data.filePath, lineNum, this.jjtGetChild(0).getColumnNumber());
         return "error";

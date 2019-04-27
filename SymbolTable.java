@@ -21,10 +21,8 @@ public class SymbolTable {
      
       if ((classe.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) || (classe.jjtGetChild(i).getId() == NewJava.JJTMAIN)) {
         entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i)));
-      } else  if ((classe.jjtGetChild(i).getId() == NewJava.JJTVAR)
-          && (((SimpleNode) classe.jjtGetChild(i).jjtGetChild(0)).getId() == NewJava.JJTTYPE)) {
-        globals.add(new SymbolType(classe.jjtGetChild(i).getSymbol(),
-            ((SimpleNode) classe.jjtGetChild(i).jjtGetChild(0)).getSymbol()));
+      } else  if ((classe.jjtGetChild(i).getId() == NewJava.JJTVAR) && (((SimpleNode) classe.jjtGetChild(i).jjtGetChild(0)).getId() == NewJava.JJTTYPE)) {
+        globals.add(new SymbolType(classe.jjtGetChild(i).getSymbol(),((SimpleNode) classe.jjtGetChild(i).jjtGetChild(0)).getSymbol()));
       }
     }
     dump();
