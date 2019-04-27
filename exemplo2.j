@@ -50,7 +50,7 @@ callMe_end:
 .limit stack 1
 .limit locals 3
 
-.var 1 is a I from coisas_init to coisas_end
+.var 1 is a [I from coisas_init to coisas_end
 .var 2 is b I from coisas_init to coisas_end
 
 coisas_init:

@@ -23,7 +23,7 @@ public class SymbolTableEntry {
 
 		// nos da funcao
 		for (int i = 0; i < Node.jjtGetNumChildren(); i++) {
-			
+
 			nodelist.add((SimpleNode) Node.jjtGetChild(i));
 			if (Node.jjtGetChild(i).getId() == NewJava.JJTRETURN) {
 				for (int j = 0; j < Node.jjtGetChild(i).jjtGetNumChildren(); j++) {
@@ -41,16 +41,17 @@ public class SymbolTableEntry {
 		// return
 		if (Node.getId() == NewJava.JJTMAIN)
 			returnDescriptor = new SymbolType("void").type;
-		else
+		else{
 			returnDescriptor = nodelist.get(0).getSymbol();
 
-		// construir params
-		if (nodelist.get(1).getId() == NewJava.JJTARGS)
-			for (int j = 0; j < nodelist.get(1).jjtGetNumChildren(); j++) {
-				aux.add((SimpleNode) nodelist.get(1).jjtGetChild(j));
-				params.add(
-						new SymbolType(aux.get(j).getSymbol(), ((SimpleNode) aux.get(j).jjtGetChild(0)).getSymbol()));
-			}
+			// construir params
+			if (nodelist.get(1).getId() == NewJava.JJTARGS)
+				for (int j = 0; j < nodelist.get(1).jjtGetNumChildren(); j++) {
+					aux.add((SimpleNode) nodelist.get(1).jjtGetChild(j));
+					params.add(
+							new SymbolType(aux.get(j).getSymbol(), ((SimpleNode) aux.get(j).jjtGetChild(0)).getSymbol()));
+				}
+		}
 
 		// variaveis locais
 		for (int i = 0; i < nodelist.size(); i++) {
