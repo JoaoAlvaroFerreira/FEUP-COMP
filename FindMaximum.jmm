@@ -1,18 +1,13 @@
 class FindMaximum {
 	int[] test_arr;
 
-	public int find_maximum(int[] shitty) {
+	public int find_maximum(int[] arr) {
 		int i;
 		int maximum;
 		int value;
 
-		int[] arr; 
-		arr = new int[5];										//nao e do exemplo so eliminar
-
 		i = 1;
-
 		maximum = arr[0];
-		
 		while (i < arr.length) {
 			value = arr[i];
 			if (maximum < value) {

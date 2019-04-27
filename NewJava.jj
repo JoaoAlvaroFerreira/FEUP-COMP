@@ -889,17 +889,16 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
         }
       }
 /*@egen*/    
-
-    | t=<IDENTIFIER> open=<BRACKETOPEN> Expression() close=<BRACKETCLOSE>/*@bgen(jjtree) TEXT */
+    | t=<IDENTIFIER> open=<BRACKETOPEN> Expression() close=<BRACKETCLOSE>/*@bgen(jjtree) #VAR( 1) */
       {
-        SimpleNode jjtn002 = new SimpleNode(JJTTEXT);
+        SimpleNode jjtn002 = new SimpleNode(JJTVAR);
         boolean jjtc002 = true;
         jjtree.openNodeScope(jjtn002);
       }
       try {
 /*@egen*//*@bgen(jjtree)*/
       {
-        jjtree.closeNodeScope(jjtn002, true);
+        jjtree.closeNodeScope(jjtn002,  1);
         jjtc002 = false;
       }
 /*@egen*/ 
@@ -910,10 +909,11 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
       }/*@bgen(jjtree)*/
       } finally {
         if (jjtc002) {
-          jjtree.closeNodeScope(jjtn002, true);
+          jjtree.closeNodeScope(jjtn002,  1);
         }
       }
-/*@egen*/     
+/*@egen*/       
+      
 
     | t=<IDENTIFIER>/*@bgen(jjtree) TEXT */
       {
@@ -939,8 +939,6 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
         }
       }
 /*@egen*/     
-
-    
 
     |/*@bgen(jjtree) TRUE */
       {
