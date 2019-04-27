@@ -3,13 +3,13 @@
 .super java/lang/Object
 
 
-.field public nuno Z
 
 .method public static main([Ljava/lang/String;)V
 .limit stack 5
-.limit locals 3
+.limit locals 4
 
 .var 2 is l I from main_init to main_end
+.var 3 is nuno Z from main_init to main_end
 
 main_init:
  ; l = 2
@@ -17,7 +17,7 @@ bipush 2
 istore 2
  ; nuno = false
 bipush 0
-putfield Haha/nuno Z
+istore 3
  ; l = +
 bipush 2
 bipush 4
