@@ -19,6 +19,8 @@ public class JasminParser{
   private int stacklim;
   private ArrayList<String> localVarList;
   private SymbolTable symbolTable;
+  private int stackSize;
+  private int maxStackSize;
 
   public JasminParser(String file_path,SimpleNode root,SymbolTable symbolTable){
     this.source = file_path;
@@ -93,8 +95,12 @@ public class JasminParser{
 
   public String generateMethod(SimpleNode method){
     String ret = "";
+    String tmp = "";
     localVarList.clear();
     localVarList.add("this");
+    SymbolTableEntry methodSymbols = new SymbolTableEntry(method);
+    this.stackSize = 0;
+    this.maxStackSize = 0;
 
     //se for main, method e sempre igual
     if(method.getId() == NewJava.JJTMAIN){
@@ -103,8 +109,6 @@ public class JasminParser{
       localVarList.add("args");
     }else{
       ret += ".method public " + method.getSymbol() + "(";
-
-      SymbolTableEntry methodSymbols = new SymbolTableEntry(method);
 
       //argumentos funcao
       for(int i=0;i<methodSymbols.params.size();i++){
@@ -122,31 +126,58 @@ public class JasminParser{
 
 
     //local variables directive
-    ret += this.generateLocalVariables(method);
+    tmp += this.generateLocalVariables(method);
 
-    ret +="\n";
+    tmp +="\n";
     //label init
-    ret += method.getSymbol() + "_init:\n";
+    tmp += method.getSymbol() + "_init:\n";
 
     //inserir statements
     for(int i=0;i<method.jjtGetNumChildren();i++){
       SimpleNode curStatement = (SimpleNode) method.jjtGetChild(i);
       switch(curStatement.getId()){
         case NewJava.JJTASSIGN:
-          ret+=this.generateAssign(curStatement);
+          tmp+=this.generateAssign(curStatement);
+          break;
+        case NewJava.JJTRETURN:
+          if(curStatement.jjtGetNumChildren() > 0){
+            SimpleNode returnVal = (SimpleNode)curStatement.jjtGetChild(0);
+            if(returnVal.getId() == NewJava.JJTTRUE){
+              tmp+="bipush 1\n";
+              this.incrementStackSize();
+            }else if(returnVal.getId() == NewJava.JJTFALSE){
+              tmp+="bipush 0\n";
+              this.incrementStackSize();
+            }else{
+              tmp+="bipush "+returnVal.getSymbol()+"\n";
+              this.incrementStackSize();
+            }
+
+            tmp+="ireturn\n";
+            this.stackSize--;
+          }else{
+            tmp+="return\n";
+          }
+
           break;
         default:
           break;
       }
     }
 
+    if(methodSymbols.returnDescriptor.equals("void")){
+      tmp+="return\n";
+    }
+
     //label end
-    ret += method.getSymbol() + "_end:\n";
+    tmp += method.getSymbol() + "_end:\n";
 
-    ret +="\n";
+    tmp +="\n";
 
-    ret += ".end method\n\n";
+    tmp += ".end method\n\n";
 
+    ret += ".limit stack " + Integer.toString(this.maxStackSize) + "\n";
+    ret += tmp;
 
     return ret;
   }
@@ -191,22 +222,27 @@ public class JasminParser{
     }else if(statement.jjtGetChild(1).getId() == NewJava.JJTFALSE){
       ret += " ; " + statement.jjtGetChild(0).getSymbol() + " = false\n";
       ret += "bipush 0\n";
+      this.incrementStackSize();
     }else if(statement.jjtGetChild(1).getId() == NewJava.JJTTRUE){
       ret += " ; " + statement.jjtGetChild(0).getSymbol() + " = true\n";
       ret += "bipush 1\n";
+      this.incrementStackSize();
     //inteiros
     }else{
       ret += " ; " + statement.jjtGetChild(0).getSymbol() + " = " + statement.jjtGetChild(1).getSymbol() + "\n";
       ret += "bipush " + statement.jjtGetChild(1).getSymbol() + "\n";
+      this.incrementStackSize();
     }
     //verifica se é local ou global
-    if(localVarList.indexOf(statement.jjtGetChild(0).getSymbol()) != -1)
-      ret += "astore " + Integer.toString(localVarList.indexOf(statement.jjtGetChild(0).getSymbol())) + "\n";
-    else{
+    if(localVarList.indexOf(statement.jjtGetChild(0).getSymbol()) != -1){
+      ret += "istore " + Integer.toString(localVarList.indexOf(statement.jjtGetChild(0).getSymbol())) + "\n";
+      this.stackSize--;
+    }else{
       ret += "putfield ";
       if(this.supername != null)
         ret += this.supername + "/";
       ret+= this.classname + "/" + statement.jjtGetChild(0).getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(statement.jjtGetChild(0).getSymbol()))+"\n";
+      this.stackSize--;
     }
 
     return ret;
@@ -241,12 +277,14 @@ public class JasminParser{
 
     if(op.jjtGetChild(0).getId() == NewJava.JJTVAL){
       ret += "bipush " + op.jjtGetChild(0).getSymbol() + "\n";
+      this.incrementStackSize();
     }else{
       ret += this.generateOp((SimpleNode)op.jjtGetChild(0));
     }
 
     if(op.jjtGetChild(1).getId() == NewJava.JJTVAL){
       ret += "bipush " + op.jjtGetChild(1).getSymbol() + "\n";
+      this.incrementStackSize();
     }else{
       ret += this.generateOp((SimpleNode)op.jjtGetChild(1));
     }
@@ -254,20 +292,29 @@ public class JasminParser{
     switch(op.symbol){
       case "+":
         ret += "iadd\n";
+        this.stackSize--;
       break;
       case "-":
         ret += "isub\n";
+        this.stackSize--;
       break;
       case "*":
         ret += "imul\n";
+        this.stackSize--;
       break;
       case "/":
         ret += "idiv\n";
+        this.stackSize--;
       break;
     }
 
     return ret;
   }
 
+  public void incrementStackSize(){
+    this.stackSize++;
+    if(this.stackSize > this.maxStackSize)
+      this.maxStackSize = this.stackSize;
+  }
 
 }

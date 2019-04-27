@@ -39,7 +39,7 @@ public class SymbolTableEntry {
 
 		// return
 		if (Node.getId() == NewJava.JJTMAIN)
-			returnDescriptor = new SymbolType("void").toString();
+			returnDescriptor = new SymbolType("void").type;
 		else
 			returnDescriptor = nodelist.get(0).getSymbol();
 
