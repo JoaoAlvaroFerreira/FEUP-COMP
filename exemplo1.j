@@ -1,5 +1,8 @@
 .source exemplo1.jmm
 .class public Item
+
+fffffffffffff
+
 .method public static main([Ljava/lang/String;)V
 .limit vars 3
 
@@ -9,6 +12,9 @@
 
 main_init:
  ; i = 2
+bipush 2
+astore 0
+ ; k = 2
 bipush 2
 astore -1
  ; k = 2
@@ -26,7 +32,11 @@ main_end:
 f1_init:
  ; i = 2
 bipush 2
+<<<<<<< Updated upstream
 astore -1
+=======
+astore 0
+>>>>>>> Stashed changes
 f1_end:
 
 .end method
@@ -40,7 +50,11 @@ f1_end:
 cenas_init:
  ; oi = null
 bipush null
+<<<<<<< Updated upstream
 astore 3
+=======
+astore 4
+>>>>>>> Stashed changes
 cenas_end:
 
 .end method

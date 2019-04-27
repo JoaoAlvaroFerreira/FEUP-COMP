@@ -109,4 +109,13 @@ public class SymbolTable {
     return entries.get(functionNum).returnDescriptor.toString();
   }
 
+  public SymbolType getGlobal(String name){
+    for(SymbolType global : globals){
+      if(global.symbol.equals(name))
+        return global;
+    }
+
+    return null;
+  }
+
 };

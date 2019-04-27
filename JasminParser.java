@@ -18,12 +18,14 @@ public class JasminParser{
   private int vars;
   private int stacklim;
   private ArrayList<String> localVarList;
+  private SymbolTable symbolTable;
 
-  public JasminParser(String file_path,SimpleNode root){
+  public JasminParser(String file_path,SimpleNode root,SymbolTable symbolTable){
     this.source = file_path;
     this.root = root;
     this.fileClass = (SimpleNode) root.jjtGetChild(0);
     this.localVarList = new ArrayList<>();
+    this.symbolTable = symbolTable;
 
     if(fileClass.getId() == NewJava.JJTCLASS){
       this.accessspec = "public";
@@ -43,9 +45,15 @@ public class JasminParser{
     String output = "";
     output += ".source "+sourceClass+"."+sourceFileExtension+"\n";
     output += ".class " + accessspec + " " + classname + "\n";
-    if(supername!= null)
-    output += ".super " + supername + "\n\n";
+    output += ".super java/lang/Object";
 
+    if(supername!= null)
+      output +="/"+supername;
+
+    output += "\n\n";
+
+    //globals
+    output += "\n" + this.generateGlobals() + "\n";
 
     //methods
     for(int i=0;i<fileClass.jjtGetNumChildren();i++){
@@ -85,11 +93,13 @@ public class JasminParser{
 
   public String generateMethod(SimpleNode method){
     String ret = "";
+    localVarList.clear();
 
     //se for main, method e sempre igual
     if(method.getId() == NewJava.JJTMAIN){
       ret += ".method public static main([Ljava/lang/String;)V\n";
       method.symbol = "main";
+      localVarList.add("args");
     }else{
       ret += ".method public " + method.getSymbol() + "(";
 
@@ -98,6 +108,7 @@ public class JasminParser{
       //argumentos funcao
       for(int i=0;i<methodSymbols.params.size();i++){
         ret+=this.getJasminType(methodSymbols.params.get(i)) + ";";
+        localVarList.add(methodSymbols.params.get(i).symbol);
       }
       //remove ultimo ponto e virgula
       if (ret != null && ret.length() > 0 && ret.charAt(ret.length() - 1) == ';') {
@@ -139,11 +150,10 @@ public class JasminParser{
     return ret;
   }
 
-
   public String generateLocalVariables(SimpleNode method){
     String ret = "";
     String localVar = "";
-    int varIndex = 0;
+    int varIndex = localVarList.size();
     SymbolType varType;
 
     for(int i=0; i<method.jjtGetNumChildren();i++){
@@ -153,6 +163,7 @@ public class JasminParser{
 
         localVarList.add(varType.symbol);
 
+        //declaracao variaveis locais
         localVar += ".var " + Integer.toString(varIndex) + " is "
             + varType.symbol + " "
             + this.getJasminType(varType)
@@ -162,7 +173,7 @@ public class JasminParser{
       }
     }
 
-    ret += ".limit vars " + Integer.toString(varIndex) + "\n\n";
+    ret += ".limit locals " + Integer.toString(varIndex) + "\n\n";
     ret += localVar;
 
     return ret;
@@ -171,9 +182,31 @@ public class JasminParser{
   public String generateAssign(SimpleNode statement){
     String ret = "";
 
-    ret += " ; " + statement.jjtGetChild(0).getSymbol() + " = " + statement.jjtGetChild(1).getSymbol() + "\n";
-    ret += "bipush " + statement.jjtGetChild(1).getSymbol() + "\n";
-    ret += "astore " + Integer.toString(localVarList.indexOf(statement.jjtGetChild(0).getSymbol())-1) + "\n";
+    //caso seja atrib. de operacoes
+    if((statement.jjtGetChild(1).getId() == NewJava.JJTOP2) || (statement.jjtGetChild(1).getId() == NewJava.JJTOP3) || (statement.jjtGetChild(1).getId() == NewJava.JJTOP4) || (statement.jjtGetChild(1).getId() == NewJava.JJTOP5)){
+      ret += " ; " + statement.jjtGetChild(0).getSymbol() + " = " + statement.jjtGetChild(1).getSymbol() + "\n"; //FIX THE SIGN ONLY COMMENT
+      ret+= this.generateOp((SimpleNode)statement.jjtGetChild(1));
+    //atribuicao de booleanas
+    }else if(statement.jjtGetChild(1).getId() == NewJava.JJTFALSE){
+      ret += " ; " + statement.jjtGetChild(0).getSymbol() + " = false\n";
+      ret += "bipush 0\n";
+    }else if(statement.jjtGetChild(1).getId() == NewJava.JJTTRUE){
+      ret += " ; " + statement.jjtGetChild(0).getSymbol() + " = true\n";
+      ret += "bipush 1\n";
+    //inteiros
+    }else{
+      ret += " ; " + statement.jjtGetChild(0).getSymbol() + " = " + statement.jjtGetChild(1).getSymbol() + "\n";
+      ret += "bipush " + statement.jjtGetChild(1).getSymbol() + "\n";
+    }
+    //verifica se é local ou global
+    if(localVarList.indexOf(statement.jjtGetChild(0).getSymbol()) != -1)
+      ret += "astore " + Integer.toString(localVarList.indexOf(statement.jjtGetChild(0).getSymbol())) + "\n";
+    else{
+      ret += "putfield ";
+      if(this.supername != null)
+        ret += this.supername + "/";
+      ret+= this.classname + "/" + statement.jjtGetChild(0).getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(statement.jjtGetChild(0).getSymbol()))+"\n";
+    }
 
     return ret;
   }
@@ -191,5 +224,49 @@ public class JasminParser{
       default:
       return "";
     }
-  }*/
+  }
+
+  public String generateGlobals(){
+    String ret = "";
+
+    for(int i=0;i<this.symbolTable.globals.size();i++){
+      ret += ".field public " + this.symbolTable.globals.get(i).symbol + " " + this.getJasminType(this.symbolTable.globals.get(i)) + "\n";
+    }
+
+    return ret;
+  }
+  public String generateOp(SimpleNode op){
+    String ret = "";
+
+    if(op.jjtGetChild(0).getId() == NewJava.JJTVAL){
+      ret += "bipush " + op.jjtGetChild(0).getSymbol() + "\n";
+    }else{
+      ret += this.generateOp((SimpleNode)op.jjtGetChild(0));
+    }
+
+    if(op.jjtGetChild(1).getId() == NewJava.JJTVAL){
+      ret += "bipush " + op.jjtGetChild(1).getSymbol() + "\n";
+    }else{
+      ret += this.generateOp((SimpleNode)op.jjtGetChild(1));
+    }
+
+    switch(op.symbol){
+      case "+":
+        ret += "iadd\n";
+      break;
+      case "-":
+        ret += "isub\n";
+      break;
+      case "*":
+        ret += "imul\n";
+      break;
+      case "/":
+        ret += "idiv\n";
+      break;
+    }
+
+    return ret;
+  }
+
+
 }

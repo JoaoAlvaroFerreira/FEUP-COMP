@@ -42,8 +42,13 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
     table.startSymbolTable(root);
 
     //Jasmin Generator
+<<<<<<< Updated upstream
     //JasminParser jasminParser = new JasminParser(filePath,root);
     //jasminParser.generate();
+=======
+    JasminParser jasminParser = new JasminParser(filePath,root,table);
+    jasminParser.generate();
+>>>>>>> Stashed changes
 
     return table;
 

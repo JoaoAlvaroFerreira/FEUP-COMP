@@ -1,8 +1,10 @@
 class Haha {
-
+  boolean nuno;
   public static void main(String [] args){
     int l;
     l = 2;
+    nuno = false;
+    l = 2+4+3*(4/2);
   }
 
   public int callMe(int x) {
