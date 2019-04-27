@@ -1,41 +1,18 @@
-class Fac extends Nuno {
-  /*
-  ComputeFac function
-  */
-  public void ComputeFac(int a,int b){
-    int num_aux ;
-    if (!(num < 1))
-    num_aux = 1;
-    else
-    num_aux = num * (this.ComputeFac(num-1));
-    return num_aux;
-  }
-
-  public int add(){
-    int num1;
-    int num2;
-    int res;
-
-    num1=5;
-    num2=4;
-    res=num1+num2;
-
-    return res;
-  }
-
+class Fac
+{
   public static void main(String[] a){
-    int countador;
-    boolean teste;
-    io.println(new Fac().ComputeFac(10)); //assuming the existence
-    // of the classfile io.class
-    nuno.length;
-
-    i[2];
-    i[4]=4;
-
-
-    nuno.fodasse(2 * 3 + 3 * 2 - 3 && 3);
-
-    while(e<true) {}
+    //int[] a;
+    //a = new int[5];
+    int a;
+    int c;
   }
+
+  public int[] f1(int g){
+    int[] b;
+
+    b = new int[5];
+
+    return b; 
+  }
+
 }

@@ -135,6 +135,7 @@ TOKEN:
   | < THIS: "this" >
   | < NEW: "new" >
   | < LENGTH: "length" >
+  | < INTARRAY: "int[]" >
   | < INT: "int" >
   | < PUBLIC: "public" >
   | < STATIC: "static" >
@@ -174,7 +175,9 @@ void VarDeclaration()#VAR: {Token t;}
 
 void Type()#TYPE: {Token t;}
 {
-    ( t=<INT> [<BRACKETOPEN> <BRACKETCLOSE>{}]
+    (
+      t=<INTARRAY>
+    | t=<INT>
     | t=<BOOLEAN>
     | t=<IDENTIFIER>
     | t=<VOID>
@@ -232,7 +235,7 @@ void Statement()#void:{Token t=new Token();}
 
 void Assign() #void: {Token t;}
 {
-  AssignAux() [<ASSIGN> Expression(){}#ASSIGN(2)] <SEMICOLON>
+   AssignAux() [<ASSIGN> Expression(){}#ASSIGN(2)] <SEMICOLON>
 }
 
 void AssignAux() #VAR: {Token t;}
@@ -341,17 +344,28 @@ void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token()
         jjtThis.line = t.beginLine;
         jjtThis.column = t.beginColumn;
       }#VAL
+
+      /*
+    | t=<IDENTIFIER> open=<BRACKETOPEN> Expression() close=<BRACKETCLOSE> 
+      {
+        jjtThis.symbol = t.image;
+        jjtThis.line = t.beginLine;
+        jjtThis.column = t.beginColumn;
+      }#INTARRAY
+      */
+
     | t=<IDENTIFIER>
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
         jjtThis.column = t.beginColumn;
       }#TEXT
+
     | <TRUE> #TRUE
     | <FALSE> #FALSE
     | <THIS> #THIS
     | <NEW> (t=<INT> open=<BRACKETOPEN> Expression() close=<BRACKETCLOSE> {
-      jjtThis.symbol = t.image;
+      jjtThis.symbol = "int[]";
       jjtThis.line = t.beginLine;
       jjtThis.column = t.beginColumn;
     }#NEW(1)

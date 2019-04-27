@@ -23,6 +23,7 @@ public class SymbolTableEntry {
 
 		// nos da funcao
 		for (int i = 0; i < Node.jjtGetNumChildren(); i++) {
+			
 			nodelist.add((SimpleNode) Node.jjtGetChild(i));
 			if (Node.jjtGetChild(i).getId() == NewJava.JJTRETURN) {
 				for (int j = 0; j < Node.jjtGetChild(i).jjtGetNumChildren(); j++) {
@@ -54,10 +55,8 @@ public class SymbolTableEntry {
 		// variaveis locais
 		for (int i = 0; i < nodelist.size(); i++) {
 			// se nao for variavel, adicionar à lista
-			if ((nodelist.get(i).getId() == NewJava.JJTVAR)
-					&& (((SimpleNode) nodelist.get(i).jjtGetChild(0)).getId() == NewJava.JJTTYPE)) {
-				vars.add(new SymbolType(nodelist.get(i).getSymbol(),
-						((SimpleNode) nodelist.get(i).jjtGetChild(0)).getSymbol()));
+			if ((nodelist.get(i).getId() == NewJava.JJTVAR) && (((SimpleNode) nodelist.get(i).jjtGetChild(0)).getId() == NewJava.JJTTYPE)) {
+				vars.add(new SymbolType(nodelist.get(i).getSymbol(),((SimpleNode) nodelist.get(i).jjtGetChild(0)).getSymbol()));
 			}
 		}
 

@@ -59,31 +59,33 @@ public interface NewJavaConstants {
   /** RegularExpression Id. */
   int LENGTH = 34;
   /** RegularExpression Id. */
-  int INT = 35;
+  int INTARRAY = 35;
   /** RegularExpression Id. */
-  int PUBLIC = 36;
+  int INT = 36;
   /** RegularExpression Id. */
-  int STATIC = 37;
+  int PUBLIC = 37;
   /** RegularExpression Id. */
-  int VOID = 38;
+  int STATIC = 38;
   /** RegularExpression Id. */
-  int MAIN = 39;
+  int VOID = 39;
   /** RegularExpression Id. */
-  int RETURN = 40;
+  int MAIN = 40;
   /** RegularExpression Id. */
-  int BOOLEAN = 41;
+  int RETURN = 41;
   /** RegularExpression Id. */
-  int IF = 42;
+  int BOOLEAN = 42;
   /** RegularExpression Id. */
-  int ELSE = 43;
+  int IF = 43;
   /** RegularExpression Id. */
-  int WHILE = 44;
+  int ELSE = 44;
   /** RegularExpression Id. */
-  int STRING = 45;
+  int WHILE = 45;
   /** RegularExpression Id. */
-  int INTEGERLITERAL = 46;
+  int STRING = 46;
   /** RegularExpression Id. */
-  int IDENTIFIER = 47;
+  int INTEGERLITERAL = 47;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 48;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -131,6 +133,7 @@ public interface NewJavaConstants {
     "\"this\"",
     "\"new\"",
     "\"length\"",
+    "\"int[]\"",
     "\"int\"",
     "\"public\"",
     "\"static\"",
