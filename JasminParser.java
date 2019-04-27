@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 
 public class JasminParser{
 
-/*
+
   private String source;
   private SimpleNode root;
   private SimpleNode fileClass;
