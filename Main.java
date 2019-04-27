@@ -19,7 +19,7 @@ public class Main {
 
       for(Map.Entry<String, SymbolTable> entry : tables.entrySet()) {
         SymbolTable table = entry.getValue();
-        
+
         for (int i = 0; i < table.entries.size(); i++) {
           for (int j = 0; j < table.entries.get(i).nodelist.size(); j++) {
             if (table.entries.get(i).nodelist.get(j).visit(table, i).toString().equals("error")) {

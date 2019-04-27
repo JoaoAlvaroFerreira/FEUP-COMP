@@ -11,4 +11,4 @@ echo - - - -  - - - - - - - - - - - - - - - - -
 CALL javac *.java
 echo execution - - - - - - - - - - - - - - - -
 echo - - - -  - - - - - - - - - - - - - - - - -
-CALL java Main exemplo2.jmm exemplo1.jmm
+CALL java Main FindMaximum.jmm

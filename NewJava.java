@@ -42,9 +42,10 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
     table.startSymbolTable(root);
 
     //Jasmin Generator
+    /*
     JasminParser jasminParser = new JasminParser(filePath,root,table);
     jasminParser.generate();
-
+*/
     return table;
 
 
@@ -1489,12 +1490,6 @@ if (jjtc009) {
     finally { jj_save(57, xla); }
   }
 
-  static private boolean jj_3_10()
- {
-    if (jj_scan_token(VOID)) return true;
-    return false;
-  }
-
   static private boolean jj_3_1()
  {
     if (jj_scan_token(EXTENDS)) return true;
@@ -1508,16 +1503,16 @@ if (jjtc009) {
     return false;
   }
 
-  static private boolean jj_3_8()
- {
-    if (jj_scan_token(BOOLEAN)) return true;
-    return false;
-  }
-
   static private boolean jj_3_48()
  {
     if (jj_scan_token(INT)) return true;
     if (jj_scan_token(BRACKETOPEN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_8()
+ {
+    if (jj_scan_token(BOOLEAN)) return true;
     return false;
   }
 
@@ -2071,6 +2066,12 @@ if (jjtc009) {
  {
     if (jj_scan_token(COMMA)) return true;
     if (jj_3R_18()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_10()
+ {
+    if (jj_scan_token(VOID)) return true;
     return false;
   }
 

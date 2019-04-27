@@ -37,6 +37,8 @@ class Item {
     Haha haha;
     int i;
 
+    haha = new Haha();
+
     haha.callMe(oi);
     haha.callMe(i);
     haha.callMe(oi, oi);
