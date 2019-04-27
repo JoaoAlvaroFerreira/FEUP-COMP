@@ -94,6 +94,7 @@ public class JasminParser{
   public String generateMethod(SimpleNode method){
     String ret = "";
     localVarList.clear();
+    localVarList.add("this");
 
     //se for main, method e sempre igual
     if(method.getId() == NewJava.JJTMAIN){
@@ -116,7 +117,7 @@ public class JasminParser{
       }
 
       //tipo de retorno
-      ret+= ")" + this.getJasminType(methodSymbols.returnDescriptor) + "\n";
+      ret+= ")" + this.getJasminType(new SymbolType(methodSymbols.returnDescriptor)) + "\n";
     }
 
 
@@ -213,13 +214,13 @@ public class JasminParser{
 
   public String getJasminType(SymbolType varType){
     switch(varType.type){
-      case INT:
+      case "int":
       return "I";
-      case INT_ARR:
+      case "int[]":
       return "[I";
-      case BOOLEAN:
+      case "boolean":
       return "Z";
-      case VOID:
+      case "void":
       return "V";
       default:
       return "";

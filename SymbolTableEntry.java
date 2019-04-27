@@ -7,6 +7,7 @@ public class SymbolTableEntry {
 	ArrayList<SymbolType> params;
 	ArrayList<SimpleNode> aux;
 	ArrayList<SymbolType> vars;
+	String returnType;
 	String name;
 
 	public SymbolTableEntry(SimpleNode Node) {
@@ -23,42 +24,41 @@ public class SymbolTableEntry {
 		// nos da funcao
 		for (int i = 0; i < Node.jjtGetNumChildren(); i++) {
 			nodelist.add((SimpleNode) Node.jjtGetChild(i));
-		}
+			if (Node.jjtGetChild(i).getId() == NewJava.JJTRETURN) {
+				for (int j = 0; j < Node.jjtGetChild(i).jjtGetNumChildren(); j++) {
+					if (Node.jjtGetChild(i).jjtGetChild(j).getId() == NewJava.JJTVAL) {
+						returnType = "int";
+					}
 
-		// return
-		if (Node.getId() == NewJava.JJTMAIN) {
-			returnDescriptor = new SymbolType("void").toString();
-		} else {       
-			String type = new SymbolType(nodelist.get(0).getSymbol()).toString();
-
-			int index = type.indexOf("->");
-
-			String typeAux = type.substring(index + 3, type.length());
-
-			if (typeAux.toString().equals("error")){
-				returnDescriptor = nodelist.get(0).getSymbol();
-			} else {
-				returnDescriptor = typeAux.toString();
-			}
-		}
-
-		if (Node.getId() != NewJava.JJTMAIN){
-			// construir params
-			if (nodelist.get(1).getId() == NewJava.JJTARGS){
-				for (int j = 0; j < nodelist.get(1).jjtGetNumChildren(); j++) {
-					aux.add((SimpleNode) nodelist.get(1).jjtGetChild(j));
-					params.add(new SymbolType(aux.get(j).getSymbol(), ((SimpleNode) aux.get(j).jjtGetChild(0)).getSymbol()));
+					if (Node.jjtGetChild(i).jjtGetChild(j).getId() == NewJava.JJTTRUE || Node.jjtGetChild(i).jjtGetChild(j).getId() == NewJava.JJTFALSE) {
+						returnType = "boolean";
+					}
 				}
 			}
 		}
+
+		// return
+		if (Node.getId() == NewJava.JJTMAIN)
+			returnDescriptor = new SymbolType("void").toString();
+		else
+			returnDescriptor = nodelist.get(0).getSymbol();
+
+		// construir params
+		if (nodelist.get(1).getId() == NewJava.JJTARGS)
+			for (int j = 0; j < nodelist.get(1).jjtGetNumChildren(); j++) {
+				aux.add((SimpleNode) nodelist.get(1).jjtGetChild(j));
+				params.add(
+						new SymbolType(aux.get(j).getSymbol(), ((SimpleNode) aux.get(j).jjtGetChild(0)).getSymbol()));
+			}
 
 		// variaveis locais
 		for (int i = 0; i < nodelist.size(); i++) {
 			// se nao for variavel, adicionar à lista
-			if (nodelist.get(i).getId() == NewJava.JJTVAR)
-				if(((SimpleNode) nodelist.get(i).jjtGetChild(0)).getId() == NewJava.JJTTYPE) {
-					vars.add(new SymbolType(nodelist.get(i).getSymbol(), nodelist.get(i).jjtGetChild(0).getSymbol()));
-				}
+			if ((nodelist.get(i).getId() == NewJava.JJTVAR)
+					&& (((SimpleNode) nodelist.get(i).jjtGetChild(0)).getId() == NewJava.JJTTYPE)) {
+				vars.add(new SymbolType(nodelist.get(i).getSymbol(),
+						((SimpleNode) nodelist.get(i).jjtGetChild(0)).getSymbol()));
+			}
 		}
 
 	}
