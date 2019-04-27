@@ -901,18 +901,18 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
       open = jj_consume_token(BRACKETOPEN);
       Expression();
       close = jj_consume_token(BRACKETCLOSE);
-        SimpleNode jjtn002 = new SimpleNode(JJTTEXT);
+        SimpleNode jjtn002 = new SimpleNode(JJTVAR);
         boolean jjtc002 = true;
         jjtree.openNodeScope(jjtn002);
       try {
-        jjtree.closeNodeScope(jjtn002, true);
+        jjtree.closeNodeScope(jjtn002,  1);
         jjtc002 = false;
         jjtn002.symbol = t.image;
         jjtn002.line = t.beginLine;
         jjtn002.column = t.beginColumn;
       } finally {
         if (jjtc002) {
-          jjtree.closeNodeScope(jjtn002, true);
+          jjtree.closeNodeScope(jjtn002,  1);
         }
       }
     } else if (jj_2_52(2)) {
@@ -1454,12 +1454,6 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
     return false;
   }
 
-  static private boolean jj_3_48() {
-    if (jj_scan_token(INT)) return true;
-    if (jj_scan_token(BRACKETOPEN)) return true;
-    return false;
-  }
-
   static private boolean jj_3_1() {
     if (jj_scan_token(EXTENDS)) return true;
     if (jj_scan_token(IDENTIFIER)) return true;
@@ -1476,9 +1470,9 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
     return false;
   }
 
-  static private boolean jj_3_49() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(ROUNDBRACKETOPEN)) return true;
+  static private boolean jj_3_48() {
+    if (jj_scan_token(INT)) return true;
+    if (jj_scan_token(BRACKETOPEN)) return true;
     return false;
   }
 
@@ -1489,6 +1483,12 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
 
   static private boolean jj_3_6() {
     if (jj_scan_token(INTARRAY)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_49() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(ROUNDBRACKETOPEN)) return true;
     return false;
   }
 
@@ -1532,11 +1532,6 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
     return false;
   }
 
-  static private boolean jj_3_53() {
-    if (jj_scan_token(TRUE)) return true;
-    return false;
-  }
-
   static private boolean jj_3_44() {
     if (jj_3R_18()) return true;
     Token xsp;
@@ -1544,6 +1539,11 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants, NewJavaCon
       xsp = jj_scanpos;
       if (jj_3_43()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  static private boolean jj_3_53() {
+    if (jj_scan_token(TRUE)) return true;
     return false;
   }
 
