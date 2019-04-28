@@ -31,7 +31,7 @@ find_maximum_end:
 .end method
 
 .method public build_test_arr()I
-.limit stack 6
+.limit stack 7
 .limit locals 1
 
 
@@ -46,6 +46,7 @@ bipush 0
 bipush 0
 bipush 5
 isub
+bipush 12
 bipush 12
 bipush 0
 ireturn

@@ -235,7 +235,7 @@ void Statement()#void:{Token t=new Token();}
 
 void Assign() #void: {Token t;}
 {
-   AssignAux() [<ASSIGN> Expression(){}#ASSIGN(2)] <SEMICOLON>
+  AssignAux() [<ASSIGN> Expression(){}#ASSIGN(2)] <SEMICOLON>
 }
 
 void AssignAux() #VAR: {Token t;}
@@ -278,7 +278,7 @@ void WhileStatement()#WHILE: {Token t;}
 
 void Expression()#void: {Token t = new Token();}
 {
-    VarTerm() [Expr2()]
+  VarTerm() [Expr2()]
 }
 
 void Expr2()#void: {Token t;}
@@ -344,13 +344,18 @@ void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token()
         jjtThis.line = t.beginLine;
         jjtThis.column = t.beginColumn;
       }#VAL
+          |   t=<IDENTIFIER> <BRACKETOPEN>  Expression() <BRACKETCLOSE>{}#ARRINDEX(1)
+      {
+        jjtThis.symbol = t.image;
+        jjtThis.line = t.beginLine;
+        jjtThis.column = t.beginColumn;
+      }#VAR(1)
     | t=<IDENTIFIER> open=<BRACKETOPEN> Expression() close=<BRACKETCLOSE> 
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
         jjtThis.column = t.beginColumn;
       }#VAR(1)
-      
 
     | t=<IDENTIFIER>
       {

@@ -5,6 +5,7 @@ import java.util.TreeMap;
 public class SymbolTable {
   ArrayList<SymbolTableEntry> entries = new ArrayList<SymbolTableEntry>();
   Map<Integer, ArrayList<String>> initializedVariables = new TreeMap<Integer, ArrayList<String>>();
+  Map<Integer, Map<String, Integer>> initializedArrays = new TreeMap<Integer, Map<String, Integer>>();
   ArrayList<SymbolType> globals = new ArrayList<SymbolType>();
   String className;
   String filePath;
