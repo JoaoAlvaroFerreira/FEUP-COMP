@@ -21,6 +21,7 @@ public class JasminParser{
   private SymbolTable symbolTable;
   private int stackSize;
   private int maxStackSize;
+  private SymbolTableEntry methodSymbols;
 
   public JasminParser(String file_path,SimpleNode root,SymbolTable symbolTable){
     this.source = file_path;
@@ -57,6 +58,8 @@ public class JasminParser{
     //globals
     output += "\n" + this.generateGlobals() + "\n";
 
+    //default constructor
+    output+= "; default constructor\n.method public <init>()V\naload_0\ninvokespecial java/lang/Object/<init>()V\nreturn\n.end method\n\n";
     //methods
     for(int i=0;i<fileClass.jjtGetNumChildren();i++){
       if((fileClass.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) ||
@@ -98,7 +101,7 @@ public class JasminParser{
     String tmp = "";
     localVarList.clear();
     localVarList.add("this");
-    SymbolTableEntry methodSymbols = new SymbolTableEntry(method);
+    this.methodSymbols = new SymbolTableEntry(method);
     this.stackSize = 0;
     this.maxStackSize = 0;
 
@@ -135,34 +138,7 @@ public class JasminParser{
     //inserir statements
     for(int i=0;i<method.jjtGetNumChildren();i++){
       SimpleNode curStatement = (SimpleNode) method.jjtGetChild(i);
-      switch(curStatement.getId()){
-        case NewJava.JJTASSIGN:
-          tmp+=this.generateAssign(curStatement);
-          break;
-        case NewJava.JJTRETURN:
-          if(curStatement.jjtGetNumChildren() > 0){
-            SimpleNode returnVal = (SimpleNode)curStatement.jjtGetChild(0);
-            if(returnVal.getId() == NewJava.JJTTRUE){
-              tmp+="bipush 1\n";
-              this.incrementStackSize();
-            }else if(returnVal.getId() == NewJava.JJTFALSE){
-              tmp+="bipush 0\n";
-              this.incrementStackSize();
-            }else{
-              tmp+="bipush "+returnVal.getSymbol()+"\n";
-              this.incrementStackSize();
-            }
-
-            tmp+="ireturn\n";
-            this.stackSize--;
-          }else{
-            tmp+="return\n";
-          }
-
-          break;
-        default:
-          break;
-      }
+      tmp+=this.generateStatement(curStatement);
     }
 
     if(methodSymbols.returnDescriptor.equals("void")){
@@ -178,6 +154,169 @@ public class JasminParser{
 
     ret += ".limit stack " + Integer.toString(this.maxStackSize) + "\n";
     ret += tmp;
+
+    return ret;
+  }
+
+  public String generateStatement(SimpleNode curStatement){
+    String ret = "";
+    switch(curStatement.getId()){
+      case NewJava.JJTASSIGN:
+        ret+=this.generateAssign(curStatement);
+        break;
+
+      //caso de retorno, verificar se existe valor a retornar
+      case NewJava.JJTRETURN:
+        if(curStatement.jjtGetNumChildren() > 0){
+          SimpleNode returnVal = (SimpleNode)curStatement.jjtGetChild(0);
+          ret+=this.generateStatement(returnVal);
+          ret+="ireturn\n";
+          this.stackSize--;
+        }else{
+          ret+="return\n";
+        }
+        break;
+
+      //carregar valor da variável para a stack
+      case NewJava.JJTTEXT:
+
+        //verifica se é local ou global
+        if(localVarList.indexOf(curStatement.getSymbol()) != -1){
+          //verifica tipo da variavel
+          SymbolType curVar = this.methodSymbols.getLocal(curStatement.getSymbol());
+
+          if(curVar.type.equals("int")){
+              ret += "iload ";
+            }else{
+              ret += "aload ";
+            }
+
+          ret += Integer.toString(localVarList.indexOf(curStatement.getSymbol())) + "\n";
+          this.incrementStackSize();
+
+        }else if(this.symbolTable.getGlobal(curStatement.getSymbol())!=null){
+          ret += "getfield ";
+          if(this.supername != null)
+            ret += this.supername + "/";
+          ret+= this.classname + "/" + curStatement.getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(curStatement.getSymbol()))+"\n";
+          this.incrementStackSize();
+        //classe externa
+        }else{
+          //ret += "getstatic " + curStatement.getSymbol() + "\n";
+        }
+
+        break;
+
+      //guardar valor em variavel
+      case NewJava.JJTVAR:
+      //apenas se não for uma declaraçao (com type como filho)
+      if(curStatement.jjtGetNumChildren()==0){
+        //verifica se é local
+        if(localVarList.indexOf(curStatement.getSymbol()) != -1){
+          //encontrar tipo da var na symbol table
+          SymbolType curVar = this.methodSymbols.getLocal(curStatement.getSymbol());
+
+          if(curVar.type.equals("int")){
+              ret += "istore ";
+            }else{
+              ret += "astore ";
+            }
+
+          ret += Integer.toString(localVarList.indexOf(curStatement.getSymbol())) + "\n";
+          this.stackSize--;
+        //global (atributo da classe)
+        }else if(this.symbolTable.getGlobal(curStatement.getSymbol())!=null){
+          ret += "putfield ";
+          if(this.supername != null)
+            ret += this.supername + "/";
+          ret+= this.classname + "/" + curStatement.getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(curStatement.getSymbol()))+"\n";
+          this.stackSize--;
+        //classe externa
+        }else{
+          //ret += "getstatic " + curStatement.getSymbol();
+        }
+      }
+        break;
+
+      //carregar valor duietemnte do codigo
+      case NewJava.JJTVAL:
+        ret+="bipush "+curStatement.getSymbol()+"\n";
+        this.incrementStackSize();
+        break;
+
+      //booleanas
+      case NewJava.JJTFALSE:
+        ret+="bipush 0\n";
+        this.incrementStackSize();
+        break;
+
+      case NewJava.JJTTRUE:
+        ret+="bipush 1\n";
+        this.incrementStackSize();
+        break;
+      case NewJava.JJTOP2:
+      case NewJava.JJTOP3:
+      case NewJava.JJTOP4:
+      case NewJava.JJTOP5:
+        ret+= this.generateOp(curStatement);
+        break;
+
+      case NewJava.JJTNEW:
+        ret += "new " + curStatement.getSymbol() + "\n";
+        this.incrementStackSize();
+        ret += "dup\n";
+        this.incrementStackSize();
+        ret += "invokespecial " + curStatement.getSymbol() + "/<init>()V\n";
+        this.stackSize--;
+        break;
+
+      //chamda de funcoes de uma classe
+      case NewJava.JJTFULLSTOP:
+        String methodTypes = "(";
+        SimpleNode classe = (SimpleNode)curStatement.jjtGetChild(0);
+        SimpleNode parameter = (SimpleNode)curStatement.jjtGetChild(1);
+
+        if(classe.symbol.equals("io")){
+          for(int i=0;i<parameter.jjtGetNumChildren();i++){
+            ret+=this.generateStatement((SimpleNode)parameter.jjtGetChild(i))+"\n";
+            //methodTypes += this.getJasminType((SimpleNode)parameter.jjtGetChild(i).) + ";";
+          }
+
+          ret+="invokestatic " + classe.symbol + "/" + parameter.symbol + "(I)V\n";
+          this.stackSize--;
+
+        }else{
+
+          ret+=this.generateStatement(classe);
+
+          for(int i=0;i<parameter.jjtGetNumChildren();i++){
+            ret+=this.generateStatement((SimpleNode)parameter.jjtGetChild(i))+"\n";
+            //methodTypes += this.getJasminType((SimpleNode)parameter.jjtGetChild(i).) + ";";
+          }
+
+          //encontrar metodo na symbol table
+          for(int i=0;i<this.symbolTable.entries.size();i++){
+            if(this.symbolTable.entries.get(i).name.equals(parameter.getSymbol())){
+              for(SymbolType arg : this.symbolTable.entries.get(i).params){
+                methodTypes +=this.getJasminType(arg)+";";
+              }
+              //remover ultimo ponto e vrigula
+              if (methodTypes != null && methodTypes.length() > 0 && methodTypes.charAt(methodTypes.length() - 1) == ';') {
+                methodTypes = methodTypes.substring(0, methodTypes.length() - 1);
+              }
+              methodTypes += ")"+this.getJasminType(new SymbolType(this.symbolTable.entries.get(i).returnDescriptor));
+            }
+          }
+
+          ret +="invokevirtual " + this.classname + "/" + parameter.getSymbol() + methodTypes;
+          this.stackSize--;
+        }
+
+
+        break;
+      default:
+        break;
+    }
 
     return ret;
   }
@@ -214,6 +353,7 @@ public class JasminParser{
   public String generateAssign(SimpleNode statement){
     String ret = "";
 
+    /*
     //caso seja atrib. de operacoes
     if((statement.jjtGetChild(1).getId() == NewJava.JJTOP2) || (statement.jjtGetChild(1).getId() == NewJava.JJTOP3) || (statement.jjtGetChild(1).getId() == NewJava.JJTOP4) || (statement.jjtGetChild(1).getId() == NewJava.JJTOP5)){
       ret += " ; " + statement.jjtGetChild(0).getSymbol() + " = " + statement.jjtGetChild(1).getSymbol() + "\n"; //FIX THE SIGN ONLY COMMENT
@@ -233,17 +373,11 @@ public class JasminParser{
       ret += "bipush " + statement.jjtGetChild(1).getSymbol() + "\n";
       this.incrementStackSize();
     }
-    //verifica se é local ou global
-    if(localVarList.indexOf(statement.jjtGetChild(0).getSymbol()) != -1){
-      ret += "istore " + Integer.toString(localVarList.indexOf(statement.jjtGetChild(0).getSymbol())) + "\n";
-      this.stackSize--;
-    }else{
-      ret += "putfield ";
-      if(this.supername != null)
-        ret += this.supername + "/";
-      ret+= this.classname + "/" + statement.jjtGetChild(0).getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(statement.jjtGetChild(0).getSymbol()))+"\n";
-      this.stackSize--;
-    }
+    */
+
+    ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(1));
+    ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(0));
+
 
     return ret;
   }
@@ -259,7 +393,7 @@ public class JasminParser{
       case "void":
       return "V";
       default:
-      return "";
+      return "L"+this.classname+";";
     }
   }
 
@@ -275,6 +409,10 @@ public class JasminParser{
   public String generateOp(SimpleNode op){
     String ret = "";
 
+    ret+=this.generateStatement((SimpleNode)op.jjtGetChild(0));
+    ret+=this.generateStatement((SimpleNode)op.jjtGetChild(1));
+
+    /*
     if(op.jjtGetChild(0).getId() == NewJava.JJTVAL){
       ret += "bipush " + op.jjtGetChild(0).getSymbol() + "\n";
       this.incrementStackSize();
@@ -288,6 +426,8 @@ public class JasminParser{
     }else{
       ret += this.generateOp((SimpleNode)op.jjtGetChild(1));
     }
+
+    */
 
     switch(op.symbol){
       case "+":

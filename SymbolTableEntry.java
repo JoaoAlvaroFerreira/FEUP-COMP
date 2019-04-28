@@ -63,6 +63,22 @@ public class SymbolTableEntry {
 
 	}
 
+	public SymbolType getLocal(String name){
+		for(SymbolType local : this.vars){
+			if(local.symbol.equals(name)){
+				return local;
+			}
+		}
+
+		for(SymbolType param : this.params){
+			if(param.symbol.equals(name)){
+				return param;
+			}
+		}
+
+		return null;
+	}
+
 	public void dump() {
 		System.out.println("\nFunction: " + name);
 		System.out.println("Return: " + returnDescriptor.toString());
