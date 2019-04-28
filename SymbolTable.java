@@ -1,8 +1,10 @@
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class SymbolTable {
   ArrayList<SymbolTableEntry> entries = new ArrayList<SymbolTableEntry>();
-  ArrayList<String> initializedVariables = new ArrayList<String>();
+  Map<Integer, ArrayList<String>> initializedVariables = new TreeMap<Integer, ArrayList<String>>();
   ArrayList<SymbolType> globals = new ArrayList<SymbolType>();
   String className;
   String filePath;
@@ -18,7 +20,6 @@ public class SymbolTable {
 
     // para cada filho da classe extrair apenas funcoes e main
     for (int i = 0; i < classe.jjtGetNumChildren(); i++) {
-     
       if ((classe.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) || (classe.jjtGetChild(i).getId() == NewJava.JJTMAIN)) {
         entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i)));
       } else  if ((classe.jjtGetChild(i).getId() == NewJava.JJTVAR) && (((SimpleNode) classe.jjtGetChild(i).jjtGetChild(0)).getId() == NewJava.JJTTYPE)) {
@@ -116,4 +117,22 @@ public class SymbolTable {
     return null;
   }
 
+  public void initializeGlobalVariable(String varName) {
+    for (int i = 0; i < entries.size(); i++) {
+      if (!initializedVariables.isEmpty() && initializedVariables.get(i) != null && initializedVariables.get(i).contains(varName)) {
+        break;
+      }
+
+      ArrayList<String> names;
+
+      if (!initializedVariables.isEmpty() && initializedVariables.get(i) != null) {
+        names = initializedVariables.get(i);
+      } else {
+        names = new ArrayList<>();
+      }
+      names.add(varName);
+      initializedVariables.put(i, names);
+      System.out.println("Initialized global variable: " + varName + " + in function no. " + i);
+    }
+  }
 };

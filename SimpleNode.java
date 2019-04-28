@@ -126,6 +126,29 @@ public class SimpleNode implements Node {
     return column;
   }
 
+  public void addInitializedVar(SymbolTable data, int functionNum, String symbol) {
+    if (!data.initializedVariables.isEmpty()) {
+      if (data.initializedVariables.get(functionNum) != null) {
+        if (!data.initializedVariables.get(functionNum).contains(symbol)) {
+          ArrayList<String> vars = data.initializedVariables.get(functionNum);
+          vars.add(symbol);
+          data.initializedVariables.replace(functionNum, vars);
+          System.out.println("Initialized variable: " + symbol + " + in function no. " + functionNum);
+        }
+      } else {
+        ArrayList<String> vars = new ArrayList<>();
+        vars.add(symbol);
+        data.initializedVariables.put(functionNum, vars);
+        System.out.println("Initialized variable: " + symbol + " + in function no. " + functionNum);
+      }
+    } else {
+      ArrayList<String> vars = new ArrayList<>();
+      vars.add(symbol);
+      data.initializedVariables.put(functionNum, vars);
+      System.out.println("Initialized variable: " + symbol + " + function no. " + functionNum);
+    }
+  }
+
   @Override
   public Object visit(SymbolTable data, int functionNum) {
     SemanticalError error;
@@ -141,6 +164,9 @@ public class SimpleNode implements Node {
 
       if (type.equals("error")) {
         type = data.checkIfExistGlobals(name); // checkar globais
+        if (!type.equals("error")) {
+          data.initializeGlobalVariable(this.getSymbol());
+        }
       }
 
       if (!type.contains("/")) { // variable has unique name
@@ -180,7 +206,14 @@ public class SimpleNode implements Node {
     }
 
     if (id == NewJava.JJTNEW) {
+      if (symbol.equals("int[]")) {
+        System.out.println("NEW "+symbol+" "+this.jjtGetChild(0).getSymbol());
+      }
       return symbol;
+    }
+
+    if (id == NewJava.JJTARRINDEX) {
+      System.out.println("accessing " + this.jjtGetParent().getSymbol() + " [" + this.jjtGetChild(0) + "]");
     }
 
     // type of arguments
@@ -208,8 +241,13 @@ public class SimpleNode implements Node {
       return "int";
     }
 
-    if (id == NewJava.JJTASSIGN) {
+    if (id == NewJava.JJTARGS) {
+      for (int i = 0; i < this.jjtGetNumChildren(); i++) {
+        addInitializedVar(data, functionNum, this.jjtGetChild(i).getSymbol());
+      }
+    }
 
+    if (id == NewJava.JJTASSIGN) {
       // Lado esquerdo
       String identifierType = (String) this.jjtGetChild(0).visit(data, functionNum);
 
@@ -249,10 +287,7 @@ public class SimpleNode implements Node {
         return "error";
       }
 
-      if (!data.initializedVariables.contains(((SimpleNode) this.jjtGetChild(0)).getSymbol())) {
-        data.initializedVariables.add(((SimpleNode) this.jjtGetChild(0)).getSymbol());
-        // System.out.println("initialized var = " + this.jjtGetChild(0).getSymbol());
-      }
+      addInitializedVar(data, functionNum, this.jjtGetChild(0).getSymbol());
     }
 
     // Function type must match return type
@@ -264,6 +299,15 @@ public class SimpleNode implements Node {
         error = new SemanticalError("INCOMPATIBLE_TYPES", data.filePath, this.jjtGetChild(0).getLineNumber(),
             ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
         error.printError(type, dataType);
+        return "error";
+      }
+
+      if (data.initializedVariables.isEmpty() || data.initializedVariables.get(functionNum) == null
+          || (!data.initializedVariables.get(functionNum).contains(this.jjtGetChild(0).getSymbol())
+              && this.jjtGetChild(0).getId() == NewJava.JJTTEXT)) {
+        error = new SemanticalError("NO_INITIALIZATION", data.filePath, this.jjtGetChild(0).getLineNumber(),
+            this.jjtGetChild(0).getColumnNumber());
+        error.printError(this.jjtGetChild(0).getSymbol());
         return "error";
       }
     }
@@ -284,7 +328,8 @@ public class SimpleNode implements Node {
 
       String type = (String) leftSide.visit(data, functionNum);
 
-      if (!data.initializedVariables.contains(leftSide.symbol) && !type.equals("error")) {
+      if (data.initializedVariables.isEmpty() || data.initializedVariables.get(functionNum) == null
+          || (!data.initializedVariables.get(functionNum).contains(leftSide.symbol) && !type.equals("error"))) {
         error = new SemanticalError("NO_INITIALIZATION", data.filePath, leftSide.getLineNumber(),
             leftSide.getColumnNumber());
         error.printError(leftSide.symbol);
@@ -312,9 +357,9 @@ public class SimpleNode implements Node {
                   error.printError(typeArg, var.params.get(i).type);
                   return "error";
                 }
-
-                if (rightSide.jjtGetChild(i).getId() == NewJava.JJTTEXT
-                    && !data.initializedVariables.contains(rightSide.jjtGetChild(i).getSymbol())) {
+                if (data.initializedVariables.isEmpty() || data.initializedVariables.get(functionNum) == null
+                    || (rightSide.jjtGetChild(i).getId() == NewJava.JJTTEXT && !data.initializedVariables
+                        .get(functionNum).contains(rightSide.jjtGetChild(i).getSymbol()))) {
                   error = new SemanticalError("NO_INITIALIZATION", data.filePath,
                       rightSide.jjtGetChild(i).getLineNumber(), rightSide.jjtGetChild(i).getColumnNumber());
                   error.printError(rightSide.jjtGetChild(i).getSymbol());
@@ -350,12 +395,22 @@ public class SimpleNode implements Node {
         return "error";
       }
 
-      if (this.jjtGetChild(0).getId() == NewJava.JJTTEXT
-          && !data.initializedVariables.contains(this.jjtGetChild(0).getSymbol())) {
+      if (data.initializedVariables.isEmpty() || data.initializedVariables.get(functionNum) == null || (this.jjtGetChild(0).getId() == NewJava.JJTTEXT
+          && !data.initializedVariables.get(functionNum).contains(this.jjtGetChild(0).getSymbol()))) {
         error = new SemanticalError("NO_INITIALIZATION", data.filePath, this.jjtGetChild(0).getLineNumber(),
             this.jjtGetChild(0).getColumnNumber());
         error.printError(this.jjtGetChild(0).getSymbol());
         return "error";
+      }
+
+      for (int i = 1; i < this.jjtGetNumChildren(); i++) {
+        this.jjtGetChild(i).visit(data, functionNum);
+      }
+    }
+
+    if (id == NewJava.JJTELSE) {
+      for (int i = 0; i < this.jjtGetNumChildren(); i++) {
+        this.jjtGetChild(i).visit(data, functionNum);
       }
     }
 
@@ -370,11 +425,12 @@ public class SimpleNode implements Node {
     }
 
     // check if variable is initialized
-    if (startOP.jjtGetChild(0).getId() == NewJava.JJTTEXT
-        && !data.initializedVariables.contains(startOP.jjtGetChild(0).getSymbol())) {
+    if (data.initializedVariables.isEmpty() || data.initializedVariables.get(functionNum) == null 
+        || (startOP.jjtGetChild(0).getId() == NewJava.JJTTEXT && !data.initializedVariables.get(functionNum).contains(startOP.jjtGetChild(0).getSymbol()))) {
       error = new SemanticalError("NO_INITIALIZATION", data.filePath, startOP.jjtGetChild(0).getLineNumber(),
           startOP.jjtGetChild(0).getColumnNumber());
       error.printError(startOP.jjtGetChild(0).getSymbol());
+      System.out.println("wtf functionNUm = " + functionNum);
       return true;
     }
 
@@ -392,8 +448,8 @@ public class SimpleNode implements Node {
       return false;
     }
 
-    if (startOP.jjtGetChild(1).getId() == NewJava.JJTTEXT
-        && !data.initializedVariables.contains(startOP.jjtGetChild(1).getSymbol())) {
+    if (data.initializedVariables.isEmpty() || data.initializedVariables.get(functionNum) == null || (startOP.jjtGetChild(1).getId() == NewJava.JJTTEXT
+        && !data.initializedVariables.get(functionNum).contains(startOP.jjtGetChild(1).getSymbol()))) {
       error = new SemanticalError("NO_INITIALIZATION", data.filePath, startOP.jjtGetChild(1).getLineNumber(),
           startOP.jjtGetChild(1).getColumnNumber());
       error.printError(startOP.jjtGetChild(1).getSymbol());

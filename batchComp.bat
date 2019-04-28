@@ -9,6 +9,6 @@ CALL javacc NewJava.jj
 echo javac - - - - -- - - - - - - -  - - - - -
 echo - - - -  - - - - - - - - - - - - - - - - -
 CALL javac *.java
+CALL java Main FindMaximum.jmm
 echo execution - - - - - - - - - - - - - - - -
 echo - - - -  - - - - - - - - - - - - - - - - -
-CALL java Main FindMaximum.jmm
