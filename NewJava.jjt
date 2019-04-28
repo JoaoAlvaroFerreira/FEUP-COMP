@@ -344,13 +344,7 @@ void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token()
         jjtThis.line = t.beginLine;
         jjtThis.column = t.beginColumn;
       }#VAL
-          |   t=<IDENTIFIER> <BRACKETOPEN>  Expression() <BRACKETCLOSE>{}#ARRINDEX(1)
-      {
-        jjtThis.symbol = t.image;
-        jjtThis.line = t.beginLine;
-        jjtThis.column = t.beginColumn;
-      }#VAR(1)
-    | t=<IDENTIFIER> open=<BRACKETOPEN> Expression() close=<BRACKETCLOSE> 
+    | t=<IDENTIFIER> open=<BRACKETOPEN> Expression() close=<BRACKETCLOSE> #ARRINDEX(1)
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
