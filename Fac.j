@@ -12,15 +12,13 @@ return
 .end method
 
 .method public ComputeFac(I)I
-.limit stack 2
+.limit stack 1
 .limit locals 3
 
 .var 2 is num_aux I from ComputeFac_init to ComputeFac_end
 
 ComputeFac_init:
 iload 1
-bipush 2
-imul
 istore 2
 iload 2
 ireturn
@@ -48,3 +46,5 @@ return
 main_end:
 
 .end method
+
+
