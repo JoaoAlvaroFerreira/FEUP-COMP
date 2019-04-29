@@ -45,6 +45,12 @@ public class SemanticalError {
       public String toString() {
         return "WRONG_METHOD_ARGS";
       }
+    },
+    OUT_OF_BOUNDS {
+      @Override
+      public String toString() {
+        return "OUT_OF_BOUNDS";
+      }
     }
   };
 
@@ -62,6 +68,8 @@ public class SemanticalError {
       return ErrorType.INCOMPATIBLE_TYPES;
     case "WRONG_METHOD_ARGS":
       return ErrorType.WRONG_METHOD_ARGS;
+      case "OUT_OF_BOUND":
+      return ErrorType.OUT_OF_BOUNDS;
     default:
       return ErrorType.UNKNOWN_SYMBOL;
     }
@@ -74,14 +82,17 @@ public class SemanticalError {
     this.currentError = getErrorType(error);
   }
 
+  void printError(int index, int length) {
+    System.out.println("\n" + filePath + ":" + lineNum + ": error: Index " + index + " is out of bounds for length " + length);
+    printLine();
+  }
+
   void printError(String symbol) {
     if (this.currentError.toString().equals("BAD_OPERAND_TYPES")) {
-      System.out
-          .println("\n" + filePath + ":" + lineNum + ": error: bad operand types for binary operator '" + symbol + "'");
+      System.out.println("\n" + filePath + ":" + lineNum + ": error: bad operand types for binary operator '" + symbol + "'");
     }
     if (this.currentError.toString().equals("NO_INITIALIZATION")) {
-      System.out.println(
-          "\n" + filePath + ":" + lineNum + ": error: variable " + symbol + " might not have been initialized");
+      System.out.println("\n" + filePath + ":" + lineNum + ": error: variable " + symbol + " might not have been initialized");
     }
     printLine();
   }

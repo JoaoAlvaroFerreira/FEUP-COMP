@@ -135,19 +135,16 @@ public class SimpleNode implements Node {
           ArrayList<String> vars = data.initializedVariables.get(functionNum);
           vars.add(symbol);
           data.initializedVariables.replace(functionNum, vars);
-          System.out.println("Initialized variable: " + symbol + " + in function no. " + functionNum);
         }
       } else {
         ArrayList<String> vars = new ArrayList<>();
         vars.add(symbol);
         data.initializedVariables.put(functionNum, vars);
-        System.out.println("Initialized variable: " + symbol + " + in function no. " + functionNum);
       }
     } else {
       ArrayList<String> vars = new ArrayList<>();
       vars.add(symbol);
       data.initializedVariables.put(functionNum, vars);
-      System.out.println("Initialized variable: " + symbol + " + function no. " + functionNum);
     }
   }
 
@@ -155,7 +152,7 @@ public class SimpleNode implements Node {
   public Object visit(SymbolTable data, int functionNum) {
     SemanticalError error;
 
-    if (id == NewJava.JJTVAR) {
+    if (id == NewJava.JJTVAR || id == NewJava.JJTTEXT) {
       String name = (String) this.getSymbol();
 
       String type = data.checkIfExists(name, functionNum); // checkar locais
@@ -171,12 +168,12 @@ public class SimpleNode implements Node {
         }
       }
 
+
       if (!type.contains("/")) { // variable has unique name
         if ((!type.equals("int") && !type.equals("boolean") && !type.equals("int[]")) || type.equals("error")) {
           if (this.jjtGetNumChildren() > 0) {
             if (!Main.tables.containsKey(this.jjtGetChild(0).getSymbol())) { // checkar se é outra classe
-              error = new SemanticalError("UNKNOWN_SYMBOL", data.filePath, this.jjtGetChild(0).getLineNumber(),
-                  ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
+              error = new SemanticalError("UNKNOWN_SYMBOL", data.filePath, this.jjtGetChild(0).getLineNumber(), ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
               error.printError(data.className, "class", ((SimpleNode) this.jjtGetChild(0)).getSymbol());
               return "error";
             } else {
@@ -217,42 +214,30 @@ public class SimpleNode implements Node {
         Map<String, Integer> arraySize = new TreeMap<String, Integer>();
         arraySize.put(jjtGetParent().jjtGetChild(0).getSymbol(), Integer.parseInt(this.jjtGetChild(0).getSymbol()));
         data.initializedArrays.put(functionNum, arraySize);
-        System.out.println("NEW " + jjtGetParent().jjtGetChild(0).getSymbol() + " " + this.jjtGetChild(0).getSymbol());
       }
       return symbol;
     }
-
+    
     if (id == NewJava.JJTARRINDEX) {
-      System.out.println("accessing " + this.jjtGetParent().getSymbol() + " [" + this.jjtGetChild(0).getSymbol() + "]");
-
       if (!data.initializedArrays.isEmpty() && data.initializedArrays.get(functionNum) != null
           && data.initializedArrays.get(functionNum).get(this.jjtGetParent().getSymbol()) != null) {
-        int size = data.initializedArrays.get(functionNum).get(this.jjtGetParent().getSymbol());
+        int length = data.initializedArrays.get(functionNum).get(this.jjtGetParent().getSymbol());
         int index;
 
         if (this.jjtGetChild(0).getId() == NewJava.JJTVAL) {
           index = Integer.parseInt(this.jjtGetChild(0).getSymbol());
 
-          if (index >= size) {
-            throw new ArrayIndexOutOfBoundsException("Index " + index + " is out of bounds for length " + size);
+          if (index >= length) {
+            error = new SemanticalError("OUT_OF_BOUNDS", data.filePath, this.jjtGetChild(0).getLineNumber(), this.jjtGetChild(0).getColumnNumber());
+            error.printError(index, length);
+            return "error";
           }
         }
       }
     }
 
-    // type of arguments
-    if (id == NewJava.JJTTEXT) {
-      String type = data.checkIfExists(this.getSymbol(), functionNum);
-
-      if (type.equals("error")) {
-        type = data.searchParam(symbol, functionNum);
-      }
-
-      if (type.equals("error")) {
-        type = data.checkIfExistGlobals(symbol);
-      }
-
-      return type;
+    if (id == NewJava.JJTTHIS) {
+      return "this";
     }
 
     if ((id == NewJava.JJTOP2) || (id == NewJava.JJTOP3) || (id == NewJava.JJTOP4) || (id == NewJava.JJTOP5)) {
@@ -262,6 +247,7 @@ public class SimpleNode implements Node {
         error.printError(symbol);
         return "error";
       }
+      
       return "int";
     }
 
@@ -293,8 +279,7 @@ public class SimpleNode implements Node {
 
       // Lado esquerdo assign
       if (identifierType.equals("error")) {
-        error = new SemanticalError("UNKNOWN_SYMBOL", data.filePath, this.jjtGetChild(0).getLineNumber(),
-            ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
+        error = new SemanticalError("UNKNOWN_SYMBOL", data.filePath, this.jjtGetChild(0).getLineNumber(), ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
         error.printError(data.className, "variable", ((SimpleNode) this.jjtGetChild(0)).getSymbol());
         return "error";
       }
@@ -305,8 +290,7 @@ public class SimpleNode implements Node {
       }
 
       if (!identifierType.equals(expressionType)) {
-        error = new SemanticalError("INCOMPATIBLE_TYPES", data.filePath, this.jjtGetChild(0).getLineNumber(),
-            ((SimpleNode) this.jjtGetChild(1)).getColumnNumber());
+        error = new SemanticalError("INCOMPATIBLE_TYPES", data.filePath, this.jjtGetChild(0).getLineNumber(), ((SimpleNode) this.jjtGetChild(1)).getColumnNumber());
         error.printError(expressionType, identifierType);
         return "error";
       }
@@ -320,17 +304,13 @@ public class SimpleNode implements Node {
       String dataType = data.getReturn(functionNum);
 
       if (!type.equals(dataType)) {
-        error = new SemanticalError("INCOMPATIBLE_TYPES", data.filePath, this.jjtGetChild(0).getLineNumber(),
-            ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
+        error = new SemanticalError("INCOMPATIBLE_TYPES", data.filePath, this.jjtGetChild(0).getLineNumber(), ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
         error.printError(type, dataType);
         return "error";
       }
 
-      if (this.jjtGetChild(0).getId() == NewJava.JJTTEXT
-          && (data.initializedVariables.isEmpty() || data.initializedVariables.get(functionNum) == null
-              || !data.initializedVariables.get(functionNum).contains(this.jjtGetChild(0).getSymbol()))) {
-        error = new SemanticalError("NO_INITIALIZATION", data.filePath, this.jjtGetChild(0).getLineNumber(),
-            this.jjtGetChild(0).getColumnNumber());
+      if (this.jjtGetChild(0).getId() == NewJava.JJTTEXT && (data.initializedVariables.isEmpty() || data.initializedVariables.get(functionNum) == null || !data.initializedVariables.get(functionNum).contains(this.jjtGetChild(0).getSymbol()))) {
+        error = new SemanticalError("NO_INITIALIZATION", data.filePath, this.jjtGetChild(0).getLineNumber(), this.jjtGetChild(0).getColumnNumber());
         error.printError(this.jjtGetChild(0).getSymbol());
         return "error";
       }
@@ -352,14 +332,18 @@ public class SimpleNode implements Node {
 
       String type = (String) leftSide.visit(data, functionNum);
 
-      if (!type.equals("error")
-          && (data.initializedVariables.isEmpty() || data.initializedVariables.get(functionNum) == null
-              || !data.initializedVariables.get(functionNum).contains(leftSide.symbol))) {
-        error = new SemanticalError("NO_INITIALIZATION", data.filePath, leftSide.getLineNumber(),
-            leftSide.getColumnNumber());
+
+      if (leftSide.getId()!= NewJava.JJTNEW && !type.equals("this") && !type.equals("error") && (data.initializedVariables.isEmpty() || data.initializedVariables.get(functionNum) == null || !data.initializedVariables.get(functionNum).contains(leftSide.symbol))) {
+        error = new SemanticalError("NO_INITIALIZATION", data.filePath, leftSide.getLineNumber(), leftSide.getColumnNumber());
         error.printError(leftSide.symbol);
         return "error";
       }
+
+      if (type.equals("this")) {
+        type = data.className;
+      }
+
+    
 
       // class
       if (Main.tables.containsKey(type)) {
@@ -369,24 +353,19 @@ public class SimpleNode implements Node {
           if (var.name.equals(rightSide.getSymbol())) {
 
             if (var.params.size() != rightSide.jjtGetNumChildren()) {
-              error = new SemanticalError("WRONG_METHOD_ARGS", data.filePath, rightSide.getLineNumber(),
-                  rightSide.getColumnNumber());
+              error = new SemanticalError("WRONG_METHOD_ARGS", data.filePath, rightSide.getLineNumber(), rightSide.getColumnNumber());
               error.printError(var.name, data.className, var.params, rightSide, data, functionNum);
               return "error";
             } else {
               for (int i = 0; i < var.params.size(); i++) {
                 String typeArg = (String) ((SimpleNode) rightSide.jjtGetChild(i)).visit(data, functionNum);
                 if (!var.params.get(i).type.equals(typeArg)) {
-                  error = new SemanticalError("INCOMPATIBLE_TYPES", data.filePath, leftSide.getLineNumber(),
-                      ((SimpleNode) rightSide.jjtGetChild(i)).getColumnNumber());
+                  error = new SemanticalError("INCOMPATIBLE_TYPES", data.filePath, leftSide.getLineNumber(), ((SimpleNode) rightSide.jjtGetChild(i)).getColumnNumber());
                   error.printError(typeArg, var.params.get(i).type);
                   return "error";
                 }
-                if (rightSide.jjtGetChild(i).getId() == NewJava.JJTTEXT && (data.initializedVariables.isEmpty()
-                    || data.initializedVariables.get(functionNum) == null
-                    || !data.initializedVariables.get(functionNum).contains(rightSide.jjtGetChild(i).getSymbol()))) {
-                  error = new SemanticalError("NO_INITIALIZATION", data.filePath,
-                      rightSide.jjtGetChild(i).getLineNumber(), rightSide.jjtGetChild(i).getColumnNumber());
+                if (rightSide.jjtGetChild(i).getId() == NewJava.JJTTEXT && (data.initializedVariables.isEmpty() || data.initializedVariables.get(functionNum) == null || !data.initializedVariables.get(functionNum).contains(rightSide.jjtGetChild(i).getSymbol()))) {
+                  error = new SemanticalError("NO_INITIALIZATION", data.filePath,rightSide.jjtGetChild(i).getLineNumber(), rightSide.jjtGetChild(i).getColumnNumber());
                   error.printError(rightSide.jjtGetChild(i).getSymbol());
                   return "error";
                 }
@@ -396,17 +375,24 @@ public class SimpleNode implements Node {
             return var.returnDescriptor;
           }
         }
+        
 
-        error = new SemanticalError("UNKNOWN_SYMBOL", data.filePath, leftSide.getLineNumber(),
-            rightSide.getColumnNumber());
+        error = new SemanticalError("UNKNOWN_SYMBOL",data.filePath, leftSide.getLineNumber(), rightSide.getColumnNumber());
         error.printError(data.className, "method", rightSide.getSymbol());
         return "error";
       }
+      
+        if (rightSide.jjtGetNumChildren() != 0 && rightSide.jjtGetChild(0).getId() == NewJava.JJTFULLSTOP) {
+          return rightSide.jjtGetChild(0).visit(data, functionNum);
+        }
 
-      if (rightSide.jjtGetChild(0).getId() == NewJava.JJTFULLSTOP) {
-        return rightSide.jjtGetChild(0).visit(data, functionNum);
-      }
-      return this.jjtGetParent().jjtGetChild(0).visit(data, functionNum);
+        if (type.equals("this")){
+          return rightSide.visit(data, functionNum);
+        }
+        if(rightSide.jjtGetNumChildren() == 0 && this.jjtGetParent().getId() != NewJava.JJTMAIN && this.jjtGetParent().getId() != NewJava.JJTFUNCTION)
+          return this.jjtGetParent().jjtGetChild(0).visit(data, functionNum);
+        else
+          return "int";
     }
 
     if (id == NewJava.JJTIF || id == NewJava.JJTWHILE) {
@@ -457,7 +443,6 @@ public class SimpleNode implements Node {
       error = new SemanticalError("NO_INITIALIZATION", data.filePath, startOP.jjtGetChild(0).getLineNumber(),
           startOP.jjtGetChild(0).getColumnNumber());
       error.printError(startOP.jjtGetChild(0).getSymbol());
-      System.out.println("wtf functionNUm = " + functionNum);
       return true;
     }
 

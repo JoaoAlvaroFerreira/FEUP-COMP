@@ -146,7 +146,6 @@ public class SymbolTable {
       }
       names.add(varName);
       initializedVariables.put(i, names);
-      System.out.println("Initialized global variable: " + varName + " + in function no. " + i);
     }
   }
 };
