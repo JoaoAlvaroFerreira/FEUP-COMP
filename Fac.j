@@ -47,11 +47,11 @@ aload 3
 aload 3
 bipush 2
 
-invokevirtual Fac/getNum(I)I
+invokevirtual exemplo3/getNum(I)I
 
 bipush 3
 
-invokevirtual Fac/getMult(I;I)I
+invokevirtual exemplo3/getMult(I;I)I
 istore 4
 iload 4
 

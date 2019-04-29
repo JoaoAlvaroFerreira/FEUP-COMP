@@ -297,8 +297,8 @@ public class JasminParser{
 
           methodTypes = this.getMethodSignature(curStatement);
 
-          //COLOCAR NOME DA CLASSE CERTA
-          ret +="invokevirtual " + this.classname + "/" + parameter.getSymbol() + methodTypes + "\n";
+          //COLOCAR NOME DA CLASSE
+          ret +="invokevirtual " + this.getVarType(classe) + "/" + parameter.getSymbol() + methodTypes + "\n";
           this.stackSize--;
         }
 
