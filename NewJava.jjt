@@ -14,6 +14,7 @@ public class NewJava
   public static int errorCount = 10;
   public static SymbolTable table;
   public static String filePath;
+  public static SimpleNode root;
 
   public NewJava(SymbolTable table, String path) {
     this.filePath = path;
@@ -37,17 +38,17 @@ public class NewJava
     }
 
 
-    SimpleNode root = myJava.Program();
+    NewJava.root = myJava.Program();
 
-    root.dump("");
+    NewJava.root.dump("");
 
     //contrutor  symbol table
 
-    table.startSymbolTable(root);
+    table.startSymbolTable(NewJava.root);
 
     //Jasmin Generator
-    JasminParser jasminParser = new JasminParser(filePath,root,table);
-    jasminParser.generate();
+    //JasminParser jasminParser = new JasminParser(filePath,root,table);
+    //jasminParser.generate();
 
     return table;
 
@@ -344,13 +345,13 @@ void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token()
         jjtThis.line = t.beginLine;
         jjtThis.column = t.beginColumn;
       }#VAL
-    | t=<IDENTIFIER> open=<BRACKETOPEN> Expression() close=<BRACKETCLOSE> 
+    | t=<IDENTIFIER> open=<BRACKETOPEN> Expression() close=<BRACKETCLOSE>
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
         jjtThis.column = t.beginColumn;
       }#VAR(1)
-      
+
 
     | t=<IDENTIFIER>
       {

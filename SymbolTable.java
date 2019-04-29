@@ -18,7 +18,7 @@ public class SymbolTable {
 
     // para cada filho da classe extrair apenas funcoes e main
     for (int i = 0; i < classe.jjtGetNumChildren(); i++) {
-     
+
       if ((classe.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) || (classe.jjtGetChild(i).getId() == NewJava.JJTMAIN)) {
         entries.add(new SymbolTableEntry((SimpleNode) classe.jjtGetChild(i)));
       } else  if ((classe.jjtGetChild(i).getId() == NewJava.JJTVAR) && (((SimpleNode) classe.jjtGetChild(i).jjtGetChild(0)).getId() == NewJava.JJTTYPE)) {
@@ -105,6 +105,19 @@ public class SymbolTable {
 
   public String getReturn(int functionNum) {
     return entries.get(functionNum).returnDescriptor.toString();
+  }
+
+  public String getReturn(String methodName,ArrayList<String> argTypes){
+    String ret = null;
+    for(SymbolTableEntry curMethod : this.entries){
+      if(curMethod.name.equals(methodName)){
+        String curRet = curMethod.getReturn(argTypes);
+        if (curRet != null)
+          ret = curRet;
+      }
+    }
+
+    return ret;
   }
 
   public SymbolType getGlobal(String name){

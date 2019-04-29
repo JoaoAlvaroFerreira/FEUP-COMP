@@ -1,30 +1,39 @@
 .source exemplo3.jmm
-.class public Fac
+.class public exemplo3
 .super java/lang/Object
 
 
 
-.method public static main([Ljava/lang/String;)V
-.limit locals 4
+; default constructor
+.method public <init>()V
+aload_0
+invokespecial java/lang/Object/<init>()V
+return
+.end method
 
-.var 2 is a I from main_init to main_end
-.var 3 is c I from main_init to main_end
+.method public getMult(I;I)I
+.limit stack 2
+.limit locals 3
 
-main_init:
-main_end:
+
+getMult_init:
+iload 1
+iload 2
+imul
+ireturn
+getMult_end:
 
 .end method
 
-.method public f1(I)[I
-.limit locals 3
+.method public getNum(I)I
+.limit stack 1
+.limit locals 2
 
-.var 2 is b [I from f1_init to f1_end
 
-f1_init:
- ; b = int[]
-bipush int[]
-astore 2
-f1_end:
+getNum_init:
+iload 1
+ireturn
+getNum_end:
 
 .end method
 

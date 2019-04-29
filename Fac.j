@@ -27,20 +27,40 @@ ComputeFac_end:
 .end method
 
 .method public static main([Ljava/lang/String;)V
-.limit stack 2
-.limit locals 3
+.limit stack 3
+.limit locals 5
 
 .var 2 is lol LFac; from main_init to main_end
+.var 3 is exe LFac; from main_init to main_end
+.var 4 is num I from main_init to main_end
 
 main_init:
+new exemplo3
+dup
+invokespecial exemplo3/<init>()V
+astore 3
 new Fac
 dup
 invokespecial Fac/<init>()V
 astore 2
+aload 3
+aload 3
+bipush 2
+
+invokevirtual Fac/getNum(I)I
+
+bipush 3
+
+invokevirtual Fac/getMult(I;I)I
+istore 4
+iload 4
+
+invokestatic io/println(I)V
 aload 2
 bipush 10
 
 invokevirtual Fac/ComputeFac(I)I
+
 invokestatic io/println(I)V
 return
 main_end:

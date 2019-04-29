@@ -1,3 +1,4 @@
+import java.util.Map;
 import java.lang.String;
 import java.util.ArrayList;
 import java.io.File;
@@ -294,21 +295,10 @@ public class JasminParser{
             //methodTypes += this.getJasminType((SimpleNode)parameter.jjtGetChild(i).) + ";";
           }
 
-          //encontrar metodo na symbol table
-          for(int i=0;i<this.symbolTable.entries.size();i++){
-            if(this.symbolTable.entries.get(i).name.equals(parameter.getSymbol())){
-              for(SymbolType arg : this.symbolTable.entries.get(i).params){
-                methodTypes +=this.getJasminType(arg)+";";
-              }
-              //remover ultimo ponto e vrigula
-              if (methodTypes != null && methodTypes.length() > 0 && methodTypes.charAt(methodTypes.length() - 1) == ';') {
-                methodTypes = methodTypes.substring(0, methodTypes.length() - 1);
-              }
-              methodTypes += ")"+this.getJasminType(new SymbolType(this.symbolTable.entries.get(i).returnDescriptor));
-            }
-          }
+          methodTypes = this.getMethodSignature(curStatement);
 
-          ret +="invokevirtual " + this.classname + "/" + parameter.getSymbol() + methodTypes;
+          //COLOCAR NOME DA CLASSE CERTA
+          ret +="invokevirtual " + this.classname + "/" + parameter.getSymbol() + methodTypes + "\n";
           this.stackSize--;
         }
 
@@ -397,6 +387,67 @@ public class JasminParser{
     }
   }
 
+  public String getMethodSignature(SimpleNode classCall){
+    String retSignature = "";
+    SimpleNode classe = (SimpleNode)classCall.jjtGetChild(0);
+    SimpleNode parameter = (SimpleNode)classCall.jjtGetChild(1);
+    ArrayList<String> argTypes = new ArrayList<>();
+
+    //obter tipo dos parametros
+    for(int i=0;i<parameter.jjtGetNumChildren();i++){
+      SimpleNode curArg = (SimpleNode) parameter.jjtGetChild(i);
+
+      switch(curArg.getId()){
+        case NewJava.JJTVAL:
+        case NewJava.JJTOP2:
+        case NewJava.JJTOP3:
+        case NewJava.JJTOP4:
+        case NewJava.JJTOP5:
+          argTypes.add("int");
+          break;
+        case NewJava.JJTFULLSTOP:
+          argTypes.add(this.getNormalType(new SymbolType(JasminParser.extractRet(this.getMethodSignature(curArg)))));
+          break;
+        case NewJava.JJTFALSE:
+        case NewJava.JJTTRUE:
+          argTypes.add("boolean");
+        case NewJava.JJTTEXT:
+        case NewJava.JJTVAR:
+          argTypes.add(this.getVarType(curArg));
+        break;
+
+        default:
+          break;
+
+      }
+    }
+
+
+    for(String arg : argTypes){
+      System.out.println(" "+arg);
+    }
+
+    //obter tipo retorno da funcao
+    SymbolTable classTable = Main.tables.get(this.getVarType(classe));
+    retSignature = classTable.getReturn(parameter.symbol,argTypes);
+
+    //gerar method signature
+    String methodTypes ="(";
+    for(String argType : argTypes){
+      methodTypes +=this.getJasminType(new SymbolType(argType))+";";
+    }
+    //remover ultimo ponto e vrigula
+    if (methodTypes != null && methodTypes.length() > 0 && methodTypes.charAt(methodTypes.length() - 1) == ';') {
+      methodTypes = methodTypes.substring(0, methodTypes.length() - 1);
+    }
+    System.out.println("Return: " + retSignature + " " + classe.symbol + "."+parameter.symbol);
+    methodTypes += ")"+this.getJasminType(new SymbolType(retSignature));
+
+
+
+    return methodTypes;
+  }
+
   public String generateGlobals(){
     String ret = "";
 
@@ -455,6 +506,43 @@ public class JasminParser{
     this.stackSize++;
     if(this.stackSize > this.maxStackSize)
       this.maxStackSize = this.stackSize;
+  }
+
+  public String getVarType(SimpleNode curVariable){
+    //verifica se é local
+    if(localVarList.indexOf(curVariable.getSymbol()) != -1){
+      //encontrar tipo da var na symbol table
+      SymbolType curVar = this.methodSymbols.getLocal(curVariable.getSymbol());
+      return curVar.type;
+
+    //global (atributo da classe)
+    }else if(this.symbolTable.getGlobal(curVariable.getSymbol())!=null){
+      return this.symbolTable.getGlobal(curVariable.getSymbol()).type;
+    }
+
+    return null;
+  }
+
+
+  //extrai tipo de retorno de uma signature de uma funcao
+  public static String extractRet(String signature){
+    String[] splitted = signature.split("\\)");
+    return splitted[1];
+  }
+
+  public String getNormalType(SymbolType varType){
+    switch(varType.type){
+      case "I":
+      return "int";
+      case "[I":
+      return "int[]";
+      case "Z":
+      return "boolean";
+      case "V":
+      return "void";
+      default:
+      return varType.type.substring(1,varType.type.length()-1);
+    }
   }
 
 }

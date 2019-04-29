@@ -93,4 +93,20 @@ public class SymbolTableEntry {
 		System.out.println("");
 	}
 
+	//retorna o tipo de retorno da funcao com uma dada lista de tipo de args
+	public String getReturn(ArrayList<String> retTypes){
+
+		//se o num. de tipos nao corresponder
+		if(this.params.size() != retTypes.size())
+			return null;
+
+		for(int i=0;i<this.params.size();i++){
+			if(retTypes.get(i) != this.params.get(i).getType()){
+				return null;
+			}
+		}
+
+		return returnDescriptor;
+	}
+
 }

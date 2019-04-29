@@ -10,6 +10,11 @@ class Fac {
     }
     public static void main(String[] a){
       Fac lol;
+      exemplo3 exe;
+      int num;
+      exe = new exemplo3();
       lol=new Fac();
+      num=exe.getMult(exe.getNum(2),3);
+      io.println(num);
       io.println(lol.ComputeFac(10));
 } }

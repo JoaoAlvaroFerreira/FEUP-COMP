@@ -18,6 +18,7 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
   public static int errorCount = 10;
   public static SymbolTable table;
   public static String filePath;
+  public static SimpleNode root;
 
   public NewJava(SymbolTable table, String path) {
     this.filePath = path;
@@ -41,17 +42,17 @@ public class NewJava/*@bgen(jjtree)*/implements NewJavaTreeConstants/*@egen*/
     }
 
 
-    SimpleNode root = myJava.Program();
+    NewJava.root = myJava.Program();
 
-    root.dump("");
+    NewJava.root.dump("");
 
     //contrutor  symbol table
 
-    table.startSymbolTable(root);
+    table.startSymbolTable(NewJava.root);
 
     //Jasmin Generator
-    JasminParser jasminParser = new JasminParser(filePath,root,table);
-    jasminParser.generate();
+    //JasminParser jasminParser = new JasminParser(filePath,root,table);
+    //jasminParser.generate();
 
     return table;
 
@@ -901,7 +902,7 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
         jjtree.closeNodeScope(jjtn002,  1);
         jjtc002 = false;
       }
-/*@egen*/ 
+/*@egen*/
       {
         jjtn002.symbol = t.image;
         jjtn002.line = t.beginLine;
@@ -913,7 +914,7 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
         }
       }
 /*@egen*/       
-      
+
 
     | t=<IDENTIFIER>/*@bgen(jjtree) TEXT */
       {
