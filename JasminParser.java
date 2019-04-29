@@ -116,7 +116,7 @@ public class JasminParser{
 
       //argumentos funcao
       for(int i=0;i<methodSymbols.params.size();i++){
-        ret+=this.getJasminType(methodSymbols.params.get(i)) + ";";
+        ret+=this.getJasminType(methodSymbols.params.get(i)) /*+ ";"*/;
         localVarList.add(methodSymbols.params.get(i).symbol);
       }
       //remove ultimo ponto e virgula
@@ -423,9 +423,9 @@ public class JasminParser{
     }
 
 
-    for(String arg : argTypes){
-      System.out.println(" "+arg);
-    }
+    //for(String arg : argTypes){
+    //  System.out.println(" "+arg);
+    //}
 
     //obter tipo retorno da funcao
     SymbolTable classTable = Main.tables.get(this.getVarType(classe));
@@ -434,13 +434,13 @@ public class JasminParser{
     //gerar method signature
     String methodTypes ="(";
     for(String argType : argTypes){
-      methodTypes +=this.getJasminType(new SymbolType(argType))+";";
+      methodTypes +=this.getJasminType(new SymbolType(argType))/*+";"*/;
     }
     //remover ultimo ponto e vrigula
     if (methodTypes != null && methodTypes.length() > 0 && methodTypes.charAt(methodTypes.length() - 1) == ';') {
       methodTypes = methodTypes.substring(0, methodTypes.length() - 1);
     }
-    System.out.println("Return: " + retSignature + " " + classe.symbol + "."+parameter.symbol);
+    //System.out.println("Return: " + retSignature + " " + classe.symbol + "."+parameter.symbol);
     methodTypes += ")"+this.getJasminType(new SymbolType(retSignature));
 
 

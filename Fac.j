@@ -51,7 +51,7 @@ invokevirtual exemplo3/getNum(I)I
 
 bipush 3
 
-invokevirtual exemplo3/getMult(I;I)I
+invokevirtual exemplo3/getMult(II)I
 istore 4
 iload 4
 

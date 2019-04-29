@@ -11,7 +11,7 @@ invokespecial java/lang/Object/<init>()V
 return
 .end method
 
-.method public getMult(I;I)I
+.method public getMult(II)I
 .limit stack 2
 .limit locals 3
 
