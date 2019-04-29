@@ -375,6 +375,7 @@ public class SimpleNode implements Node {
             return var.returnDescriptor;
           }
         }
+        
 
         error = new SemanticalError("UNKNOWN_SYMBOL",data.filePath, leftSide.getLineNumber(), rightSide.getColumnNumber());
         error.printError(data.className, "method", rightSide.getSymbol());
