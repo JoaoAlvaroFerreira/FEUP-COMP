@@ -12,13 +12,26 @@ class Fac {
       Fac lol;
       exemplo3 exe;
       int num;
+      int num2;
       exe = new exemplo3();
       lol=new Fac();
       num=exe.getMult(exe.getNum(2),3);
+
       io.println(num);
+      io.println(lol.ComputeFac(10));
+
       num=0;
-      while(num<5){
-        io.println(lol.ComputeFac(10));
-        //num=num+1;
+      num2=0;
+      while(num2<10){
+        num=0;
+        while(num<5){
+          num=num+1;
+          io.println(num);
+        }
+        num2=num2+1;
       }
-} }
+
+
+
+    }
+}

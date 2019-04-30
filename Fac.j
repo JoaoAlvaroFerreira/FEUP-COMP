@@ -27,12 +27,13 @@ ComputeFac_end:
 .end method
 
 .method public static main([Ljava/lang/String;)V
-.limit stack 0
-.limit locals 5
+.limit stack 7
+.limit locals 6
 
 .var 2 is lol LFac; from main_init to main_end
 .var 3 is exe LFac; from main_init to main_end
 .var 4 is num I from main_init to main_end
+.var 5 is num2 I from main_init to main_end
 
 main_init:
 new exemplo3
@@ -56,23 +57,58 @@ istore 4
 iload 4
 
 invokestatic io/println(I)V
+aload 2
+bipush 10
+
+invokevirtual Fac/ComputeFac(I)I
+
+invokestatic io/println(I)V
 bipush 0
 istore 4
-while: 
+bipush 0
+istore 5
+
+while_0: 
+iload 5
+bipush 10
+if_icmplt true_0
+bipush 0
+goto endComp_0
+true_0:
+bipush 1
+endComp_0:
+ifeq endWhile_0
+
+bipush 0
+istore 4
+
+while_1: 
 iload 4
 bipush 5
-if_icmplt endWhile
-.method public null()LFac;
-.limit stack 0
-.limit locals 1
+if_icmplt true_0
+bipush 0
+goto endComp_0
+true_0:
+bipush 1
+endComp_0:
+ifeq endWhile_1
 
+iload 4
+bipush 1
+iadd
+istore 4
+iload 4
 
-null_init:
-null_end:
-
-.end method
-
-endWhile:
+invokestatic io/println(I)V
+goto while_1
+endWhile_1:
+iload 5
+bipush 1
+iadd
+istore 5
+goto while_0
+endWhile_0:
+return
 main_end:
 
 .end method

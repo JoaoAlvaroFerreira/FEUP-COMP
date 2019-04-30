@@ -23,6 +23,8 @@ public class JasminParser{
   private int stackSize;
   private int maxStackSize;
   private SymbolTableEntry methodSymbols;
+  private int whileCounter;  //identifies the scope number of the current while
+  private int compCounter;  //identifies the number of the current comparation
 
   public JasminParser(String file_path,SimpleNode root,SymbolTable symbolTable){
     this.source = file_path;
@@ -30,6 +32,8 @@ public class JasminParser{
     this.fileClass = (SimpleNode) root.jjtGetChild(0);
     this.localVarList = new ArrayList<>();
     this.symbolTable = symbolTable;
+    this.whileCounter = 0;
+    this.compCounter = 0;
 
     if(fileClass.getId() == NewJava.JJTCLASS){
       this.accessspec = "public";
@@ -437,6 +441,15 @@ public class JasminParser{
         ret += "idiv\n";
         this.stackSize--;
       break;
+      //push 0 -> false ou 1 -> true
+      case "<":
+        ret += "if_icmplt true_"+this.compCounter+"\n";
+        ret += "bipush 0\n";
+        ret += "goto endComp_"+this.compCounter+"\n";
+        ret += "true_"+this.compCounter+":\n";
+        ret += "bipush 1\n";
+        ret += "endComp_"+this.compCounter+":\n";
+      break;
     }
 
     return ret;
@@ -444,28 +457,43 @@ public class JasminParser{
 
   public String generateWhile(SimpleNode loop){
     String ret = "";
+    int whileNum = this.whileCounter++;
 
     if(loop.jjtGetNumChildren()>0){
+
       SimpleNode cond = (SimpleNode) loop.jjtGetChild(0);
 
       //label while
-      ret+="while: \n";
+      ret+="\nwhile_"+whileNum+": \n";
 
-      //condition args
-      ret+=this.generateStatement((SimpleNode)cond.jjtGetChild(0));
-      ret+=this.generateStatement((SimpleNode)cond.jjtGetChild(1));
 
-      //comparison
-      ret +="if_icmplt endWhile\n";
+      //se for uma AND
+      if(cond.getId() == NewJava.JJTOP2){
+        //se algum for falso, sair do while
+        ret+=this.generateStatement((SimpleNode)cond.jjtGetChild(0));
+        ret +="ifeq endWhile_"+whileNum+"\n\n";
+        this.stackSize--;
+        ret+=this.generateStatement((SimpleNode)cond.jjtGetChild(1));
+        ret +="ifeq endWhile_"+whileNum+"\n\n";
+        this.stackSize--;
+        //caso contrario 0-> false  tudo o resto -> true
+      }else{
+        ret+=this.generateStatement((SimpleNode)cond);
+        ret +="ifeq endWhile_"+whileNum+"\n\n";
+        //this.stackSize--;
+      }
 
       //instruction inside while
       for(int i=1;i<loop.jjtGetNumChildren();i++){
         System.out.println("LOOP CHILDERN " + loop.jjtGetChild(i).getId());
-        ret+=this.generateMethod((SimpleNode)loop.jjtGetChild(i));
+        ret+=this.generateStatement((SimpleNode)loop.jjtGetChild(i));
       }
 
+
+      ret +="goto while_"+whileNum+"\n";
       //end label
-      ret +="endWhile:\n";
+      ret +="endWhile_"+whileNum+":\n";
+
 
     }
     return ret;
