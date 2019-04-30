@@ -18,3 +18,5 @@
 /TokenMgrError.class
 /SymbolType$Type.class
 /SymbolType.class
+
+*.class

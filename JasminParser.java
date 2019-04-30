@@ -301,8 +301,9 @@ public class JasminParser{
           ret +="invokevirtual " + this.getVarType(classe) + "/" + parameter.getSymbol() + methodTypes + "\n";
           this.stackSize--;
         }
-
-
+        break;
+      case NewJava.JJTWHILE:
+        ret+=this.generateWhile(curStatement);
         break;
       default:
         break;
@@ -343,48 +344,11 @@ public class JasminParser{
   public String generateAssign(SimpleNode statement){
     String ret = "";
 
-    /*
-    //caso seja atrib. de operacoes
-    if((statement.jjtGetChild(1).getId() == NewJava.JJTOP2) || (statement.jjtGetChild(1).getId() == NewJava.JJTOP3) || (statement.jjtGetChild(1).getId() == NewJava.JJTOP4) || (statement.jjtGetChild(1).getId() == NewJava.JJTOP5)){
-      ret += " ; " + statement.jjtGetChild(0).getSymbol() + " = " + statement.jjtGetChild(1).getSymbol() + "\n"; //FIX THE SIGN ONLY COMMENT
-      ret+= this.generateOp((SimpleNode)statement.jjtGetChild(1));
-    //atribuicao de booleanas
-    }else if(statement.jjtGetChild(1).getId() == NewJava.JJTFALSE){
-      ret += " ; " + statement.jjtGetChild(0).getSymbol() + " = false\n";
-      ret += "bipush 0\n";
-      this.incrementStackSize();
-    }else if(statement.jjtGetChild(1).getId() == NewJava.JJTTRUE){
-      ret += " ; " + statement.jjtGetChild(0).getSymbol() + " = true\n";
-      ret += "bipush 1\n";
-      this.incrementStackSize();
-    //inteiros
-    }else{
-      ret += " ; " + statement.jjtGetChild(0).getSymbol() + " = " + statement.jjtGetChild(1).getSymbol() + "\n";
-      ret += "bipush " + statement.jjtGetChild(1).getSymbol() + "\n";
-      this.incrementStackSize();
-    }
-    */
-
     ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(1));
     ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(0));
 
 
     return ret;
-  }
-
-  public String getJasminType(SymbolType varType){
-    switch(varType.type){
-      case "int":
-      return "I";
-      case "int[]":
-      return "[I";
-      case "boolean":
-      return "Z";
-      case "void":
-      return "V";
-      default:
-      return "L"+this.classname+";";
-    }
   }
 
   public String getMethodSignature(SimpleNode classCall){
@@ -422,11 +386,6 @@ public class JasminParser{
       }
     }
 
-
-    //for(String arg : argTypes){
-    //  System.out.println(" "+arg);
-    //}
-
     //obter tipo retorno da funcao
     SymbolTable classTable = Main.tables.get(this.getVarType(classe));
     retSignature = classTable.getReturn(parameter.symbol,argTypes);
@@ -442,8 +401,6 @@ public class JasminParser{
     }
     //System.out.println("Return: " + retSignature + " " + classe.symbol + "."+parameter.symbol);
     methodTypes += ")"+this.getJasminType(new SymbolType(retSignature));
-
-
 
     return methodTypes;
   }
@@ -462,23 +419,6 @@ public class JasminParser{
 
     ret+=this.generateStatement((SimpleNode)op.jjtGetChild(0));
     ret+=this.generateStatement((SimpleNode)op.jjtGetChild(1));
-
-    /*
-    if(op.jjtGetChild(0).getId() == NewJava.JJTVAL){
-      ret += "bipush " + op.jjtGetChild(0).getSymbol() + "\n";
-      this.incrementStackSize();
-    }else{
-      ret += this.generateOp((SimpleNode)op.jjtGetChild(0));
-    }
-
-    if(op.jjtGetChild(1).getId() == NewJava.JJTVAL){
-      ret += "bipush " + op.jjtGetChild(1).getSymbol() + "\n";
-      this.incrementStackSize();
-    }else{
-      ret += this.generateOp((SimpleNode)op.jjtGetChild(1));
-    }
-
-    */
 
     switch(op.symbol){
       case "+":
@@ -499,6 +439,35 @@ public class JasminParser{
       break;
     }
 
+    return ret;
+  }
+
+  public String generateWhile(SimpleNode loop){
+    String ret = "";
+
+    if(loop.jjtGetNumChildren()>0){
+      SimpleNode cond = (SimpleNode) loop.jjtGetChild(0);
+
+      //label while
+      ret+="while: \n";
+
+      //condition args
+      ret+=this.generateStatement((SimpleNode)cond.jjtGetChild(0));
+      ret+=this.generateStatement((SimpleNode)cond.jjtGetChild(1));
+
+      //comparison
+      ret +="if_icmplt endWhile\n";
+
+      //instruction inside while
+      for(int i=1;i<loop.jjtGetNumChildren();i++){
+        System.out.println("LOOP CHILDERN " + loop.jjtGetChild(i).getId());
+        ret+=this.generateMethod((SimpleNode)loop.jjtGetChild(i));
+      }
+
+      //end label
+      ret +="endWhile:\n";
+
+    }
     return ret;
   }
 
@@ -528,6 +497,21 @@ public class JasminParser{
   public static String extractRet(String signature){
     String[] splitted = signature.split("\\)");
     return splitted[1];
+  }
+
+  public String getJasminType(SymbolType varType){
+    switch(varType.type){
+      case "int":
+      return "I";
+      case "int[]":
+      return "[I";
+      case "boolean":
+      return "Z";
+      case "void":
+      return "V";
+      default:
+      return "L"+this.classname+";";
+    }
   }
 
   public String getNormalType(SymbolType varType){

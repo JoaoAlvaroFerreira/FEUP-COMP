@@ -16,5 +16,9 @@ class Fac {
       lol=new Fac();
       num=exe.getMult(exe.getNum(2),3);
       io.println(num);
-      io.println(lol.ComputeFac(10));
+      num=0;
+      while(num<5){
+        io.println(lol.ComputeFac(10));
+        //num=num+1;
+      }
 } }
