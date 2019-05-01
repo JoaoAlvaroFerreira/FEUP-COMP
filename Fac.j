@@ -27,7 +27,7 @@ ComputeFac_end:
 .end method
 
 .method public static main([Ljava/lang/String;)V
-.limit stack 7
+.limit stack 6
 .limit locals 6
 
 .var 2 is lol LFac; from main_init to main_end
@@ -68,30 +68,33 @@ istore 4
 bipush 0
 istore 5
 
-while_0: 
+while0: 
 iload 5
 bipush 10
-if_icmplt true_0
+if_icmplt true0
 bipush 0
-goto endComp_0
-true_0:
+goto endComp0
+true0:
 bipush 1
-endComp_0:
-ifeq endWhile_0
+endComp0:
+ifeq endWhile0
+
+bipush 1
+ifeq endWhile0
 
 bipush 0
 istore 4
 
-while_1: 
+while1: 
 iload 4
 bipush 5
-if_icmplt true_0
+if_icmplt true1
 bipush 0
-goto endComp_0
-true_0:
+goto endComp1
+true1:
 bipush 1
-endComp_0:
-ifeq endWhile_1
+endComp1:
+ifeq endWhile1
 
 iload 4
 bipush 1
@@ -100,14 +103,14 @@ istore 4
 iload 4
 
 invokestatic io/println(I)V
-goto while_1
-endWhile_1:
+goto while1
+endWhile1:
 iload 5
 bipush 1
 iadd
 istore 5
-goto while_0
-endWhile_0:
+goto while0
+endWhile0:
 return
 main_end:
 

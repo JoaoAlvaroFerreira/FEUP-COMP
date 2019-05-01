@@ -22,7 +22,7 @@ class Fac {
 
       num=0;
       num2=0;
-      while(num2<10){
+      while(num2<10 && true){
         num=0;
         while(num<5){
           num=num+1;

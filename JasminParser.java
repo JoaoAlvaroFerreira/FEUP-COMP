@@ -443,12 +443,13 @@ public class JasminParser{
       break;
       //push 0 -> false ou 1 -> true
       case "<":
-        ret += "if_icmplt true_"+this.compCounter+"\n";
+        ret += "if_icmplt true"+this.compCounter+"\n";
         ret += "bipush 0\n";
-        ret += "goto endComp_"+this.compCounter+"\n";
-        ret += "true_"+this.compCounter+":\n";
+        ret += "goto endComp"+this.compCounter+"\n";
+        ret += "true"+this.compCounter+":\n";
         ret += "bipush 1\n";
-        ret += "endComp_"+this.compCounter+":\n";
+        ret += "endComp"+this.compCounter+":\n";
+        this.compCounter++;
       break;
     }
 
@@ -464,22 +465,22 @@ public class JasminParser{
       SimpleNode cond = (SimpleNode) loop.jjtGetChild(0);
 
       //label while
-      ret+="\nwhile_"+whileNum+": \n";
+      ret+="\nwhile"+whileNum+": \n";
 
 
       //se for uma AND
       if(cond.getId() == NewJava.JJTOP2){
         //se algum for falso, sair do while
         ret+=this.generateStatement((SimpleNode)cond.jjtGetChild(0));
-        ret +="ifeq endWhile_"+whileNum+"\n\n";
+        ret +="ifeq endWhile"+whileNum+"\n\n";
         this.stackSize--;
         ret+=this.generateStatement((SimpleNode)cond.jjtGetChild(1));
-        ret +="ifeq endWhile_"+whileNum+"\n\n";
+        ret +="ifeq endWhile"+whileNum+"\n\n";
         this.stackSize--;
         //caso contrario 0-> false  tudo o resto -> true
       }else{
         ret+=this.generateStatement((SimpleNode)cond);
-        ret +="ifeq endWhile_"+whileNum+"\n\n";
+        ret +="ifeq endWhile"+whileNum+"\n\n";
         //this.stackSize--;
       }
 
@@ -490,9 +491,9 @@ public class JasminParser{
       }
 
 
-      ret +="goto while_"+whileNum+"\n";
+      ret +="goto while"+whileNum+"\n";
       //end label
-      ret +="endWhile_"+whileNum+":\n";
+      ret +="endWhile"+whileNum+":\n";
 
 
     }
