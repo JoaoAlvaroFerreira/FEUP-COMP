@@ -1,0 +1,38 @@
+class Array {
+    
+    int elements[];
+    int currentSize;
+    int totalSize;
+   
+
+    public array(int arraySize) {
+		super();
+		totalSize = arraySize;
+		currentSize = 0;
+		elements = new int[totalSize];
+	}
+
+	private void validateIndex(int index) {
+		if(index < 0 || currentSize <= index) {
+			System.out.println("Error: Array index out of range!");
+			System.exit(1); // shut program down!
+		}
+	}
+
+	public int getElement(int index) {
+		validateIndex(index);
+		return elements[index];
+	}
+
+	public int getcurrentSize() {
+		return currentSize;
+	}
+
+	public void addElement(int element) {
+		if (currentSize < totalSize) {
+			elements[currentSize] = element;
+			currentSize = currentSize + 1;
+		}
+	}
+
+}
