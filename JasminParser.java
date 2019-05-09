@@ -25,6 +25,8 @@ public class JasminParser{
   private SymbolTableEntry methodSymbols;
   private int whileCounter;  //identifies the scope number of the current while
   private int compCounter;  //identifies the number of the current comparation
+  private int ifCounter;  //identifies the scope number of the current if
+  private int elseCounter;  //identifies the scope number of the current else
 
   public JasminParser(String file_path,SimpleNode root,SymbolTable symbolTable){
     this.source = file_path;
@@ -34,6 +36,7 @@ public class JasminParser{
     this.symbolTable = symbolTable;
     this.whileCounter = 0;
     this.compCounter = 0;
+    this.ifCounter = 0;
 
     if(fileClass.getId() == NewJava.JJTCLASS){
       this.accessspec = "public";
@@ -290,7 +293,7 @@ public class JasminParser{
           ret+="invokestatic " + classe.symbol + "/" + parameter.symbol + "(I)V\n";
           this.stackSize--;
 
-        }else{
+        } else{
 
           ret+=this.generateStatement(classe);
 
@@ -308,6 +311,12 @@ public class JasminParser{
         break;
       case NewJava.JJTWHILE:
         ret+=this.generateWhile(curStatement);
+        break;
+      case NewJava.JJTIF:
+        ret+=this.generateCondition(curStatement, "if");
+        break;
+      case NewJava.JJTELSE:
+      ret+=this.generateCondition(curStatement, "else");
         break;
       default:
         break;
@@ -418,6 +427,7 @@ public class JasminParser{
 
     return ret;
   }
+
   public String generateOp(SimpleNode op){
     String ret = "";
 
@@ -497,6 +507,67 @@ public class JasminParser{
 
 
     }
+    return ret;
+  }
+
+  public String generateCondition(SimpleNode cond, String type) {
+    String ret = "";
+    int num;
+    
+    if(cond.jjtGetNumChildren()>0){
+
+    SimpleNode condition = (SimpleNode)cond.jjtGetChild(0);
+
+    if (type.equals("if")) {
+      num = this.ifCounter++;
+      //label if
+      ret+="\nif"+num+": \n";
+      //se for uma AND
+      if(condition.getId() == NewJava.JJTOP2){
+        //se algum for falso, sair do while
+        ret += this.generateStatement((SimpleNode)condition.jjtGetChild(0));
+        ret += "ifeq endIf"+num+"\n\n";
+        this.stackSize--;
+        ret += this.generateStatement((SimpleNode)condition.jjtGetChild(1));
+        ret += "ifeq endIf"+num+"\n\n";
+        this.stackSize--;
+        //caso contrario 0-> false  tudo o resto -> true
+      } else{
+        ret += this.generateStatement((SimpleNode)condition);
+        ret +="ifeq endIf"+num+"\n\n";
+        //this.stackSize--;
+      }
+    } else if (type.equals("else")) {
+      num = this.elseCounter++;
+      //label else
+      ret+="\nelse"+num+": \n";
+    } else {
+      return "";
+    }
+
+
+    //statement inside if
+    for(int i = 1 ; i < cond.jjtGetNumChildren();i++){
+      if (type.equals("if")) {
+        System.out.print("IF ");
+      } else if (type.equals("else")) {
+        System.out.print("ELSE ");
+      }
+      System.out.print("CHILDREN " + cond.jjtGetChild(i).getId());
+      System.out.println();
+      ret += this.generateStatement((SimpleNode)cond.jjtGetChild(i));
+    }
+
+    //end label
+    ret +="end";
+    if (type.equals("if")) {
+      ret += "If";
+    } else if (type.equals("else")) {
+      ret += "Else";
+    }
+    ret += num+":\n";
+  }
+
     return ret;
   }
 
