@@ -118,7 +118,7 @@ public class JasminParser{
       ret += ".method public static main([Ljava/lang/String;)V\n";
       method.symbol = "main";
       localVarList.add("args");
-    }else{
+    } else { 
       ret += ".method public " + method.getSymbol() + "(";
 
       //argumentos funcao
@@ -149,9 +149,13 @@ public class JasminParser{
       tmp+=this.generateStatement(curStatement);
     }
 
-    if(methodSymbols.returnDescriptor.equals("void")){
-      tmp+="return\n";
+    if(methodSymbols.returnDescriptor.equals("int[]") || methodSymbols.returnDescriptor.equals("boolean")) {
+      tmp+="a";
+    } else if (methodSymbols.returnDescriptor.equals("int")) {
+      tmp+="i";
     }
+
+    tmp+="return\n";
 
     //label end
     tmp += method.getSymbol() + "_end:\n";
@@ -178,10 +182,7 @@ public class JasminParser{
         if(curStatement.jjtGetNumChildren() > 0){
           SimpleNode returnVal = (SimpleNode)curStatement.jjtGetChild(0);
           ret+=this.generateStatement(returnVal);
-          ret+="ireturn\n";
           this.stackSize--;
-        }else{
-          ret+="return\n";
         }
         break;
 
@@ -202,14 +203,15 @@ public class JasminParser{
           ret += Integer.toString(localVarList.indexOf(curStatement.getSymbol())) + "\n";
           this.incrementStackSize();
 
-        }else if(this.symbolTable.getGlobal(curStatement.getSymbol())!=null){
+        } else if(this.symbolTable.getGlobal(curStatement.getSymbol()) != null){
           ret += "getfield ";
           if(this.supername != null)
             ret += this.supername + "/";
           ret+= this.classname + "/" + curStatement.getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(curStatement.getSymbol()))+"\n";
           this.incrementStackSize();
         //classe externa
-        }else{
+
+        } else {
           //ret += "getstatic " + curStatement.getSymbol() + "\n";
         }
 
@@ -293,14 +295,15 @@ public class JasminParser{
           ret+="invokestatic " + classe.symbol + "/" + parameter.symbol + "(I)V\n";
           this.stackSize--;
 
-        } else{
-
+        } else {
           ret+=this.generateStatement(classe);
 
           for(int i=0;i<parameter.jjtGetNumChildren();i++){
             ret+=this.generateStatement((SimpleNode)parameter.jjtGetChild(i))+"\n";
             //methodTypes += this.getJasminType((SimpleNode)parameter.jjtGetChild(i).) + ";";
           }
+
+          System.out.println("curState: " + curStatement);
 
           methodTypes = this.getMethodSignature(curStatement);
 
@@ -316,7 +319,10 @@ public class JasminParser{
         ret+=this.generateCondition(curStatement, "if");
         break;
       case NewJava.JJTELSE:
-      ret+=this.generateCondition(curStatement, "else");
+        ret+=this.generateCondition(curStatement, "else");
+        break;
+      case NewJava.JJTARRINDEX:
+        
         break;
       default:
         break;
@@ -335,6 +341,8 @@ public class JasminParser{
       if((method.jjtGetChild(i).getId() == NewJava.JJTVAR)
           && (method.jjtGetChild(i).jjtGetChild(0).getId() == NewJava.JJTTYPE)){
         varType = new SymbolType(method.jjtGetChild(i).getSymbol(), method.jjtGetChild(i).jjtGetChild(0).getSymbol());
+
+        System.out.println("varType: " + varType + " " + method.jjtGetChild(i).getSymbol());
 
         localVarList.add(varType.symbol);
 
@@ -400,8 +408,15 @@ public class JasminParser{
     }
 
     //obter tipo retorno da funcao
-    SymbolTable classTable = Main.tables.get(this.getVarType(classe));
-    retSignature = classTable.getReturn(parameter.symbol,argTypes);
+    
+    String varType = this.getVarType(classe);
+    if(varType == null){
+      varType = "void";
+      retSignature = "void";
+    }else{
+      SymbolTable classTable = Main.tables.get(varType);
+      retSignature = classTable.getReturn(parameter.symbol,argTypes);
+    }
 
     //gerar method signature
     String methodTypes ="(";
@@ -585,7 +600,7 @@ public class JasminParser{
       return curVar.type;
 
     //global (atributo da classe)
-    }else if(this.symbolTable.getGlobal(curVariable.getSymbol())!=null){
+    } else if(this.symbolTable.getGlobal(curVariable.getSymbol())!=null){
       return this.symbolTable.getGlobal(curVariable.getSymbol()).type;
     }
 

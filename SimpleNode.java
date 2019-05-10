@@ -343,8 +343,6 @@ public class SimpleNode implements Node {
         type = data.className;
       }
 
-    
-
       // class
       if (Main.tables.containsKey(type)) {
         SymbolTable tableAux = Main.tables.get(type);

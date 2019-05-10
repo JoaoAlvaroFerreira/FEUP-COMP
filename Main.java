@@ -13,6 +13,13 @@ public class Main {
       SymbolTable symbolTable = null;
       ArrayList<JasminParser> parsers = new ArrayList<>();
 
+      int[] nuno = new int[6];
+      nuno[0] = 1;
+      while (nuno.length < 4) {
+        System.out.println("haha");
+      }
+
+
       for (int i = 0; i < args.length; i++) {
           parser = new NewJava(symbolTable, args[i]);
           symbolTable = parser.start();

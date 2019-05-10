@@ -4,9 +4,9 @@ javacc NewJava.jj
 echo -----------------------------------
 javac *.java
 echo -----------------------------------
-java Main Fac.jmm exemplo3.jmm
+java Main FindMaximum.jmm
 echo -----------------------------------
-java -jar jasmin-2.4/jasmin.jar Fac.j exemplo3.j
+java -jar jasmin-2.4/jasmin.jar FindMaximum.j
 echo -----------------------------------
-java Fac
+java FindMaximum
 

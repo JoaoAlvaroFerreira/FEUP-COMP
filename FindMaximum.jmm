@@ -38,7 +38,6 @@ class FindMaximum {
 
 	public static void main(String[] args) {
 		FindMaximum fm;
-
 		fm = new FindMaximum();
 		fm.build_test_arr();
 		
