@@ -72,9 +72,8 @@ find_maximum_end:
 
 
 build_test_arr_init:
-new int[]
-dup
-invokespecial int[]/<init>()V
+bipush 5
+newarray int
 putfield FindMaximum/test_arr [I
 bipush 14
 bipush 28

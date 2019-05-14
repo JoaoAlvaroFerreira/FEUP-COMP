@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.regex.*;
 
 public class JasminParser{
 
@@ -118,7 +119,7 @@ public class JasminParser{
       ret += ".method public static main([Ljava/lang/String;)V\n";
       method.symbol = "main";
       localVarList.add("args");
-    } else { 
+    } else {
       ret += ".method public " + method.getSymbol() + "(";
 
       //argumentos funcao
@@ -272,12 +273,21 @@ public class JasminParser{
         break;
 
       case NewJava.JJTNEW:
-        ret += "new " + curStatement.getSymbol() + "\n";
-        this.incrementStackSize();
-        ret += "dup\n";
-        this.incrementStackSize();
-        ret += "invokespecial " + curStatement.getSymbol() + "/<init>()V\n";
-        this.stackSize--;
+        //cria um novo array
+        if(curStatement.getSymbol().equals("int[]")){
+          //extrai o comprimento do array
+          String arraySize = curStatement.jjtGetChild(0).getSymbol();
+          ret+="bipush " + arraySize + "\n";
+          this.incrementStackSize();
+          ret += "newarray int\n";
+        }else{
+          ret += "new " + curStatement.getSymbol() + "\n";
+          this.incrementStackSize();
+          ret += "dup\n";
+          this.incrementStackSize();
+          ret += "invokespecial " + curStatement.getSymbol() + "/<init>()V\n";
+          this.stackSize--;
+        }
         break;
 
       //chamda de funcoes de uma classe
@@ -322,7 +332,7 @@ public class JasminParser{
         ret+=this.generateCondition(curStatement, "else");
         break;
       case NewJava.JJTARRINDEX:
-        
+
         break;
       default:
         break;
@@ -408,7 +418,7 @@ public class JasminParser{
     }
 
     //obter tipo retorno da funcao
-    
+
     String varType = this.getVarType(classe);
     if(varType == null){
       varType = "void";
@@ -528,7 +538,7 @@ public class JasminParser{
   public String generateCondition(SimpleNode cond, String type) {
     String ret = "";
     int num;
-    
+
     if(cond.jjtGetNumChildren()>0){
 
     SimpleNode condition = (SimpleNode)cond.jjtGetChild(0);
