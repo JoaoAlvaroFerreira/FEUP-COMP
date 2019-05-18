@@ -13,7 +13,7 @@ return
 .end method
 
 .method public find_maximum([I)I
-.limit stack 3
+.limit stack 1
 .limit locals 5
 
 .var 2 is i I from find_maximum_init to find_maximum_end
@@ -23,6 +23,9 @@ return
 find_maximum_init:
 bipush 1
 istore 2
+bipush 0
+
+aastore
 istore 3
 
 while0: 
@@ -37,6 +40,8 @@ endComp0:
 invokevirtual null/length()V
 ifeq endWhile0
 
+ldc 5 
+newarray int
 istore 4
 
 if0: 
@@ -67,7 +72,7 @@ find_maximum_end:
 .end method
 
 .method public build_test_arr()I
-.limit stack 6
+.limit stack 2
 .limit locals 1
 
 
@@ -76,12 +81,27 @@ bipush 5
 newarray int
 putfield FindMaximum/test_arr [I
 bipush 14
-bipush 28
 bipush 0
+
+aastore
+bipush 28
+bipush 1
+
+aastore
+bipush 0
+bipush 2
+
+aastore
 bipush 0
 bipush 5
 isub
+bipush 3
+
+aastore
 bipush 12
+bipush 4
+
+aastore
 bipush 0
 ireturn
 build_test_arr_end:

@@ -5,6 +5,7 @@ class FindMaximum {
 		int i;
 		int maximum;
 		int value;
+		
 
 		i = 1;
 		maximum = arr[0];

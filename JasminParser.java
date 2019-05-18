@@ -28,6 +28,7 @@ public class JasminParser{
   private int compCounter;  //identifies the number of the current comparation
   private int ifCounter;  //identifies the scope number of the current if
   private int elseCounter;  //identifies the scope number of the current else
+  private int arrayCounter;
 
   public JasminParser(String file_path,SimpleNode root,SymbolTable symbolTable){
     this.source = file_path;
@@ -35,9 +36,11 @@ public class JasminParser{
     this.fileClass = (SimpleNode) root.jjtGetChild(0);
     this.localVarList = new ArrayList<>();
     this.symbolTable = symbolTable;
+    this.arrayCounter = 0;
     this.whileCounter = 0;
     this.compCounter = 0;
     this.ifCounter = 0;
+   
 
     if(fileClass.getId() == NewJava.JJTCLASS){
       this.accessspec = "public";
@@ -173,6 +176,8 @@ public class JasminParser{
 
   public String generateStatement(SimpleNode curStatement){
     String ret = "";
+    Boolean arrayflag = false;
+    
     switch(curStatement.getId()){
       case NewJava.JJTASSIGN:
         ret+=this.generateAssign(curStatement);
@@ -200,7 +205,7 @@ public class JasminParser{
             }else{
               ret += "aload ";
             }
-
+          
           ret += Integer.toString(localVarList.indexOf(curStatement.getSymbol())) + "\n";
           this.incrementStackSize();
 
@@ -220,6 +225,8 @@ public class JasminParser{
 
       //guardar valor em variavel
       case NewJava.JJTVAR:
+     
+     
       //apenas se não for uma declaraçao (com type como filho)
       if(curStatement.jjtGetNumChildren()==0){
         //verifica se é local
@@ -227,15 +234,17 @@ public class JasminParser{
           //encontrar tipo da var na symbol table
           SymbolType curVar = this.methodSymbols.getLocal(curStatement.getSymbol());
 
-          if(curVar.type.equals("int")){
+         if(curVar.type.equals("int")){
               ret += "istore ";
             }else{
               ret += "astore ";
             }
 
           ret += Integer.toString(localVarList.indexOf(curStatement.getSymbol())) + "\n";
+        
           this.stackSize--;
         //global (atributo da classe)
+        
         }else if(this.symbolTable.getGlobal(curStatement.getSymbol())!=null){
           ret += "putfield ";
           if(this.supername != null)
@@ -246,7 +255,10 @@ public class JasminParser{
         }else{
           //ret += "getstatic " + curStatement.getSymbol();
         }
-      }
+      } else if(curStatement.jjtGetChild(0).getId() == NewJava.JJTARRINDEX)
+      ret+=this.generateArray(curStatement);
+     
+      
         break;
 
       //carregar valor duietemnte do codigo
@@ -330,10 +342,11 @@ public class JasminParser{
         break;
       case NewJava.JJTELSE:
         ret+=this.generateCondition(curStatement, "else");
+      //  System.out.println("\n \n JJT ELSE");
         break;
-      case NewJava.JJTARRINDEX:
-
-        break;
+     // case NewJava.JJTARRINDEX:
+       // ret+=this.generateArray(curStatement);
+       
       default:
         break;
     }
@@ -521,7 +534,7 @@ public class JasminParser{
 
       //instruction inside while
       for(int i=1;i<loop.jjtGetNumChildren();i++){
-        System.out.println("LOOP CHILDERN " + loop.jjtGetChild(i).getId());
+        System.out.println("LOOP CHILDREN " + loop.jjtGetChild(i).getId());
         ret+=this.generateStatement((SimpleNode)loop.jjtGetChild(i));
       }
 
@@ -531,6 +544,60 @@ public class JasminParser{
       ret +="endWhile"+whileNum+":\n";
 
 
+    }
+    return ret;
+  }
+
+
+  public String generateArray(SimpleNode array){
+    String ret = "";
+    
+    
+    if(array.jjtGetNumChildren()>0){
+  
+
+      //IF IT'S CREATING THE ARRAY
+       if(array.jjtGetChild(0).jjtGetChild(0).getId() == NewJava.JJTTEXT){
+         
+        ret += "ldc 5 \n"; //5 é suposto ser o tamanho, mas não o sei ir buscar
+        ret+="newarray int\n";
+        this.stackSize--;
+
+        //ler array reference da stack e guardar nome/referencia para poder usar a seguir
+        //this.stackSize--;
+        
+        this.arrayCounter++;
+        
+       }
+
+       //IF IT'S ASSIGNING VALUES WITH THE ARRAY
+       else if(array.jjtGetChild(0).jjtGetChild(0).getId() == NewJava.JJTVAL){
+
+        //STACK: ->array reference, index, value
+          
+        //ret+=array.getSymbol()+"\n"; //suposto ser array reference, está array nome temporariamente
+        this.stackSize--;
+        ret+=this.generateStatement((SimpleNode)array.jjtGetChild(0).jjtGetChild(0))+"\n";
+        this.stackSize--;
+        //onde o bipush devia ficar, mas aparece antes
+
+        ret+="aastore\n"; //temporário, é suposto ter distinção entre load e store,
+        //mas não sei exatamente como distinguir com base nas variaveis que tenho
+        
+        //load from array
+       /* if(){
+          ret+="aaload";
+        }
+        //store in array
+        else if(){
+
+          ret+="aastore";
+        }*/
+       
+
+      
+       }
+      
     }
     return ret;
   }
