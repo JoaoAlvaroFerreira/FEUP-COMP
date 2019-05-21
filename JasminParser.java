@@ -40,7 +40,7 @@ public class JasminParser{
     this.whileCounter = 0;
     this.compCounter = 0;
     this.ifCounter = 0;
-   
+
 
     if(fileClass.getId() == NewJava.JJTCLASS){
       this.accessspec = "public";
@@ -177,7 +177,7 @@ public class JasminParser{
   public String generateStatement(SimpleNode curStatement){
     String ret = "";
     Boolean arrayflag = false;
-    
+
     switch(curStatement.getId()){
       case NewJava.JJTASSIGN:
         ret+=this.generateAssign(curStatement);
@@ -194,7 +194,8 @@ public class JasminParser{
 
       //carregar valor da variável para a stack
       case NewJava.JJTTEXT:
-
+      //apenas se não for uma declaraçao (com type como filho)
+      if(curStatement.jjtGetNumChildren()==0){
         //verifica se é local ou global
         if(localVarList.indexOf(curStatement.getSymbol()) != -1){
           //verifica tipo da variavel
@@ -205,7 +206,7 @@ public class JasminParser{
             }else{
               ret += "aload ";
             }
-          
+
           ret += Integer.toString(localVarList.indexOf(curStatement.getSymbol())) + "\n";
           this.incrementStackSize();
 
@@ -220,13 +221,16 @@ public class JasminParser{
         } else {
           //ret += "getstatic " + curStatement.getSymbol() + "\n";
         }
-
+      } else if(curStatement.jjtGetChild(0).getId() == NewJava.JJTARRINDEX){
+        ret+=this.generateArray(curStatement);
+        ret+="iaload\n";
+      }
         break;
 
       //guardar valor em variavel
       case NewJava.JJTVAR:
-     
-     
+
+
       //apenas se não for uma declaraçao (com type como filho)
       if(curStatement.jjtGetNumChildren()==0){
         //verifica se é local
@@ -241,10 +245,10 @@ public class JasminParser{
             }
 
           ret += Integer.toString(localVarList.indexOf(curStatement.getSymbol())) + "\n";
-        
+
           this.stackSize--;
         //global (atributo da classe)
-        
+
         }else if(this.symbolTable.getGlobal(curStatement.getSymbol())!=null){
           ret += "putfield ";
           if(this.supername != null)
@@ -256,9 +260,9 @@ public class JasminParser{
           //ret += "getstatic " + curStatement.getSymbol();
         }
       } else if(curStatement.jjtGetChild(0).getId() == NewJava.JJTARRINDEX)
-      ret+=this.generateArray(curStatement);
-     
-      
+        ret+=this.generateArray(curStatement);
+
+
         break;
 
       //carregar valor duietemnte do codigo
@@ -317,7 +321,11 @@ public class JasminParser{
           ret+="invokestatic " + classe.symbol + "/" + parameter.symbol + "(I)V\n";
           this.stackSize--;
 
-        } else {
+        } else if(parameter.symbol.equals("length")){
+          ret+= "aload ";
+          ret += Integer.toString(localVarList.indexOf(classe.getSymbol())) + "\n"; //mudar para globals
+          ret += "arraylength\n";
+        }else{
           ret+=this.generateStatement(classe);
 
           for(int i=0;i<parameter.jjtGetNumChildren();i++){
@@ -346,7 +354,7 @@ public class JasminParser{
         break;
      // case NewJava.JJTARRINDEX:
        // ret+=this.generateArray(curStatement);
-       
+
       default:
         break;
     }
@@ -388,9 +396,14 @@ public class JasminParser{
   public String generateAssign(SimpleNode statement){
     String ret = "";
 
-    ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(1));
-    ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(0));
-
+    if ((statement.jjtGetChild(0).jjtGetNumChildren() > 0) && (statement.jjtGetChild(0).jjtGetChild(0).getId() == NewJava.JJTARRINDEX)){
+        ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(0));
+        ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(1));
+        ret+="iastore\n";
+      }else{
+      ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(1));
+      ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(0));
+    }
 
     return ret;
   }
@@ -551,39 +564,37 @@ public class JasminParser{
 
   public String generateArray(SimpleNode array){
     String ret = "";
-    
-    
+
+
     if(array.jjtGetNumChildren()>0){
-  
-
-      //IF IT'S CREATING THE ARRAY
-       if(array.jjtGetChild(0).jjtGetChild(0).getId() == NewJava.JJTTEXT){
-         
-        ret += "ldc 5 \n"; //5 é suposto ser o tamanho, mas não o sei ir buscar
-        ret+="newarray int\n";
-        this.stackSize--;
-
-        //ler array reference da stack e guardar nome/referencia para poder usar a seguir
-        //this.stackSize--;
-        
-        this.arrayCounter++;
-        
-       }
 
        //IF IT'S ASSIGNING VALUES WITH THE ARRAY
-       else if(array.jjtGetChild(0).jjtGetChild(0).getId() == NewJava.JJTVAL){
+       if(array.jjtGetChild(0).jjtGetChild(0).getId() == NewJava.JJTVAL){
 
         //STACK: ->array reference, index, value
-          
+
+
+
+        //verifica se é local ou global
+        if(localVarList.indexOf(array.getSymbol()) != -1){
+          ret += "aload ";
+          ret += Integer.toString(localVarList.indexOf(array.getSymbol())) + "\n";
+          this.incrementStackSize();
+        }else{
+          ret += "getfield ";
+          if(this.supername != null)
+            ret += this.supername + "/";
+          ret+= this.classname + "/" + array.getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(array.getSymbol()))+"\n";
+        }
         //ret+=array.getSymbol()+"\n"; //suposto ser array reference, está array nome temporariamente
-        this.stackSize--;
-        ret+=this.generateStatement((SimpleNode)array.jjtGetChild(0).jjtGetChild(0))+"\n";
-        this.stackSize--;
+
+        ret+=this.generateStatement((SimpleNode)array.jjtGetChild(0).jjtGetChild(0));
+
         //onde o bipush devia ficar, mas aparece antes
 
-        ret+="aastore\n"; //temporário, é suposto ter distinção entre load e store,
+        //ret+="aastore\n"; //temporário, é suposto ter distinção entre load e store,
         //mas não sei exatamente como distinguir com base nas variaveis que tenho
-        
+
         //load from array
        /* if(){
           ret+="aaload";
@@ -593,11 +604,11 @@ public class JasminParser{
 
           ret+="aastore";
         }*/
-       
 
-      
+
+
        }
-      
+
     }
     return ret;
   }

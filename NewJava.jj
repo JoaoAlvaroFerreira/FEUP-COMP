@@ -903,9 +903,9 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
                                                          jjtree.closeNodeScope(jjtn002,  1);
                                                        }
                                                      }
-/*@egen*/             /*@bgen(jjtree) #VAR( 1) */
+/*@egen*/             /*@bgen(jjtree) #TEXT( 1) */
       {
-        SimpleNode jjtn003 = new SimpleNode(JJTVAR);
+        SimpleNode jjtn003 = new SimpleNode(JJTTEXT);
         boolean jjtc003 = true;
         jjtree.openNodeScope(jjtn003);
       }
@@ -926,7 +926,7 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
           jjtree.closeNodeScope(jjtn003,  1);
         }
       }
-/*@egen*/       
+/*@egen*/        
 
 
     | t=<IDENTIFIER>/*@bgen(jjtree) TEXT */

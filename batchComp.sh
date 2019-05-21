@@ -9,4 +9,3 @@ echo -----------------------------------
 java -jar jasmin-2.4/jasmin.jar FindMaximum.j
 echo -----------------------------------
 java FindMaximum
-

@@ -17,7 +17,8 @@ return
 
 
 main_init:
-invokevirtual HelloWorld/printHelloWorld(return
+invokevirtual null/printHelloWorld()V
+return
 main_end:
 
 .end method

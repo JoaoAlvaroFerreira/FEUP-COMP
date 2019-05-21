@@ -350,7 +350,7 @@ void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token()
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
         jjtThis.column = t.beginColumn;
-      }#VAR(1)
+      }#TEXT(1)
 
 
     | t=<IDENTIFIER>
