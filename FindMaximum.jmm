@@ -51,7 +51,7 @@ class FindMaximum {
 		oi = arr[2];
 		io.println(oi);
 		io.println(arr[2]);
-		io.println(arr[2].length);
+		io.println(arr.length);
 
 		//fm = new FindMaximum();
 		//fm.build_test_arr();
