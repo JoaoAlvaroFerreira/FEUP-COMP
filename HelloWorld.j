@@ -17,7 +17,7 @@ return
 
 
 main_init:
-invokevirtual null/printHelloWorld()V
+invokestatic ioPlus/printHelloWorld()V
 return
 main_end:
 

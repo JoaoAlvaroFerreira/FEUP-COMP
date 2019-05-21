@@ -5,10 +5,8 @@ class MonteCarloPi {
 		boolean in_circle;
 		int squareDist;
 
-		rand1 = 1;
-		rand2 = 1;
-		rand1 = Mathutils.random(0-100, 100);
-		rand2 = Mathutils.random(0-100, 100);
+		rand1 = MathUtils.random(0-100, 100);
+		rand2 = MathUtils.random(0-100, 100);
 
 		squareDist = (rand1 * rand1 + rand2 * rand2) / 100;
 		if (squareDist < 100) {
@@ -16,6 +14,9 @@ class MonteCarloPi {
 		} else {
 			in_circle = false;
 		}
+
+		//REMOVER QUANDO IF FOR CORRIGIDO
+		in_circle = true;
 
 		return in_circle;
 	}
