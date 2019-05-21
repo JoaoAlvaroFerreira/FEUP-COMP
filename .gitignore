@@ -21,3 +21,5 @@
 
 *.class
 !io.class
+!ioPlus.class
+!MathUtils.class
