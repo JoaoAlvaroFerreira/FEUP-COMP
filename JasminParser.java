@@ -391,11 +391,12 @@ public class JasminParser{
         ret+=this.generateWhile(curStatement);
         break;
       case NewJava.JJTIF:
+        System.out.println("entrei no if");
         ret+=this.generateCondition(curStatement, "if");
         break;
       case NewJava.JJTELSE:
+        System.out.println("entrei no else");
         ret+=this.generateCondition(curStatement, "else");
-      //  System.out.println("\n \n JJT ELSE");
         break;
      // case NewJava.JJTARRINDEX:
        // ret+=this.generateArray(curStatement);
@@ -417,8 +418,6 @@ public class JasminParser{
       if((method.jjtGetChild(i).getId() == NewJava.JJTVAR)
           && (method.jjtGetChild(i).jjtGetChild(0).getId() == NewJava.JJTTYPE)){
         varType = new SymbolType(method.jjtGetChild(i).getSymbol(), method.jjtGetChild(i).jjtGetChild(0).getSymbol());
-
-        System.out.println("varType: " + varType + " " + method.jjtGetChild(i).getSymbol());
 
         localVarList.add(varType.symbol);
 
@@ -592,7 +591,7 @@ public class JasminParser{
 
       //instruction inside while
       for(int i=1;i<loop.jjtGetNumChildren();i++){
-        System.out.println("LOOP CHILDREN " + loop.jjtGetChild(i).getId());
+        
         ret+=this.generateStatement((SimpleNode)loop.jjtGetChild(i));
       }
 
@@ -631,27 +630,8 @@ public class JasminParser{
             ret += this.supername + "/";
           ret+= this.classname + "/" + array.getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(array.getSymbol()))+"\n";
         }
-        //ret+=array.getSymbol()+"\n"; //suposto ser array reference, está array nome temporariamente
 
         ret+=this.generateStatement((SimpleNode)array.jjtGetChild(0).jjtGetChild(0));
-
-        //onde o bipush devia ficar, mas aparece antes
-
-        //ret+="aastore\n"; //temporário, é suposto ter distinção entre load e store,
-        //mas não sei exatamente como distinguir com base nas variaveis que tenho
-
-        //load from array
-       /* if(){
-          ret+="aaload";
-        }
-        //store in array
-        else if(){
-
-          ret+="aastore";
-        }*/
-
-
-
        }
 
     }
@@ -671,8 +651,14 @@ public class JasminParser{
       //label if
       ret+="\nif"+num+": \n";
       //se for uma AND
+
+      System.out.println(condition.getId());
+
       if(condition.getId() == NewJava.JJTOP2){
-        //se algum for falso, sair do while
+
+        System.out.println("minor operator");
+
+        //se algum for falso, sair do if
         ret += this.generateStatement((SimpleNode)condition.jjtGetChild(0));
         ret += "ifeq endIf"+num+"\n\n";
         this.stackSize--;
@@ -682,13 +668,18 @@ public class JasminParser{
         //caso contrario 0-> false  tudo o resto -> true
       } else{
         ret += this.generateStatement((SimpleNode)condition);
-        ret +="ifeq endIf"+num+"\n\n";
+        if(cond.jjtGetParent().jjtGetNumChildren() > 2){
+          ret +="ifeq else"+num+"\n\n";
+        }else{
+          ret +="ifeq endIf"+num+"\n\n";
+        }
+        
         //this.stackSize--;
       }
     } else if (type.equals("else")) {
       num = this.elseCounter++;
-      //label else
       ret+="\nelse"+num+": \n";
+      ret += this.generateStatement((SimpleNode)condition);
     } else {
       return "";
     }
@@ -696,14 +687,9 @@ public class JasminParser{
 
     //statement inside if
     for(int i = 1 ; i < cond.jjtGetNumChildren();i++){
-      if (type.equals("if")) {
-        System.out.print("IF ");
-      } else if (type.equals("else")) {
-        System.out.print("ELSE ");
-      }
-      System.out.print("CHILDREN " + cond.jjtGetChild(i).getId());
-      System.out.println();
       ret += this.generateStatement((SimpleNode)cond.jjtGetChild(i));
+      ret += "goto endIf"+num+"\n";
+
     }
 
     //end label

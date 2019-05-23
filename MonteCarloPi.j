@@ -57,16 +57,18 @@ goto endComp0
 true0:
 bipush 1
 endComp0:
-ifeq endIf0
+ifeq else0
 
-bipush 1
+bipush 0
 istore 3
+goto endIf0
 
 else0: 
-endElse0:
-endIf0:
 bipush 1
 istore 3
+endElse0:
+goto endIf0
+endIf0:
 iload 3
 ireturn
 performSingleEstimate_end:
@@ -102,11 +104,16 @@ ifeq endWhile0
 if1: 
 aload 0
 invokevirtual MonteCarloPi/performSingleEstimate()Z
-ifeq endIf1
+ifeq else1
 
 
 else1: 
+iload 2
+sipush 1
+iadd
+istore 2
 endElse1:
+goto endIf1
 endIf1:
 iload 3
 sipush 1
