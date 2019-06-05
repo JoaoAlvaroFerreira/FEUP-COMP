@@ -229,6 +229,7 @@ void Statement()#void:{Token t=new Token();}
 {
   <CURLYBRACKETOPENED> (Statement())* <CURLYBRACKETCLOSED>
   | <IF> IfStatement()
+  | <ELSE> ElseStatement()
   | <WHILE> WhileStatement()
   | Assign()
   | Expression() <SEMICOLON>
@@ -250,9 +251,12 @@ void AssignAux() #VAR: {Token t;}
 
 void IfStatement()#IF:{}
 {
-  <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement() ([<ELSE> Statement()]){
+  <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()
+}
 
-  }#ELSE()
+void ElseStatement()#ELSE:{}
+{
+ Statement()
 }
 
 void WhileStatement()#WHILE: {Token t;}

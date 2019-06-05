@@ -16,8 +16,8 @@ public interface NewJavaTreeConstants
   public int JJTIF = 12;
   public int JJTELSE = 13;
   public int JJTWHILE = 14;
-  public int JJTFULLSTOP = 15;
-  public int JJTOP2 = 16;
+  public int JJTOP2 = 15;
+  public int JJTFULLSTOP = 16;
   public int JJTOP3 = 17;
   public int JJTOP4 = 18;
   public int JJTOP5 = 19;
@@ -47,8 +47,8 @@ public interface NewJavaTreeConstants
     "IF",
     "ELSE",
     "WHILE",
-    "FULLSTOP",
     "OP2",
+    "FULLSTOP",
     "OP3",
     "OP4",
     "OP5",
@@ -62,4 +62,4 @@ public interface NewJavaTreeConstants
     "NOT",
   };
 }
-/* JavaCC - OriginalChecksum=499e4b19b78e1bd74d1633c44d8696f8 (do not edit this line) */
+/* JavaCC - OriginalChecksum=7347db2660b8bc4aaa8f49983e082160 (do not edit this line) */
