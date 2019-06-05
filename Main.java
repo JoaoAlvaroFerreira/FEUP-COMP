@@ -47,6 +47,7 @@ public class Main {
         }
       }
 
+
     for(JasminParser curParser : parsers){
       curParser.generate();
     }
