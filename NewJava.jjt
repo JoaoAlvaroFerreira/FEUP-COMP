@@ -252,7 +252,7 @@ void IfStatement()#IF:{}
 {
   <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement() ([<ELSE> Statement()]){
 
-  }#ELSE(1)
+  }#ELSE()
 }
 
 void WhileStatement()#WHILE: {Token t;}

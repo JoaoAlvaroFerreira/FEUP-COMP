@@ -21,10 +21,17 @@ public class SymbolTableEntry {
 		else
 			name = Node.getSymbol();
 
+		if((Node.jjtGetNumChildren()>0) && (Node.jjtGetChild(0).getId()==NewJava.JJTTYPE)){
+			this.returnType = Node.jjtGetChild(0).getSymbol();
+		}else{
+			this.returnType = "void";
+		}
+
 		// nos da funcao
 		for (int i = 0; i < Node.jjtGetNumChildren(); i++) {
 
 			nodelist.add((SimpleNode) Node.jjtGetChild(i));
+			/*
 			if (Node.jjtGetChild(i).getId() == NewJava.JJTRETURN) {
 				for (int j = 0; j < Node.jjtGetChild(i).jjtGetNumChildren(); j++) {
 					if (Node.jjtGetChild(i).jjtGetChild(j).getId() == NewJava.JJTVAL) {
@@ -36,13 +43,14 @@ public class SymbolTableEntry {
 					}
 				}
 			}
+			*/
 		}
 
 		// return
 		if (Node.getId() == NewJava.JJTMAIN)
 			returnDescriptor = new SymbolType("void").type;
 		else{
-			returnDescriptor = nodelist.get(0).getSymbol();
+			returnDescriptor = new SymbolType(returnType).type;
 
 			// construir params
 			if (nodelist.get(1).getId() == NewJava.JJTARGS)

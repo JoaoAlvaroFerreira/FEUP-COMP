@@ -13,7 +13,7 @@ return
 .end method
 
 .method public find_maximum([I)I
-.limit stack 7
+.limit stack 8
 .limit locals 6
 
 .var 2 is i I from find_maximum_init to find_maximum_end
@@ -68,10 +68,11 @@ bipush 1
 endComp1:
 ifeq else0
 
-
-else0: 
 iload 4
 istore 3
+goto endIf0
+
+else0: 
 endElse0:
 goto endIf0
 endIf0:
@@ -81,6 +82,9 @@ iadd
 istore 2
 goto while0
 endWhile0:
+
+iload 3
+invokestatic io/println(I)V
 
 iload 3
 
@@ -158,7 +162,7 @@ get_array_end:
 .end method
 
 .method public static main([Ljava/lang/String;)V
-.limit stack 2
+.limit stack 4
 .limit locals 3
 
 .var 2 is fm LFindMaximum; from main_init to main_end
@@ -170,6 +174,14 @@ dup
 invokespecial FindMaximum/<init>()V
 astore 2
 
+aload 2
+invokevirtual FindMaximum/build_test_arr()I
+
+aload 2
+aload 2
+invokevirtual FindMaximum/get_array()[I
+invokevirtual FindMaximum/find_maximum([I)I
+invokestatic ioPlus/printResult(I)V
 
 return
 main_end:

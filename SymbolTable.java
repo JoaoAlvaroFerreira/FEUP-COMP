@@ -113,6 +113,7 @@ public class SymbolTable {
     String ret = null;
     for(SymbolTableEntry curMethod : this.entries){
       if(curMethod.name.equals(methodName)){
+        //System.out.println(curMethod.name + " " + curMethod.params + " " + argTypes);
         String curRet = curMethod.getReturn(argTypes);
         if (curRet != null)
           ret = curRet;

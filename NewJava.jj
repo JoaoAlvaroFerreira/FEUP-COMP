@@ -592,7 +592,7 @@ void IfStatement()   :{/*@bgen(jjtree) IF */
 {/*@bgen(jjtree) IF */
   try {
 /*@egen*/
-  <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement() ([<ELSE> Statement()])/*@bgen(jjtree) #ELSE( 1) */
+  <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement() ([<ELSE> Statement()])/*@bgen(jjtree) #ELSE(true) */
                                                                                          {
                                                                                            SimpleNode jjtn001 = new SimpleNode(JJTELSE);
                                                                                            boolean jjtc001 = true;
@@ -601,7 +601,7 @@ void IfStatement()   :{/*@bgen(jjtree) IF */
                                                                                          try {
 /*@egen*//*@bgen(jjtree)*/
                                                                                          {
-                                                                                           jjtree.closeNodeScope(jjtn001,  1);
+                                                                                           jjtree.closeNodeScope(jjtn001, true);
                                                                                            jjtc001 = false;
                                                                                          }
 /*@egen*/{
@@ -609,10 +609,10 @@ void IfStatement()   :{/*@bgen(jjtree) IF */
   }/*@bgen(jjtree)*/
                                                                                          } finally {
                                                                                            if (jjtc001) {
-                                                                                             jjtree.closeNodeScope(jjtn001,  1);
+                                                                                             jjtree.closeNodeScope(jjtn001, true);
                                                                                            }
                                                                                          }
-/*@egen*/        /*@bgen(jjtree)*/
+/*@egen*/       /*@bgen(jjtree)*/
   } catch (Throwable jjte000) {
     if (jjtc000) {
       jjtree.clearNodeScope(jjtn000);

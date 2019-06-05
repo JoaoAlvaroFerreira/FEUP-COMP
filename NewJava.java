@@ -563,12 +563,12 @@ SimpleNode jjtn001 = new SimpleNode(JJTELSE);
                                                                                            boolean jjtc001 = true;
                                                                                            jjtree.openNodeScope(jjtn001);
       try {
-jjtree.closeNodeScope(jjtn001,  1);
+jjtree.closeNodeScope(jjtn001, true);
                                                                                            jjtc001 = false;
 
       } finally {
 if (jjtc001) {
-                                                                                             jjtree.closeNodeScope(jjtn001,  1);
+                                                                                             jjtree.closeNodeScope(jjtn001, true);
                                                                                            }
       }
     } catch (Throwable jjte000) {

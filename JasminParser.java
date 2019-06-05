@@ -63,7 +63,7 @@ public class JasminParser{
     output += ".super java/lang/Object";
 
     if(supername!= null)
-      output +="/"+supername;
+    output +="/"+supername;
 
     output += "\n\n";
 
@@ -75,7 +75,7 @@ public class JasminParser{
     //methods
     for(int i=0;i<fileClass.jjtGetNumChildren();i++){
       if((fileClass.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) ||
-         (fileClass.jjtGetChild(i).getId() == NewJava.JJTMAIN)){
+      (fileClass.jjtGetChild(i).getId() == NewJava.JJTMAIN)){
         output += this.generateMethod((SimpleNode)(fileClass.jjtGetChild(i)));
       }
     }
@@ -181,17 +181,17 @@ public class JasminParser{
 
     switch(curStatement.getId()){
       case NewJava.JJTASSIGN:
-        ret+=this.generateAssign(curStatement);
-        break;
+      ret+=this.generateAssign(curStatement);
+      break;
 
       //caso de retorno, verificar se existe valor a retornar
       case NewJava.JJTRETURN:
-        if(curStatement.jjtGetNumChildren() > 0){
-          SimpleNode returnVal = (SimpleNode)curStatement.jjtGetChild(0);
-          ret+=this.generateStatement(returnVal);
-          this.stackSize--;
-        }
-        break;
+      if(curStatement.jjtGetNumChildren() > 0){
+        SimpleNode returnVal = (SimpleNode)curStatement.jjtGetChild(0);
+        ret+=this.generateStatement(returnVal);
+        this.stackSize--;
+      }
+      break;
 
       //carregar valor da variável para a stack
       case NewJava.JJTTEXT:
@@ -203,10 +203,10 @@ public class JasminParser{
           SymbolType curVar = this.methodSymbols.getLocal(curStatement.getSymbol());
 
           if(curVar.type.equals("int") || methodSymbols.returnDescriptor.equals("boolean")){
-              ret += "iload ";
-            }else{
-              ret += "aload ";
-            }
+            ret += "iload ";
+          }else{
+            ret += "aload ";
+          }
 
           ret += Integer.toString(localVarList.indexOf(curStatement.getSymbol())) + "\n";
           this.incrementStackSize();
@@ -216,10 +216,10 @@ public class JasminParser{
           this.incrementStackSize();
           ret += "getfield ";
           if(this.supername != null)
-            ret += this.supername + "/";
+          ret += this.supername + "/";
           ret+= this.classname + "/" + curStatement.getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(curStatement.getSymbol()))+"\n";
           this.incrementStackSize();
-        //classe externa
+          //classe externa
 
         } else {
           //ret += "getstatic " + curStatement.getSymbol() + "\n";
@@ -228,7 +228,7 @@ public class JasminParser{
         ret+=this.generateArray(curStatement);
         ret+="iaload\n";
       }
-        break;
+      break;
 
       //guardar valor em variavel
       case NewJava.JJTVAR:
@@ -241,438 +241,487 @@ public class JasminParser{
           //encontrar tipo da var na symbol table
           SymbolType curVar = this.methodSymbols.getLocal(curStatement.getSymbol());
 
-         if(curVar.type.equals("int") || curVar.type.equals("boolean")){
-              ret += "istore ";
-            }else{
-              ret += "astore ";
-            }
+          if(curVar.type.equals("int") || curVar.type.equals("boolean")){
+            ret += "istore ";
+          }else{
+            ret += "astore ";
+          }
 
           ret += Integer.toString(localVarList.indexOf(curStatement.getSymbol())) + "\n";
 
           this.stackSize--;
-        //global (atributo da classe)
+          //global (atributo da classe)
 
         }else if(this.symbolTable.getGlobal(curStatement.getSymbol())!=null){
           ret += "putfield ";
           if(this.supername != null)
-            ret += this.supername + "/";
+          ret += this.supername + "/";
           ret+= this.classname + "/" + curStatement.getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(curStatement.getSymbol()))+"\n";
           this.stackSize--;
-        //classe externa
+          //classe externa
         }else{
           //ret += "getstatic " + curStatement.getSymbol();
         }
       } else if(curStatement.jjtGetChild(0).getId() == NewJava.JJTARRINDEX)
-        ret+=this.generateArray(curStatement);
+      ret+=this.generateArray(curStatement);
 
 
-        break;
+      break;
 
       //carregar valor duietemnte do codigo
       case NewJava.JJTVAL:
-        ret+="sipush "+curStatement.getSymbol()+"\n";
-        this.incrementStackSize();
-        break;
+      ret+="sipush "+curStatement.getSymbol()+"\n";
+      this.incrementStackSize();
+      break;
 
       //booleanas
       case NewJava.JJTFALSE:
-        ret+="bipush 0\n";
-        this.incrementStackSize();
-        break;
+      ret+="bipush 0\n";
+      this.incrementStackSize();
+      break;
 
       case NewJava.JJTTRUE:
-        ret+="bipush 1\n";
-        this.incrementStackSize();
-        break;
+      ret+="bipush 1\n";
+      this.incrementStackSize();
+      break;
       case NewJava.JJTOP2:
       case NewJava.JJTOP3:
       case NewJava.JJTOP4:
       case NewJava.JJTOP5:
-        ret+= this.generateOp(curStatement);
-        break;
+      ret+= this.generateOp(curStatement);
+      break;
 
       case NewJava.JJTNEW:
-        //cria um novo array
-        if(curStatement.getSymbol().equals("int[]")){
-          //extrai o comprimento do array
-          String arraySize = curStatement.jjtGetChild(0).getSymbol();
-          ret+="bipush " + arraySize + "\n";
-          this.incrementStackSize();
-          ret += "newarray int\n";
-        }else{
-          ret += "new " + curStatement.getSymbol() + "\n";
-          this.incrementStackSize();
-          ret += "dup\n";
-          this.incrementStackSize();
-          ret += "invokespecial " + curStatement.getSymbol() + "/<init>()V\n";
-          this.stackSize--;
-        }
-        break;
+      //cria um novo array
+      if(curStatement.getSymbol().equals("int[]")){
+        //extrai o comprimento do array
+        String arraySize = curStatement.jjtGetChild(0).getSymbol();
+        ret+="bipush " + arraySize + "\n";
+        this.incrementStackSize();
+        ret += "newarray int\n";
+      }else{
+        ret += "new " + curStatement.getSymbol() + "\n";
+        this.incrementStackSize();
+        ret += "dup\n";
+        this.incrementStackSize();
+        ret += "invokespecial " + curStatement.getSymbol() + "/<init>()V\n";
+        this.stackSize--;
+      }
+      break;
 
       //chamda de funcoes de uma classe
       case NewJava.JJTFULLSTOP:
-        String methodTypes = "(";
-        SimpleNode classe = (SimpleNode)curStatement.jjtGetChild(0);
-        SimpleNode parameter = (SimpleNode)curStatement.jjtGetChild(1);
+      String methodTypes = "(";
+      SimpleNode classe = (SimpleNode)curStatement.jjtGetChild(0);
+      SimpleNode parameter = (SimpleNode)curStatement.jjtGetChild(1);
 
 
-        //classe externa
-        if((localVarList.indexOf(classe.getSymbol()) == -1)&&(this.symbolTable.getGlobal(classe.getSymbol())==null)){
-          String type = "";
-          ArrayList<String> argTypes = new ArrayList<String>();
-          for(int i=0;i<parameter.jjtGetNumChildren();i++){
-            ret+=this.generateStatement((SimpleNode)parameter.jjtGetChild(i))+"";
-            argTypes.add(this.getType((SimpleNode)parameter.jjtGetChild(i)).type);
-            type+=this.getJasminType(this.getType((SimpleNode)parameter.jjtGetChild(i))) + "";
-            //methodTypes += this.getJasminType((SimpleNode)parameter.jjtGetChild(i).) + ";";
-          }
-          //remover ultimo espaco
-          if (type != null && type.length() > 0 && type.charAt(type.length() - 1) == ' ') {
-            type = type.substring(0, type.length() - 1);
-          }
+      if(parameter.symbol.equals("length")){
+        ret+= "aload ";
+        ret += Integer.toString(localVarList.indexOf(classe.getSymbol())) + "\n"; //mudar para globals
+        ret += "arraylength\n";
+        //se a classe for uma variavel local
+      }else{    //classe externa
+        //if((localVarList.indexOf(classe.getSymbol()) == -1)&&(this.symbolTable.getGlobal(classe.getSymbol())==null)){
+        String type = "";
+        ArrayList<String> argTypes = new ArrayList<String>();
 
-          SimpleNode parent = (SimpleNode) curStatement.jjtGetParent();
+        //generate loads for nested functions
+        SimpleNode tmpParameter = parameter;
+        SimpleNode tmpClasse = classe;
+        for(int i=0;i<tmpParameter.jjtGetNumChildren();i++){
+          if((curStatement.jjtGetParent().getId() != NewJava.JJTPAREMETER) &&
+          (tmpParameter.jjtGetChild(i).getId() == NewJava.JJTFULLSTOP)){
+            ret += "aload ";
+            tmpClasse = (SimpleNode)tmpParameter.jjtGetChild(i).jjtGetChild(0);
+            tmpParameter = (SimpleNode)tmpParameter.jjtGetChild(i).jjtGetChild(1);
 
-          String retType = "V";
+            int varInd = localVarList.indexOf(tmpClasse.getSymbol());
 
-          if (parent.getId() == NewJava.JJTASSIGN){
-            retType =this.getJasminType(this.getType((SimpleNode)parent.jjtGetChild(0)));
-          }
-
-          //this.function
-          if (classe.getId() == NewJava.JJTTHIS){
-            classe.symbol = this.classname;
-            //load this to stack
-            ret += "aload 0\n";
-            this.incrementStackSize();
-
-            ret += "invokevirtual ";
-
-            retType = this.getJasminType(new SymbolType(this.symbolTable.getReturn(parameter.symbol,argTypes)));
-          }else if(classe.getId() == NewJava.JJTNEW){
-            ret+=this.generateStatement(classe);
-            for(int i=0;i<parameter.jjtGetNumChildren();i++){
-              ret+=this.generateStatement((SimpleNode)parameter.jjtGetChild(i))+"\n";
-              //methodTypes += this.getJasminType((SimpleNode)parameter.jjtGetChild(i).) + ";";
+            if(varInd<0){
+              ret+="0\n";
+            }else{
+              ret+=varInd+"\n";
             }
 
-            //System.out.println("curState: " + curStatement);
+            this.incrementStackSize();
+            i=-1;
+          }
+        }
 
-            methodTypes = this.getMethodSignature(curStatement);
 
-            ret +="invokevirtual ";
+        for(int i=0;i<parameter.jjtGetNumChildren();i++){
+          ret+=this.generateStatement((SimpleNode)parameter.jjtGetChild(i))+"";
+          argTypes.add(this.getType((SimpleNode)parameter.jjtGetChild(i)).type);
+          type+=this.getJasminType(this.getType((SimpleNode)parameter.jjtGetChild(i))) + "";
+          //methodTypes += this.getJasminType((SimpleNode)parameter.jjtGetChild(i).) + ";";
 
-          }else{
-            ret += "invokestatic ";
+          //se o parametro for outra funcao
+          if(parameter.jjtGetChild(i).getId()==NewJava.JJTFULLSTOP){
+            this.generateStatement((SimpleNode)parameter.jjtGetChild(i));
+          }
+        }
+        //remover ultimo espaco
+        if (type != null && type.length() > 0 && type.charAt(type.length() - 1) == ' ') {
+          type = type.substring(0, type.length() - 1);
+        }
+
+        SimpleNode parent = (SimpleNode) curStatement.jjtGetParent();
+
+        String retType = "V";
+
+        if (parent.getId() == NewJava.JJTASSIGN){
+          retType =this.getJasminType(this.getType((SimpleNode)parent.jjtGetChild(0)));
+        }
+
+
+        //this.function
+        if (classe.getId() == NewJava.JJTTHIS){
+          classe.symbol = this.classname;
+          //load this to stack if its not parameter of another function
+          if(curStatement.jjtGetParent().getId()!=NewJava.JJTPAREMETER){
+            ret += "aload 0\n";
             this.incrementStackSize();
           }
 
-          ret+=classe.symbol + "/" + parameter.symbol + "("+type+")"+retType+"\n";
-          //this.stackSize--;
-        //.lenght
-      } else if(parameter.symbol.equals("length")){
-          ret+= "aload ";
-          ret += Integer.toString(localVarList.indexOf(classe.getSymbol())) + "\n"; //mudar para globals
-          ret += "arraylength\n";
-        }/*else {
-          ret+=this.generateStatement(classe);
+          ret += "invokevirtual ";
 
+          retType = this.getJasminType(new SymbolType(this.symbolTable.getReturn(parameter.symbol,argTypes)));
+          ret+=classe.symbol + "/" + parameter.symbol + "("+type+")"+retType+"\n";
+        }else if(classe.getId() == NewJava.JJTNEW){
+          ret+=this.generateStatement(classe);
           for(int i=0;i<parameter.jjtGetNumChildren();i++){
             ret+=this.generateStatement((SimpleNode)parameter.jjtGetChild(i))+"\n";
             //methodTypes += this.getJasminType((SimpleNode)parameter.jjtGetChild(i).) + ";";
           }
 
-          System.out.println("curState: " + curStatement);
+          //System.out.println("curState: " + curStatement);
 
           methodTypes = this.getMethodSignature(curStatement);
 
-          //COLOCAR NOME DA CLASSE
-          ret +="invokevirtual " + this.getVarType(classe) + "/" + parameter.getSymbol() + methodTypes + "\n";
-          //this.stackSize--;
-        }*/
-        break;
-      case NewJava.JJTWHILE:
-        ret+=this.generateWhile(curStatement);
-        break;
-      case NewJava.JJTIF:
-        System.out.println("entrei no if");
-        ret+=this.generateCondition(curStatement, "if");
-        break;
-      case NewJava.JJTELSE:
-        System.out.println("entrei no else");
-        ret+=this.generateCondition(curStatement, "else");
-        break;
-     // case NewJava.JJTARRINDEX:
-       // ret+=this.generateArray(curStatement);
+          ret +="invokevirtual ";
+          ret+=classe.symbol + "/" + parameter.symbol + "("+type+")"+retType+"\n";
+        }else //classe externa ou interna
+          if((localVarList.indexOf(classe.getSymbol()) == -1)&&(this.symbolTable.getGlobal(classe.getSymbol())==null)){
+          ret += "invokestatic ";
+          this.incrementStackSize();
+          ret+=classe.symbol + "/" + parameter.symbol + "("+type+")"+retType+"\n";
+        }else{
+          retType = this.getJasminType(new SymbolType(this.symbolTable.getReturn(parameter.symbol,argTypes)));
+          //load this to stack if its not parameter of another function
+          if(curStatement.jjtGetParent().getId()!=NewJava.JJTPAREMETER){
+            ret += "aload ";
+            ret += Integer.toString(localVarList.indexOf(classe.getSymbol())) + "\n";
+            this.incrementStackSize();
+          }
+          ret +="invokevirtual ";
+          ret+=this.getType(classe).type + "/" + parameter.symbol + "("+type+")"+retType+"\n";
+        }
+        //this.stackSize--;
+        //.lenght
+      }
+
+
+
+
+      /*else {
+      ret+=this.generateStatement(classe);
+
+      for(int i=0;i<parameter.jjtGetNumChildren();i++){
+      ret+=this.generateStatement((SimpleNode)parameter.jjtGetChild(i))+"\n";
+      //methodTypes += this.getJasminType((SimpleNode)parameter.jjtGetChild(i).) + ";";
+    }
+
+    System.out.println("curState: " + curStatement);
+
+    methodTypes = this.getMethodSignature(curStatement);
+
+    //COLOCAR NOME DA CLASSE
+    ret +="invokevirtual " + this.getVarType(classe) + "/" + parameter.getSymbol() + methodTypes + "\n";
+    //this.stackSize--;
+  }*/
+  break;
+  case NewJava.JJTWHILE:
+  ret+=this.generateWhile(curStatement);
+  break;
+  case NewJava.JJTIF:
+  System.out.println("entrei no if");
+  ret+=this.generateCondition(curStatement, "if");
+  break;
+  case NewJava.JJTELSE:
+  System.out.println("entrei no else");
+  ret+=this.generateCondition(curStatement, "else");
+  break;
+  // case NewJava.JJTARRINDEX:
+  // ret+=this.generateArray(curStatement);
+
+  default:
+  break;
+}
+
+return ret;
+}
+
+public String generateLocalVariables(SimpleNode method){
+  String ret = "";
+  String localVar = "";
+  int varIndex = localVarList.size();
+  SymbolType varType;
+
+  for(int i=0; i<method.jjtGetNumChildren();i++){
+    if((method.jjtGetChild(i).getId() == NewJava.JJTVAR)
+    && (method.jjtGetChild(i).jjtGetChild(0).getId() == NewJava.JJTTYPE)){
+      varType = new SymbolType(method.jjtGetChild(i).getSymbol(), method.jjtGetChild(i).jjtGetChild(0).getSymbol());
+
+      localVarList.add(varType.symbol);
+
+      //declaracao variaveis locais
+      localVar += ".var " + Integer.toString(varIndex) + " is "
+      + varType.symbol + " "
+      + this.getJasminType(varType)
+      + " from " + method.getSymbol() + "_init to " + method.getSymbol() + "_end\n";
+
+      varIndex++;
+    }
+  }
+
+  ret += ".limit locals " + Integer.toString(varIndex) + "\n\n";
+  ret += localVar;
+
+  return ret;
+}
+
+public String generateAssign(SimpleNode statement){
+  String ret = "";
+
+  //se for global e for um putfield, fazer push do this
+  if((this.symbolTable.getGlobal(statement.jjtGetChild(0).getSymbol())!=null) &&
+  (statement.jjtGetChild(0).getId()==NewJava.JJTVAR) &&
+  !((statement.jjtGetChild(0).jjtGetNumChildren()>0)&&(statement.jjtGetChild(0).jjtGetChild(0).getId()==NewJava.JJTARRINDEX))){
+    ret+="aload 0\n";
+    this.incrementStackSize();
+  }
+
+  if((this.symbolTable.getGlobal(statement.jjtGetChild(1).getSymbol())!=null) &&
+  (statement.jjtGetChild(1).getId()==NewJava.JJTVAR) &&
+  !((statement.jjtGetChild(0).jjtGetNumChildren()>0)&&(statement.jjtGetChild(1).jjtGetChild(0).getId()==NewJava.JJTARRINDEX))){
+    ret+="aload 0\n";
+    this.incrementStackSize();
+  }
+
+  if ((statement.jjtGetChild(0).jjtGetNumChildren() > 0) && (statement.jjtGetChild(0).jjtGetChild(0).getId() == NewJava.JJTARRINDEX)){
+    ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(0));
+    ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(1));
+    ret+="iastore\n";
+  }else{
+    ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(1));
+    ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(0));
+  }
+
+  return ret;
+}
+
+public String getMethodSignature(SimpleNode classCall){
+  String retSignature = "";
+  SimpleNode classe = (SimpleNode)classCall.jjtGetChild(0);
+  SimpleNode parameter = (SimpleNode)classCall.jjtGetChild(1);
+  ArrayList<String> argTypes = new ArrayList<>();
+
+  //obter tipo dos parametros
+  for(int i=0;i<parameter.jjtGetNumChildren();i++){
+    SimpleNode curArg = (SimpleNode) parameter.jjtGetChild(i);
+
+    switch(curArg.getId()){
+      case NewJava.JJTVAL:
+      case NewJava.JJTOP2:
+      case NewJava.JJTOP3:
+      case NewJava.JJTOP4:
+      case NewJava.JJTOP5:
+      argTypes.add("int");
+      break;
+      case NewJava.JJTFULLSTOP:
+      argTypes.add(this.getNormalType(new SymbolType(JasminParser.extractRet(this.getMethodSignature(curArg)))));
+      break;
+      case NewJava.JJTFALSE:
+      case NewJava.JJTTRUE:
+      argTypes.add("boolean");
+      case NewJava.JJTTEXT:
+      case NewJava.JJTVAR:
+      argTypes.add(this.getVarType(curArg));
+      break;
 
       default:
-        break;
-    }
+      break;
 
-    return ret;
+    }
   }
 
-  public String generateLocalVariables(SimpleNode method){
-    String ret = "";
-    String localVar = "";
-    int varIndex = localVarList.size();
-    SymbolType varType;
+  //obter tipo retorno da funcao
 
-    for(int i=0; i<method.jjtGetNumChildren();i++){
-      if((method.jjtGetChild(i).getId() == NewJava.JJTVAR)
-          && (method.jjtGetChild(i).jjtGetChild(0).getId() == NewJava.JJTTYPE)){
-        varType = new SymbolType(method.jjtGetChild(i).getSymbol(), method.jjtGetChild(i).jjtGetChild(0).getSymbol());
-
-        localVarList.add(varType.symbol);
-
-        //declaracao variaveis locais
-        localVar += ".var " + Integer.toString(varIndex) + " is "
-            + varType.symbol + " "
-            + this.getJasminType(varType)
-            + " from " + method.getSymbol() + "_init to " + method.getSymbol() + "_end\n";
-
-        varIndex++;
-      }
-    }
-
-    ret += ".limit locals " + Integer.toString(varIndex) + "\n\n";
-    ret += localVar;
-
-    return ret;
+  String varType = this.getVarType(classe);
+  if(varType == null){
+    varType = "void";
+    retSignature = "void";
+  }else{
+    SymbolTable classTable = Main.tables.get(varType);
+    retSignature = classTable.getReturn(parameter.symbol,argTypes);
   }
 
-  public String generateAssign(SimpleNode statement){
-    String ret = "";
+  //gerar method signature
+  String methodTypes ="(";
+  for(String argType : argTypes){
+    methodTypes +=this.getJasminType(new SymbolType(argType))/*+";"*/;
+  }
+  //remover ultimo ponto e vrigula
+  if (methodTypes != null && methodTypes.length() > 0 && methodTypes.charAt(methodTypes.length() - 1) == ';') {
+    methodTypes = methodTypes.substring(0, methodTypes.length() - 1);
+  }
+  //System.out.println("Return: " + retSignature + " " + classe.symbol + "."+parameter.symbol);
+  methodTypes += ")"+this.getJasminType(new SymbolType(retSignature));
 
-    //se for global e for um putfield, fazer push do this
-    if((this.symbolTable.getGlobal(statement.jjtGetChild(0).getSymbol())!=null) &&
-       (statement.jjtGetChild(0).getId()==NewJava.JJTVAR) &&
-       !((statement.jjtGetChild(0).jjtGetNumChildren()>0)&&(statement.jjtGetChild(0).jjtGetChild(0).getId()==NewJava.JJTARRINDEX))){
-      ret+="aload 0\n";
-      this.incrementStackSize();
-    }
+  return methodTypes;
+}
 
-    if((this.symbolTable.getGlobal(statement.jjtGetChild(1).getSymbol())!=null) &&
-       (statement.jjtGetChild(1).getId()==NewJava.JJTVAR) &&
-       !((statement.jjtGetChild(0).jjtGetNumChildren()>0)&&(statement.jjtGetChild(1).jjtGetChild(0).getId()==NewJava.JJTARRINDEX))){
-      ret+="aload 0\n";
-      this.incrementStackSize();
-    }
+public String generateGlobals(){
+  String ret = "";
 
-    if ((statement.jjtGetChild(0).jjtGetNumChildren() > 0) && (statement.jjtGetChild(0).jjtGetChild(0).getId() == NewJava.JJTARRINDEX)){
-        ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(0));
-        ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(1));
-        ret+="iastore\n";
-      }else{
-      ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(1));
-      ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(0));
-    }
-
-    return ret;
+  for(int i=0;i<this.symbolTable.globals.size();i++){
+    ret += ".field public " + this.symbolTable.globals.get(i).symbol + " " + this.getJasminType(this.symbolTable.globals.get(i)) + "\n";
   }
 
-  public String getMethodSignature(SimpleNode classCall){
-    String retSignature = "";
-    SimpleNode classe = (SimpleNode)classCall.jjtGetChild(0);
-    SimpleNode parameter = (SimpleNode)classCall.jjtGetChild(1);
-    ArrayList<String> argTypes = new ArrayList<>();
+  return ret;
+}
 
-    //obter tipo dos parametros
-    for(int i=0;i<parameter.jjtGetNumChildren();i++){
-      SimpleNode curArg = (SimpleNode) parameter.jjtGetChild(i);
+public String generateOp(SimpleNode op){
+  String ret = "";
 
-      switch(curArg.getId()){
-        case NewJava.JJTVAL:
-        case NewJava.JJTOP2:
-        case NewJava.JJTOP3:
-        case NewJava.JJTOP4:
-        case NewJava.JJTOP5:
-          argTypes.add("int");
-          break;
-        case NewJava.JJTFULLSTOP:
-          argTypes.add(this.getNormalType(new SymbolType(JasminParser.extractRet(this.getMethodSignature(curArg)))));
-          break;
-        case NewJava.JJTFALSE:
-        case NewJava.JJTTRUE:
-          argTypes.add("boolean");
-        case NewJava.JJTTEXT:
-        case NewJava.JJTVAR:
-          argTypes.add(this.getVarType(curArg));
-        break;
+  ret+=this.generateStatement((SimpleNode)op.jjtGetChild(0));
+  ret+=this.generateStatement((SimpleNode)op.jjtGetChild(1));
 
-        default:
-          break;
+  switch(op.symbol){
+    case "+":
+    ret += "iadd\n";
+    this.stackSize--;
+    break;
+    case "-":
+    ret += "isub\n";
+    this.stackSize--;
+    break;
+    case "*":
+    ret += "imul\n";
+    this.stackSize--;
+    break;
+    case "/":
+    ret += "idiv\n";
+    this.stackSize--;
+    break;
+    //push 0 -> false ou 1 -> true
+    case "<":
+    ret += "if_icmplt true"+this.compCounter+"\n";
+    ret += "bipush 0\n";
+    ret += "goto endComp"+this.compCounter+"\n";
+    ret += "true"+this.compCounter+":\n";
+    ret += "bipush 1\n";
+    ret += "endComp"+this.compCounter+":\n";
+    this.compCounter++;
+    break;
+  }
 
-      }
-    }
+  return ret;
+}
 
-    //obter tipo retorno da funcao
+public String generateWhile(SimpleNode loop){
+  String ret = "";
+  int whileNum = this.whileCounter++;
 
-    String varType = this.getVarType(classe);
-    if(varType == null){
-      varType = "void";
-      retSignature = "void";
+  if(loop.jjtGetNumChildren()>0){
+
+    SimpleNode cond = (SimpleNode) loop.jjtGetChild(0);
+
+    //label while
+    ret+="\nwhile"+whileNum+": \n";
+
+
+    //se for uma AND
+    if(cond.getId() == NewJava.JJTOP2){
+      //se algum for falso, sair do while
+      ret+=this.generateStatement((SimpleNode)cond.jjtGetChild(0));
+      ret +="ifeq endWhile"+whileNum+"\n\n";
+      this.stackSize--;
+      ret+=this.generateStatement((SimpleNode)cond.jjtGetChild(1));
+      ret +="ifeq endWhile"+whileNum+"\n\n";
+      this.stackSize--;
+      //caso contrario 0-> false  tudo o resto -> true
     }else{
-      SymbolTable classTable = Main.tables.get(varType);
-      retSignature = classTable.getReturn(parameter.symbol,argTypes);
+      ret+=this.generateStatement((SimpleNode)cond);
+      ret +="ifeq endWhile"+whileNum+"\n\n";
+      //this.stackSize--;
     }
 
-    //gerar method signature
-    String methodTypes ="(";
-    for(String argType : argTypes){
-      methodTypes +=this.getJasminType(new SymbolType(argType))/*+";"*/;
-    }
-    //remover ultimo ponto e vrigula
-    if (methodTypes != null && methodTypes.length() > 0 && methodTypes.charAt(methodTypes.length() - 1) == ';') {
-      methodTypes = methodTypes.substring(0, methodTypes.length() - 1);
-    }
-    //System.out.println("Return: " + retSignature + " " + classe.symbol + "."+parameter.symbol);
-    methodTypes += ")"+this.getJasminType(new SymbolType(retSignature));
+    //instruction inside while
+    for(int i=1;i<loop.jjtGetNumChildren();i++){
 
-    return methodTypes;
+      ret+=this.generateStatement((SimpleNode)loop.jjtGetChild(i));
+    }
+
+
+    ret +="goto while"+whileNum+"\n";
+    //end label
+    ret +="endWhile"+whileNum+":\n";
+
+
   }
+  return ret;
+}
 
-  public String generateGlobals(){
-    String ret = "";
 
-    for(int i=0;i<this.symbolTable.globals.size();i++){
-      ret += ".field public " + this.symbolTable.globals.get(i).symbol + " " + this.getJasminType(this.symbolTable.globals.get(i)) + "\n";
+public String generateArray(SimpleNode array){
+  String ret = "";
+
+
+  if(array.jjtGetNumChildren()>0){
+
+    //IF IT'S ASSIGNING VALUES WITH THE ARRAY
+    //if(array.jjtGetChild(0).jjtGetChild(0).getId() == NewJava.JJTVAL){
+
+    //STACK: ->array reference, index, value
+
+
+
+    //verifica se é local ou global
+    if(localVarList.indexOf(array.getSymbol()) != -1){
+      ret += "aload ";
+      ret += Integer.toString(localVarList.indexOf(array.getSymbol())) + "\n";
+      this.incrementStackSize();
+    }else{
+      ret+="aload 0\n";
+      this.incrementStackSize();
+      ret += "getfield ";
+      if(this.supername != null)
+      ret += this.supername + "/";
+      ret+= this.classname + "/" + array.getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(array.getSymbol()))+"\n";
     }
 
-    return ret;
+    ret+=this.generateStatement((SimpleNode)array.jjtGetChild(0).jjtGetChild(0));
+    //}
+
   }
+  return ret;
+}
 
-  public String generateOp(SimpleNode op){
-    String ret = "";
-
-    ret+=this.generateStatement((SimpleNode)op.jjtGetChild(0));
-    ret+=this.generateStatement((SimpleNode)op.jjtGetChild(1));
-
-    switch(op.symbol){
-      case "+":
-        ret += "iadd\n";
-        this.stackSize--;
-      break;
-      case "-":
-        ret += "isub\n";
-        this.stackSize--;
-      break;
-      case "*":
-        ret += "imul\n";
-        this.stackSize--;
-      break;
-      case "/":
-        ret += "idiv\n";
-        this.stackSize--;
-      break;
-      //push 0 -> false ou 1 -> true
-      case "<":
-        ret += "if_icmplt true"+this.compCounter+"\n";
-        ret += "bipush 0\n";
-        ret += "goto endComp"+this.compCounter+"\n";
-        ret += "true"+this.compCounter+":\n";
-        ret += "bipush 1\n";
-        ret += "endComp"+this.compCounter+":\n";
-        this.compCounter++;
-      break;
-    }
-
-    return ret;
+public String generateCondition(SimpleNode cond, String type) {
+  String ret = "";
+  int num;
+  SimpleNode condition = cond;
+  if(cond.jjtGetNumChildren()>0){
+    condition = (SimpleNode)cond.jjtGetChild(0);
   }
-
-  public String generateWhile(SimpleNode loop){
-    String ret = "";
-    int whileNum = this.whileCounter++;
-
-    if(loop.jjtGetNumChildren()>0){
-
-      SimpleNode cond = (SimpleNode) loop.jjtGetChild(0);
-
-      //label while
-      ret+="\nwhile"+whileNum+": \n";
-
-
-      //se for uma AND
-      if(cond.getId() == NewJava.JJTOP2){
-        //se algum for falso, sair do while
-        ret+=this.generateStatement((SimpleNode)cond.jjtGetChild(0));
-        ret +="ifeq endWhile"+whileNum+"\n\n";
-        this.stackSize--;
-        ret+=this.generateStatement((SimpleNode)cond.jjtGetChild(1));
-        ret +="ifeq endWhile"+whileNum+"\n\n";
-        this.stackSize--;
-        //caso contrario 0-> false  tudo o resto -> true
-      }else{
-        ret+=this.generateStatement((SimpleNode)cond);
-        ret +="ifeq endWhile"+whileNum+"\n\n";
-        //this.stackSize--;
-      }
-
-      //instruction inside while
-      for(int i=1;i<loop.jjtGetNumChildren();i++){
-
-        ret+=this.generateStatement((SimpleNode)loop.jjtGetChild(i));
-      }
-
-
-      ret +="goto while"+whileNum+"\n";
-      //end label
-      ret +="endWhile"+whileNum+":\n";
-
-
-    }
-    return ret;
-  }
-
-
-  public String generateArray(SimpleNode array){
-    String ret = "";
-
-
-    if(array.jjtGetNumChildren()>0){
-
-       //IF IT'S ASSIGNING VALUES WITH THE ARRAY
-       //if(array.jjtGetChild(0).jjtGetChild(0).getId() == NewJava.JJTVAL){
-
-        //STACK: ->array reference, index, value
-
-
-
-        //verifica se é local ou global
-        if(localVarList.indexOf(array.getSymbol()) != -1){
-          ret += "aload ";
-          ret += Integer.toString(localVarList.indexOf(array.getSymbol())) + "\n";
-          this.incrementStackSize();
-        }else{
-          ret+="aload 0\n";
-          this.incrementStackSize();
-          ret += "getfield ";
-          if(this.supername != null)
-            ret += this.supername + "/";
-          ret+= this.classname + "/" + array.getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(array.getSymbol()))+"\n";
-        }
-
-        ret+=this.generateStatement((SimpleNode)array.jjtGetChild(0).jjtGetChild(0));
-      //}
-
-    }
-    return ret;
-  }
-
-  public String generateCondition(SimpleNode cond, String type) {
-    String ret = "";
-    int num;
-
-    if(cond.jjtGetNumChildren()>0){
-
-    SimpleNode condition = (SimpleNode)cond.jjtGetChild(0);
-
     if (type.equals("if")) {
       num = this.ifCounter++;
       //label if
       ret+="\nif"+num+": \n";
       //se for uma AND
-
+      if(cond.jjtGetNumChildren()>0){
       System.out.println(condition.getId());
 
       if(condition.getId() == NewJava.JJTOP2){
@@ -697,10 +746,13 @@ public class JasminParser{
 
         //this.stackSize--;
       }
+    }
     } else if (type.equals("else")) {
       num = this.elseCounter++;
       ret+="\nelse"+num+": \n";
-      ret += this.generateStatement((SimpleNode)condition);
+      if(cond.jjtGetNumChildren()>0){
+        ret += this.generateStatement((SimpleNode)condition);
+      }
     } else {
       return "";
     }
@@ -721,84 +773,92 @@ public class JasminParser{
       ret += "Else";
     }
     ret += num+":\n";
-  }
 
-    return ret;
-  }
+  return ret;
+}
 
-  public void incrementStackSize(){
-    this.stackSize++;
-    if(this.stackSize > this.maxStackSize)
-      this.maxStackSize = this.stackSize;
-  }
+public void incrementStackSize(){
+  this.stackSize++;
+  if(this.stackSize > this.maxStackSize)
+  this.maxStackSize = this.stackSize;
+}
 
-  public String getVarType(SimpleNode curVariable){
-    //verifica se é local
-    if(localVarList.indexOf(curVariable.getSymbol()) != -1){
-      //encontrar tipo da var na symbol table
-      SymbolType curVar = this.methodSymbols.getLocal(curVariable.getSymbol());
-      return curVar.type;
+public String getVarType(SimpleNode curVariable){
+  //verifica se é local
+  if(localVarList.indexOf(curVariable.getSymbol()) != -1){
+    //encontrar tipo da var na symbol table
+    SymbolType curVar = this.methodSymbols.getLocal(curVariable.getSymbol());
+    return curVar.type;
 
     //global (atributo da classe)
-    } else if(this.symbolTable.getGlobal(curVariable.getSymbol())!=null){
-      return this.symbolTable.getGlobal(curVariable.getSymbol()).type;
-    }
-
-    return null;
+  } else if(this.symbolTable.getGlobal(curVariable.getSymbol())!=null){
+    return this.symbolTable.getGlobal(curVariable.getSymbol()).type;
   }
 
+  return null;
+}
 
-  //extrai tipo de retorno de uma signature de uma funcao
-  public static String extractRet(String signature){
-    String[] splitted = signature.split("\\)");
-    return splitted[1];
+
+//extrai tipo de retorno de uma signature de uma funcao
+public static String extractRet(String signature){
+  String[] splitted = signature.split("\\)");
+  return splitted[1];
+}
+
+public String getJasminType(SymbolType varType){
+  switch(varType.type){
+    case "int":
+    return "I";
+    case "int[]":
+    return "[I";
+    case "boolean":
+    return "Z";
+    case "void":
+    return "V";
+    default:
+    return "L"+this.classname+";";
   }
+}
 
-  public String getJasminType(SymbolType varType){
-    switch(varType.type){
-      case "int":
-      return "I";
-      case "int[]":
-      return "[I";
-      case "boolean":
-      return "Z";
-      case "void":
-      return "V";
-      default:
-      return "L"+this.classname+";";
-    }
+public String getNormalType(SymbolType varType){
+  switch(varType.type){
+    case "I":
+    return "int";
+    case "[I":
+    return "int[]";
+    case "Z":
+    return "boolean";
+    case "V":
+    return "void";
+    default:
+    return varType.type.substring(1,varType.type.length()-1);
   }
+}
 
-  public String getNormalType(SymbolType varType){
-    switch(varType.type){
-      case "I":
-      return "int";
-      case "[I":
-      return "int[]";
-      case "Z":
-      return "boolean";
-      case "V":
-      return "void";
-      default:
-      return varType.type.substring(1,varType.type.length()-1);
-    }
-  }
+public SymbolType getType(SimpleNode variable){
+  SymbolType type = new SymbolType("int");
 
-  public SymbolType getType(SimpleNode variable){
-    SymbolType type = new SymbolType("int");
-
-    //se for o elemento de um array, o tipo e int
-    if((variable.jjtGetNumChildren() > 0) && (((SimpleNode)variable.jjtGetChild(0)).getId() == NewJava.JJTARRINDEX)){
-      return type;
-    }
-
-    if(this.methodSymbols.getLocal(variable.getSymbol())!= null){
-      type = this.methodSymbols.getLocal(variable.getSymbol());
-    }else if(this.symbolTable.getGlobal(variable.getSymbol()) != null){
-      type = this.symbolTable.getGlobal(variable.getSymbol());
-    }
-
+  //se for o elemento de um array, o tipo e int
+  if((variable.jjtGetNumChildren() > 0) && (((SimpleNode)variable.jjtGetChild(0)).getId() == NewJava.JJTARRINDEX)){
     return type;
   }
+
+  //tipo de uma funcao
+  if(variable.getId()==NewJava.JJTFULLSTOP){
+    ArrayList<String> argTypes = new ArrayList<String>();
+    for(int i=0;i<variable.jjtGetChild(1).jjtGetNumChildren();i++){
+      argTypes.add(this.getType((SimpleNode)variable.jjtGetChild(1).jjtGetChild(i)).type);
+    }
+    type = new SymbolType(this.symbolTable.getReturn(variable.jjtGetChild(1).getSymbol(),argTypes));
+  }
+
+  if(this.methodSymbols.getLocal(variable.getSymbol())!= null){
+    type = this.methodSymbols.getLocal(variable.getSymbol());
+  }else if(this.symbolTable.getGlobal(variable.getSymbol()) != null){
+    type = this.symbolTable.getGlobal(variable.getSymbol());
+  }
+
+  return type;
+}
 
 }

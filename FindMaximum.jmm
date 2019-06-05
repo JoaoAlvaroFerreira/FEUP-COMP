@@ -18,7 +18,7 @@ class FindMaximum {
 			}
 			i = i + 1;
 	 }
-
+	 io.println(maximum);
 		return maximum;
 	}
 
@@ -43,6 +43,9 @@ class FindMaximum {
 		fm = new FindMaximum();
 		fm.build_test_arr();
 
-		//ioPlus.printResult(fm.find_maximum(fm.get_array()));
+		//io.println(fm.build_test_arr());
+		//this.build_test_arr();
+		ioPlus.printResult(fm.find_maximum(fm.get_array()));
 	}
+
 }
