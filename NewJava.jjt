@@ -301,8 +301,7 @@ void Expr2()#void: {Token t;}
 
 void Expr3()#void: {Token t;}
 {
-     FullStop(){}#FULLSTOP(2)
-     | t=<MINOR>VarTerm()[Expr3()]
+      t=<MINOR>VarTerm()[Expr3()]
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
@@ -324,18 +323,24 @@ void Expr4()#void: {Token t;}
 
 void Expr5()#void: {Token t;}
 {
-     t=<OPERATORSHIGH>VarTerm()
+  t=<OPERATORSHIGH>VarTerm()[Expr5()]
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
         jjtThis.column = t.beginColumn;
       }#OP5(2)
+  | Expr6()[Expr5()]
+}
+
+void Expr6()#void: {Token t;}
+{
+  FullStop(){}#FULLSTOP(2)
 }
 
 void FullStop()#PAREMETER: {Token t;}
 {
-  <FULLSTOP> (t=<LENGTH> [Expr2()] |
-  t=<IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()]){
+  <FULLSTOP> (t=<LENGTH> |
+  t=<IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED>){
     jjtThis.symbol = t.image;
     jjtThis.line = t.beginLine;
     jjtThis.column = t.beginColumn;
@@ -356,7 +361,6 @@ void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token()
         jjtThis.line = t.beginLine;
         jjtThis.column = t.beginColumn;
       }#TEXT(1)
-
 
     | t=<IDENTIFIER>
       {
