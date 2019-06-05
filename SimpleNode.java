@@ -291,7 +291,9 @@ public class SimpleNode implements Node {
         return "error";
       }
 
-      if (!identifierType.equals(expressionType)) {
+      if ((!identifierType.equals(expressionType)) &&
+      !(identifierType.equals("int") && expressionType.equals("int[]")) && expressionType.equals("int[]") &&
+      !(identifierType.equals("boolean") && expressionType.equals("int")) && expressionType.equals("int")) {
         error = new SemanticalError("INCOMPATIBLE_TYPES", data.filePath, this.jjtGetChild(0).getLineNumber(), ((SimpleNode) this.jjtGetChild(1)).getColumnNumber());
         error.printError(expressionType, identifierType);
         return "error";
@@ -308,7 +310,6 @@ public class SimpleNode implements Node {
       if ((!type.equals(dataType)) &&
       !(type.equals("int") && dataType.equals("int[]")) && dataType.equals("int[]") &&
       !(type.equals("boolean") && dataType.equals("int")) && dataType.equals("int")) {
-
         error = new SemanticalError("INCOMPATIBLE_TYPES", data.filePath, this.jjtGetChild(0).getLineNumber(), ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
         error.printError(type, dataType);
         return "error";
