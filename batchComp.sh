@@ -4,8 +4,8 @@ javacc NewJava.jj
 echo -----------------------------------
 javac *.java
 echo -----------------------------------
-java Main MonteCarloPi.jmm
+java Main FindMaximum.jmm
 echo -----------------------------------
-java -jar jasmin-2.4/jasmin.jar MonteCarloPi.j
+java -jar jasmin-2.4/jasmin.jar FindMaximum.j
 echo -----------------------------------
-java MonteCarloPi
+java FindMaximum

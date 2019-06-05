@@ -151,6 +151,7 @@ public class JasminParser{
     for(int i=0;i<method.jjtGetNumChildren();i++){
       SimpleNode curStatement = (SimpleNode) method.jjtGetChild(i);
       tmp+=this.generateStatement(curStatement);
+      tmp += "\n";
     }
 
     if(methodSymbols.returnDescriptor.equals("int[]")) {
@@ -211,6 +212,8 @@ public class JasminParser{
           this.incrementStackSize();
 
         } else if(this.symbolTable.getGlobal(curStatement.getSymbol()) != null){
+          ret+="aload 0\n";
+          this.incrementStackSize();
           ret += "getfield ";
           if(this.supername != null)
             ret += this.supername + "/";
@@ -312,12 +315,13 @@ public class JasminParser{
         SimpleNode classe = (SimpleNode)curStatement.jjtGetChild(0);
         SimpleNode parameter = (SimpleNode)curStatement.jjtGetChild(1);
 
+
         //classe externa
         if((localVarList.indexOf(classe.getSymbol()) == -1)&&(this.symbolTable.getGlobal(classe.getSymbol())==null)){
           String type = "";
           ArrayList<String> argTypes = new ArrayList<String>();
           for(int i=0;i<parameter.jjtGetNumChildren();i++){
-            ret+=this.generateStatement((SimpleNode)parameter.jjtGetChild(i))+"\n";
+            ret+=this.generateStatement((SimpleNode)parameter.jjtGetChild(i))+"";
             argTypes.add(this.getType((SimpleNode)parameter.jjtGetChild(i)).type);
             type+=this.getJasminType(this.getType((SimpleNode)parameter.jjtGetChild(i))) + "";
             //methodTypes += this.getJasminType((SimpleNode)parameter.jjtGetChild(i).) + ";";
@@ -439,6 +443,21 @@ public class JasminParser{
 
   public String generateAssign(SimpleNode statement){
     String ret = "";
+
+    //se for global e for um putfield, fazer push do this
+    if((this.symbolTable.getGlobal(statement.jjtGetChild(0).getSymbol())!=null) &&
+       (statement.jjtGetChild(0).getId()==NewJava.JJTVAR) &&
+       !((statement.jjtGetChild(0).jjtGetNumChildren()>0)&&(statement.jjtGetChild(0).jjtGetChild(0).getId()==NewJava.JJTARRINDEX))){
+      ret+="aload 0\n";
+      this.incrementStackSize();
+    }
+
+    if((this.symbolTable.getGlobal(statement.jjtGetChild(1).getSymbol())!=null) &&
+       (statement.jjtGetChild(1).getId()==NewJava.JJTVAR) &&
+       !((statement.jjtGetChild(0).jjtGetNumChildren()>0)&&(statement.jjtGetChild(1).jjtGetChild(0).getId()==NewJava.JJTARRINDEX))){
+      ret+="aload 0\n";
+      this.incrementStackSize();
+    }
 
     if ((statement.jjtGetChild(0).jjtGetNumChildren() > 0) && (statement.jjtGetChild(0).jjtGetChild(0).getId() == NewJava.JJTARRINDEX)){
         ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(0));
@@ -591,7 +610,7 @@ public class JasminParser{
 
       //instruction inside while
       for(int i=1;i<loop.jjtGetNumChildren();i++){
-        
+
         ret+=this.generateStatement((SimpleNode)loop.jjtGetChild(i));
       }
 
@@ -613,7 +632,7 @@ public class JasminParser{
     if(array.jjtGetNumChildren()>0){
 
        //IF IT'S ASSIGNING VALUES WITH THE ARRAY
-       if(array.jjtGetChild(0).jjtGetChild(0).getId() == NewJava.JJTVAL){
+       //if(array.jjtGetChild(0).jjtGetChild(0).getId() == NewJava.JJTVAL){
 
         //STACK: ->array reference, index, value
 
@@ -625,6 +644,8 @@ public class JasminParser{
           ret += Integer.toString(localVarList.indexOf(array.getSymbol())) + "\n";
           this.incrementStackSize();
         }else{
+          ret+="aload 0\n";
+          this.incrementStackSize();
           ret += "getfield ";
           if(this.supername != null)
             ret += this.supername + "/";
@@ -632,7 +653,7 @@ public class JasminParser{
         }
 
         ret+=this.generateStatement((SimpleNode)array.jjtGetChild(0).jjtGetChild(0));
-       }
+      //}
 
     }
     return ret;
@@ -673,7 +694,7 @@ public class JasminParser{
         }else{
           ret +="ifeq endIf"+num+"\n\n";
         }
-        
+
         //this.stackSize--;
       }
     } else if (type.equals("else")) {
@@ -765,6 +786,11 @@ public class JasminParser{
 
   public SymbolType getType(SimpleNode variable){
     SymbolType type = new SymbolType("int");
+
+    //se for o elemento de um array, o tipo e int
+    if((variable.jjtGetNumChildren() > 0) && (((SimpleNode)variable.jjtGetChild(0)).getId() == NewJava.JJTARRINDEX)){
+      return type;
+    }
 
     if(this.methodSymbols.getLocal(variable.getSymbol())!= null){
       type = this.methodSymbols.getLocal(variable.getSymbol());

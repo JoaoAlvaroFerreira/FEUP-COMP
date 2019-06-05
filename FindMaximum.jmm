@@ -1,60 +1,47 @@
 class FindMaximum {
 	int[] test_arr;
-			int testes;
-/*
+
 	public int find_maximum(int[] arr) {
 		int i;
 		int maximum;
 		int value;
-
+		int temp;
 
 		i = 1;
 		maximum = arr[0];
-		while (i < arr.length) {
+		temp=arr.length;
+		while (i < temp) {
 			value = arr[i];
 			if (maximum < value) {
 				maximum = value;
 			} else {
 			}
 			i = i + 1;
-		}
+	 }
 
 		return maximum;
 	}
-	*/
 
 	public int build_test_arr() {
-		//test_arr = new int[5];
-		//test_arr[0] = 14;
-		//test_arr[1] = 28;
-		//test_arr[2] = 0;
-		//test_arr[3] = 0-5;
-		//test_arr[4] = 12;
-		//testes=2;
-
+		test_arr = new int[5];
+		test_arr[0] = 14;
+		test_arr[1] = 28;
+		test_arr[2] = 0;
+		test_arr[3] = 0-5; // No unary minus in Java--
+		test_arr[4] = 12;
 
 		return 0;
 	}
-/*
+
 	public int[] get_array() {
 		return test_arr;
 	}
-*/
+
 	public static void main(String[] args) {
 		FindMaximum fm;
-		int oi;
-		int[] arr;
 
-		arr=new int[9];
-	 	oi = 5;
-		arr[2] = 3;
-		oi = arr[2];
-		io.println(oi);
-		io.println(arr[2]);
-		io.println(arr.length);
-
-		//fm = new FindMaximum();
-		//fm.build_test_arr();
+		fm = new FindMaximum();
+		fm.build_test_arr();
 
 		//ioPlus.printResult(fm.find_maximum(fm.get_array()));
 	}
