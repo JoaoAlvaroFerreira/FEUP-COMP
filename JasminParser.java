@@ -202,7 +202,7 @@ public class JasminParser{
           //verifica tipo da variavel
           SymbolType curVar = this.methodSymbols.getLocal(curStatement.getSymbol());
 
-          if(curVar.type.equals("int") || methodSymbols.returnDescriptor.equals("boolean")){
+          if(curVar.type.equals("int") || methodSymbols.returnDescriptor.equals("boolean") || curVar.type.equals("boolean")){
             ret += "iload ";
           }else{
             ret += "aload ";
@@ -737,6 +737,11 @@ public String generateCondition(SimpleNode cond, String type) {
         this.stackSize--;
         //caso contrario 0-> false  tudo o resto -> true
       } else{
+        //se for boolenana, fezer push de 0 ou 1
+      //  if(((SimpleNode)condition).getId()==NewJava.JJTBOOLEAN){
+
+        //}
+
         ret += this.generateStatement((SimpleNode)condition);
         if(cond.jjtGetParent().jjtGetNumChildren() > 2){
           ret +="ifeq else"+num+"\n\n";
@@ -766,13 +771,10 @@ public String generateCondition(SimpleNode cond, String type) {
     }
 
     //end label
-    ret +="end";
-    if (type.equals("if")) {
-      ret += "If";
-    } else if (type.equals("else")) {
-      ret += "Else";
+    if (type.equals("else")) {
+      ret += "endElse"+num+":\n";
+      ret += "endIf"+num+":\n";
     }
-    ret += num+":\n";
 
   return ret;
 }
