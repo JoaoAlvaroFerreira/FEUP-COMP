@@ -617,7 +617,11 @@ public String generateOp(SimpleNode op){
     break;
     //push 0 -> false ou 1 -> true
     case "<":
-    ret += "if_icmplt true"+this.compCounter+"\n";
+    //se for um ! entao >=
+    if(((SimpleNode)op.jjtGetParent()).getId() == NewJava.JJTNOT)
+      ret += "if_icmpge true"+this.compCounter+"\n";
+    else
+      ret += "if_icmplt true"+this.compCounter+"\n";
     ret += "bipush 0\n";
     ret += "goto endComp"+this.compCounter+"\n";
     ret += "true"+this.compCounter+":\n";
@@ -711,10 +715,15 @@ public String generateArray(SimpleNode array){
 
 public String generateCondition(SimpleNode cond, String type) {
   String ret = "";
+  boolean not = false;
   int num;
   SimpleNode condition = cond;
   if(cond.jjtGetNumChildren()>0){
     condition = (SimpleNode)cond.jjtGetChild(0);
+    if(condition.getId() == NewJava.JJTNOT){
+      condition = (SimpleNode)condition.jjtGetChild(0);
+      not = true;
+    }
   }
     if (type.equals("if")) {
       num = this.ifCounter++;

@@ -217,7 +217,7 @@ public class SimpleNode implements Node {
       }
       return symbol;
     }
-    
+
     if (id == NewJava.JJTARRINDEX) {
       if (!data.initializedArrays.isEmpty() && data.initializedArrays.get(functionNum) != null
           && data.initializedArrays.get(functionNum).get(this.jjtGetParent().getSymbol()) != null) {
@@ -247,7 +247,7 @@ public class SimpleNode implements Node {
         error.printError(symbol);
         return "error";
       }
-      
+
       return "int";
     }
 
@@ -373,13 +373,13 @@ public class SimpleNode implements Node {
             return var.returnDescriptor;
           }
         }
-        
+
 
         error = new SemanticalError("UNKNOWN_SYMBOL",data.filePath, leftSide.getLineNumber(), rightSide.getColumnNumber());
         error.printError(data.className, "method", rightSide.getSymbol());
         return "error";
       }
-      
+
         if (rightSide.jjtGetNumChildren() != 0 && rightSide.jjtGetChild(0).getId() == NewJava.JJTFULLSTOP) {
           return rightSide.jjtGetChild(0).visit(data, functionNum);
         }
@@ -397,7 +397,7 @@ public class SimpleNode implements Node {
       String conditionType = (String) ((SimpleNode) this.jjtGetChild(0)).visit(data, functionNum);
 
       if (!conditionType.equals("boolean") && !conditionType.equals("int") && !conditionType.equals("error")
-          && NewJava.JJTOP2 != this.jjtGetChild(0).getId() && NewJava.JJTOP3 != this.jjtGetChild(0).getId()) {
+          && NewJava.JJTOP2 != this.jjtGetChild(0).getId() && NewJava.JJTOP3 != this.jjtGetChild(0).getId() && NewJava.JJTNOT != this.jjtGetChild(0).getId()) {
         error = new SemanticalError("INCOMPATIBLE_TYPES", data.filePath, this.jjtGetChild(0).getLineNumber(),
             ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
         error.printError(conditionType, "boolean");
