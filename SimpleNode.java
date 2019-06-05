@@ -213,7 +213,12 @@ public class SimpleNode implements Node {
     if (id == NewJava.JJTNEW) {
       if (symbol.equals("int[]")) {
         Map<String, Integer> arraySize = new TreeMap<String, Integer>();
-        arraySize.put(jjtGetParent().jjtGetChild(0).getSymbol(), Integer.parseInt(this.jjtGetChild(0).getSymbol()));
+        //se o indice nao for uma constante int
+        try{
+          arraySize.put(jjtGetParent().jjtGetChild(0).getSymbol(), Integer.parseInt(this.jjtGetChild(0).getSymbol()));
+        }catch(Exception nfe){
+          arraySize.put(jjtGetParent().jjtGetChild(0).getSymbol(), -1);
+        }
         data.initializedArrays.put(functionNum, arraySize);
       }
       return symbol;
@@ -228,7 +233,7 @@ public class SimpleNode implements Node {
         if (this.jjtGetChild(0).getId() == NewJava.JJTVAL) {
           index = Integer.parseInt(this.jjtGetChild(0).getSymbol());
 
-          if (index >= length) {
+          if ((index >= length) && (length>-1)) {
             error = new SemanticalError("OUT_OF_BOUNDS", data.filePath, this.jjtGetChild(0).getLineNumber(), this.jjtGetChild(0).getColumnNumber());
             error.printError(index, length);
             return "error";
