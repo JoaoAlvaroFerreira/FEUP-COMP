@@ -284,8 +284,8 @@ void Expression()#void: {Token t = new Token();}
 
 void Expr2()#void: {Token t;}
 {
-    FullStop(){}#FULLSTOP(2)
-    | t=<AND> VarTerm() [Expr2()]
+
+    t=<AND> VarTerm() [Expr2()]
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
@@ -297,7 +297,8 @@ void Expr2()#void: {Token t;}
 
 void Expr3()#void: {Token t;}
 {
-     t=<MINOR>VarTerm()[Expr3()]
+     FullStop(){}#FULLSTOP(2)
+     | t=<MINOR>VarTerm()[Expr3()]
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
@@ -329,8 +330,8 @@ void Expr5()#void: {Token t;}
 
 void FullStop()#PAREMETER: {Token t;}
 {
-  (<FULLSTOP> (t=<LENGTH> [Expr2()] |
-  t=<IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])){
+  <FULLSTOP> (t=<LENGTH> [Expr2()] |
+  t=<IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()]){
     jjtThis.symbol = t.image;
     jjtThis.line = t.beginLine;
     jjtThis.column = t.beginColumn;
