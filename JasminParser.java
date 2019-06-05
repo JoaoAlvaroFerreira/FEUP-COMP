@@ -295,9 +295,8 @@ public class JasminParser{
       //cria um novo array
       if(curStatement.getSymbol().equals("int[]")){
         //extrai o comprimento do array
-        String arraySize = curStatement.jjtGetChild(0).getSymbol();
-        ret+="bipush " + arraySize + "\n";
-        this.incrementStackSize();
+        ret+=this.generateStatement((SimpleNode)curStatement.jjtGetChild(0));
+        
         ret += "newarray int\n";
       }else{
         ret += "new " + curStatement.getSymbol() + "\n";
