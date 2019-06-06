@@ -695,7 +695,6 @@ public String generateArray(SimpleNode array){
   String ret = "";
 
 
-  if(array.jjtGetNumChildren()>0){
 
     //IF IT'S ASSIGNING VALUES WITH THE ARRAY
     //if(array.jjtGetChild(0).jjtGetChild(0).getId() == NewJava.JJTVAL){
@@ -718,10 +717,13 @@ public String generateArray(SimpleNode array){
       ret+= this.classname + "/" + array.getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(array.getSymbol()))+"\n";
     }
 
+  if(array.jjtGetNumChildren()>0){
     ret+=this.generateStatement((SimpleNode)array.jjtGetChild(0).jjtGetChild(0));
     //}
 
   }
+  if(array.getSymbol().equals("field"))
+  System.out.println("FUCK "+ret);
   return ret;
 }
 
