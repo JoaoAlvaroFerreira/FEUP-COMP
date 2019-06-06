@@ -156,6 +156,7 @@ public class JasminParser{
       SimpleNode curStatement = (SimpleNode) method.jjtGetChild(i);
       tmp+=this.generateStatement(curStatement);
       tmp += "\n";
+
     }
 
 
@@ -221,6 +222,7 @@ public class JasminParser{
 
           ret += Integer.toString(localVarList.indexOf(curStatement.getSymbol())) + "\n";
           this.incrementStackSize();
+
 
         } else if(this.symbolTable.getGlobal(curStatement.getSymbol()) != null){
           ret+="aload 0\n";
@@ -397,6 +399,8 @@ public class JasminParser{
           }
 
           ret += "invokevirtual ";
+          //this.stackSize--;//this
+
           //se for nao um metodo da superclasse
           //this.incrementStackSize();
           if(this.symbolTable.getReturn(parameter.symbol,argTypes) != null){
@@ -404,6 +408,7 @@ public class JasminParser{
           }
 
           ret+=classe.symbol + "/" + parameter.symbol + "("+type+")"+retType+"\n";
+            //ret+=";cur: "+this.stackSize+"\n";
         }else if(classe.getId() == NewJava.JJTNEW){
           ret+=this.generateStatement(classe);
           for(int i=0;i<parameter.jjtGetNumChildren();i++){
@@ -416,6 +421,7 @@ public class JasminParser{
           methodTypes = this.getMethodSignature(curStatement);
 
           ret +="invokevirtual ";
+          //this.stackSize--;//this
           ret+=classe.symbol + "/" + parameter.symbol + "("+type+")"+retType+"\n";
         }else //classe externa ou interna
           if((localVarList.indexOf(classe.getSymbol()) == -1)&&(this.symbolTable.getGlobal(classe.getSymbol())==null)){
@@ -436,15 +442,20 @@ public class JasminParser{
             ret = temp + Integer.toString(localVarList.indexOf(classe.getSymbol())) + "\n"+ ret;
           }
           ret +="invokevirtual ";
+          //this.stackSize--;//this
           //se for nao um metodo da superclasse
          if(this.symbolTable.getReturn(parameter.symbol,argTypes) != null){
             ret+=this.getType(classe).type + "/" + parameter.symbol + "("+type+")"+retType+"\n";
           }else{
             ret+=supername + "/" + parameter.symbol + "("+type+")"+retType+"\n";
           }
+            //ret+=";cur: "+this.stackSize+"\n";
         }
 
         this.stackSize-=parameter.jjtGetNumChildren();
+        //se o retonrno nao for null, incrementar a stack para o guardar
+        if(!retType.equals("V"))
+          this.incrementStackSize();
 
         //se for uma chamada da funcao e o valor nao for gurdado em lado nenhum
         if((curStatement.jjtGetParent().getId()!=NewJava.JJTASSIGN) &&
@@ -452,11 +463,14 @@ public class JasminParser{
           (curStatement.jjtGetParent().getId()!=NewJava.JJTRETURN) &&
           (curStatement.jjtGetParent().getId()!=NewJava.JJTPAREMETER) &&
           (curStatement.jjtGetParent().getId()!=NewJava.JJTARGS) &&
-          (curStatement.jjtGetParent().getId()!=NewJava.JJTOP2) &&   (curStatement.jjtGetParent().getId()!=NewJava.JJTOP3) &&   (curStatement.jjtGetParent().getId()!=NewJava.JJTOP4) &&   (curStatement.jjtGetParent().getId()!=NewJava.JJTOP5)){
-          while(this.stackSize>0){
+          !(retType.equals("V")) &&
+          (curStatement.jjtGetParent().getId()!=NewJava.JJTOP2) && (curStatement.jjtGetParent().getId()!=NewJava.JJTOP3) &&   (curStatement.jjtGetParent().getId()!=NewJava.JJTOP4) &&   (curStatement.jjtGetParent().getId()!=NewJava.JJTOP5) &&
+          !(((curStatement.jjtGetParent().getId()==NewJava.JJTIF) || (curStatement.jjtGetParent().getId()==NewJava.JJTWHILE))  &&
+          ((curStatement.jjtGetParent().jjtGetNumChildren()>0)&&(curStatement.jjtGetParent().jjtGetChild(0).getId()==NewJava.JJTFULLSTOP) && (curStatement.jjtGetParent().jjtGetChild(0).jjtGetChild(0).getSymbol().equals(classe.symbol))&& (curStatement.jjtGetParent().jjtGetChild(0).jjtGetChild(1).getSymbol().equals(parameter.symbol))))) {
+          //while(this.stackSize>0){
              ret+="pop\n";
              this.stackSize--;
-           }
+           //}
         }
         //se retornar void, entao podemos decrementar a stack
         //if(retType.equals("V"))
@@ -487,14 +501,17 @@ public class JasminParser{
   break;
   case NewJava.JJTWHILE:
   ret+=this.generateWhile(curStatement);
+        //ret+=";cur: "+this.stackSize+"\n";
   break;
   case NewJava.JJTIF:
   //System.out.println("entrei no if");
   ret+=this.generateCondition(curStatement, "if");
+          //ret+=";cur: "+this.stackSize+"\n";
   break;
   case NewJava.JJTELSE:
   //System.out.println("entrei no else");
   ret+=this.generateCondition(curStatement, "else");
+          //ret+=";cur: "+this.stackSize+"\n";
   break;
   // case NewJava.JJTARRINDEX:
   // ret+=this.generateArray(curStatement);
@@ -794,6 +811,7 @@ public String generateCondition(SimpleNode cond, String type) {
       num = this.ifCounter++;
       //label if
       ret+="\nif"+num+": \n";
+        //ret+=";cur: "+this.stackSize+"\n";
       //se for uma AND
       if(cond.jjtGetNumChildren()>0){
       System.out.println(condition.getId());
@@ -817,6 +835,7 @@ public String generateCondition(SimpleNode cond, String type) {
         //}
 
         ret += this.generateStatement((SimpleNode)condition);
+          //ret+=";cur: "+this.stackSize+"\n";
         if(cond.jjtGetParent().jjtGetNumChildren() > 2){
           ret +="ifeq else"+num+"\n\n";
         }else{
@@ -836,6 +855,7 @@ public String generateCondition(SimpleNode cond, String type) {
       return "";
     }
 
+            //ret+=";cur: "+this.stackSize+"\n";
 
     //statement inside if
     for(int i = 1 ; i < cond.jjtGetNumChildren();i++){
