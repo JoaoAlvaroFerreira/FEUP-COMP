@@ -78,7 +78,9 @@ public class JasminParser{
     for(int i=0;i<fileClass.jjtGetNumChildren();i++){
       if((fileClass.jjtGetChild(i).getId() == NewJava.JJTFUNCTION) ||
       (fileClass.jjtGetChild(i).getId() == NewJava.JJTMAIN)){
+        int temp = this.maxStackSize;
         output += this.generateMethod((SimpleNode)(fileClass.jjtGetChild(i)));
+        maxStackSize = temp;
       }
     }
 
@@ -156,6 +158,7 @@ public class JasminParser{
       tmp += "\n";
     }
 
+
     if(methodSymbols.returnDescriptor.equals("int[]")) {
       tmp+="a";
     } else if (methodSymbols.returnDescriptor.equals("int") || methodSymbols.returnDescriptor.equals("boolean")) {
@@ -169,7 +172,7 @@ public class JasminParser{
 
     tmp +="\n";
 
-    tmp += ".end method\n\n";
+    tmp += ".end method\n;tamanh final "+this.stackSize+"\n";
 
     ret += ".limit stack " + Integer.toString(this.maxStackSize) + "\n";
     ret += tmp;
@@ -188,12 +191,17 @@ public class JasminParser{
 
       //caso de retorno, verificar se existe valor a retornar
       case NewJava.JJTRETURN:
-      if(curStatement.jjtGetNumChildren() > 0){
-        SimpleNode returnVal = (SimpleNode)curStatement.jjtGetChild(0);
-        ret+=this.generateStatement(returnVal);
-        this.stackSize--;
-      }
-      break;
+        //se sobrarem elementos na stack, fazer pop para tamanho consistente
+        while(this.stackSize>0){
+          ret+="pop\n";
+          this.stackSize--;
+        }
+        if(curStatement.jjtGetNumChildren() > 0){
+          SimpleNode returnVal = (SimpleNode)curStatement.jjtGetChild(0);
+          ret+=this.generateStatement(returnVal);
+          this.stackSize--;
+        }
+        break;
 
       //carregar valor da variável para a stack
       case NewJava.JJTTEXT:
@@ -204,7 +212,8 @@ public class JasminParser{
           //verifica tipo da variavel
           SymbolType curVar = this.methodSymbols.getLocal(curStatement.getSymbol());
 
-          if(curVar.type.equals("int") || methodSymbols.returnDescriptor.equals("boolean") || curVar.type.equals("boolean")){
+
+          if(curVar.type.equals("int") || /*methodSymbols.returnDescriptor.equals("boolean") ||*/ curVar.type.equals("boolean")){
             ret += "iload ";
           }else{
             ret += "aload ";
@@ -229,6 +238,7 @@ public class JasminParser{
       } else if(curStatement.jjtGetChild(0).getId() == NewJava.JJTARRINDEX){
         ret+=this.generateArray(curStatement);
         ret+="iaload\n";
+        this.stackSize--;
       }
       break;
 
@@ -260,6 +270,7 @@ public class JasminParser{
           ret += this.supername + "/";
           ret+= this.classname + "/" + curStatement.getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(curStatement.getSymbol()))+"\n";
           this.stackSize--;
+          //this.stackSize--;
           //classe externa
         }else{
           //ret += "getstatic " + curStatement.getSymbol();
@@ -381,12 +392,17 @@ public class JasminParser{
           //load this to stack if its not parameter of another function
           if(curStatement.jjtGetParent().getId()!=NewJava.JJTPAREMETER){
             ret = "aload 0\n"+ret;
-            this.incrementStackSize();
+            //se tivermos de adicionar o this antes, temos que incrementar o tamanho maximo ate agora
+            this.incrementStackSize(this.maxStackSize+1);
           }
 
           ret += "invokevirtual ";
+          //se for nao um metodo da superclasse
+          //this.incrementStackSize();
+          if(this.symbolTable.getReturn(parameter.symbol,argTypes) != null){
+            retType = this.getJasminType(new SymbolType(this.symbolTable.getReturn(parameter.symbol,argTypes)));
+          }
 
-          retType = this.getJasminType(new SymbolType(this.symbolTable.getReturn(parameter.symbol,argTypes)));
           ret+=classe.symbol + "/" + parameter.symbol + "("+type+")"+retType+"\n";
         }else if(classe.getId() == NewJava.JJTNEW){
           ret+=this.generateStatement(classe);
@@ -404,19 +420,34 @@ public class JasminParser{
         }else //classe externa ou interna
           if((localVarList.indexOf(classe.getSymbol()) == -1)&&(this.symbolTable.getGlobal(classe.getSymbol())==null)){
           ret += "invokestatic ";
-          this.incrementStackSize();
+          //this.incrementStackSize();
           ret+=classe.symbol + "/" + parameter.symbol + "("+type+")"+retType+"\n";
         }else{
-          retType = this.getJasminType(new SymbolType(this.symbolTable.getReturn(parameter.symbol,argTypes)));
+          System.out.println(parameter.symbol+" "+argTypes);
+          //se for nao um metodo da superclasse
+          if(this.symbolTable.getReturn(parameter.symbol,argTypes) != null){
+            retType = this.getJasminType(new SymbolType(this.symbolTable.getReturn(parameter.symbol,argTypes)));
+          }
           //load this to stack if its not parameter of another function
           if(curStatement.jjtGetParent().getId()!=NewJava.JJTPAREMETER){
             String temp = "aload ";
+            //se tivermos de adicionar o this antes, temos que incrementar o tamanho maximo ate agora
+            this.incrementStackSize(this.maxStackSize+1);
             ret = temp + Integer.toString(localVarList.indexOf(classe.getSymbol())) + "\n"+ ret;
-            this.incrementStackSize();
           }
           ret +="invokevirtual ";
-          ret+=this.getType(classe).type + "/" + parameter.symbol + "("+type+")"+retType+"\n";
+          //se for nao um metodo da superclasse
+         if(this.symbolTable.getReturn(parameter.symbol,argTypes) != null){
+            ret+=this.getType(classe).type + "/" + parameter.symbol + "("+type+")"+retType+"\n";
+          }else{
+            ret+=supername + "/" + parameter.symbol + "("+type+")"+retType+"\n";
+          }
         }
+
+        this.stackSize-=parameter.jjtGetNumChildren();
+        //se retornar void, entao podemos decrementar a stack
+        //if(retType.equals("V"))
+        //  this.stackSize--;
         //this.stackSize--;
         //.lenght
       }
@@ -445,11 +476,11 @@ public class JasminParser{
   ret+=this.generateWhile(curStatement);
   break;
   case NewJava.JJTIF:
-  System.out.println("entrei no if");
+  //System.out.println("entrei no if");
   ret+=this.generateCondition(curStatement, "if");
   break;
   case NewJava.JJTELSE:
-  System.out.println("entrei no else");
+  //System.out.println("entrei no else");
   ret+=this.generateCondition(curStatement, "else");
   break;
   // case NewJava.JJTARRINDEX:
@@ -457,7 +488,7 @@ public class JasminParser{
 
   case NewJava.JJTNOT:
     ret+=this.generateStatement((SimpleNode)curStatement.jjtGetChild(0));
-    //negacao
+    //negacao - nao ha alteracoes no tamanho da stack
     ret+="\n";
     ret+="ifeq push1_not"+this.notCounter+"\n";
     ret+="bipush 0\n";
@@ -488,10 +519,10 @@ public String generateLocalVariables(SimpleNode method){
       localVarList.add(varType.symbol);
 
       //declaracao variaveis locais
-        //localVar += ".var " + Integer.toString(varIndex) + " is "
-        //+ varType.symbol + " "
-        //+ this.getJasminType(varType)
-        //+ " from " + method.getSymbol() + "_init to " + method.getSymbol() + "_end\n";
+        localVar += ".var " + Integer.toString(varIndex) + " is "
+        + varType.symbol + " "
+        + this.getJasminType(varType)
+        + " from " + method.getSymbol() + "_init to " + method.getSymbol() + "_end\n";
 
       varIndex++;
     }
@@ -525,6 +556,9 @@ public String generateAssign(SimpleNode statement){
     ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(0));
     ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(1));
     ret+="iastore\n";
+    this.stackSize--;
+    this.stackSize--;
+    this.stackSize--;
   }else{
     ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(1));
     ret+=this.generateStatement((SimpleNode)statement.jjtGetChild(0));
@@ -598,7 +632,7 @@ public String generateGlobals(){
   String ret = "";
 
   for(int i=0;i<this.symbolTable.globals.size();i++){
-    //ret += ".field public " + this.symbolTable.globals.get(i).symbol + " " + this.getJasminType(this.symbolTable.globals.get(i)) + "\n";
+    ret += ".field public " + this.symbolTable.globals.get(i).symbol + " " + this.getJasminType(this.symbolTable.globals.get(i)) + "\n";
   }
 
   return ret;
@@ -634,12 +668,16 @@ public String generateOp(SimpleNode op){
       ret += "if_icmpge true"+this.compCounter+"\n";
     else
       ret += "if_icmplt true"+this.compCounter+"\n";
+    this.stackSize--;
+    this.stackSize--;
+
     ret += "bipush 0\n";
     ret += "goto endComp"+this.compCounter+"\n";
     ret += "true"+this.compCounter+":\n";
     ret += "bipush 1\n";
     ret += "endComp"+this.compCounter+":\n";
     this.compCounter++;
+    this.incrementStackSize();
     break;
   }
 
@@ -671,7 +709,7 @@ public String generateWhile(SimpleNode loop){
     }else{
       ret+=this.generateStatement((SimpleNode)cond);
       ret +="ifeq endWhile"+whileNum+"\n\n";
-      //this.stackSize--;
+      this.stackSize--;
     }
 
     //instruction inside while
@@ -715,6 +753,7 @@ public String generateArray(SimpleNode array){
       if(this.supername != null)
       ret += this.supername + "/";
       ret+= this.classname + "/" + array.getSymbol() + " " + this.getJasminType(this.symbolTable.getGlobal(array.getSymbol()))+"\n";
+            this.incrementStackSize();
     }
 
   if(array.jjtGetNumChildren()>0){
@@ -722,8 +761,7 @@ public String generateArray(SimpleNode array){
     //}
 
   }
-  if(array.getSymbol().equals("field"))
-  System.out.println("FUCK "+ret);
+
   return ret;
 }
 
@@ -772,7 +810,7 @@ public String generateCondition(SimpleNode cond, String type) {
           ret +="ifeq endIf"+num+"\n\n";
         }
 
-        //this.stackSize--;
+        this.stackSize--;
       }
     }
     } else if (type.equals("else")) {
@@ -789,9 +827,8 @@ public String generateCondition(SimpleNode cond, String type) {
     //statement inside if
     for(int i = 1 ; i < cond.jjtGetNumChildren();i++){
       ret += this.generateStatement((SimpleNode)cond.jjtGetChild(i));
-      ret += "goto endIf"+num+"\n";
-
     }
+    ret += "goto endIf"+num+"\n";
 
     //end label
     if (type.equals("else")) {
@@ -806,6 +843,11 @@ public void incrementStackSize(){
   this.stackSize++;
   if(this.stackSize > this.maxStackSize)
   this.maxStackSize = this.stackSize;
+}
+public void incrementStackSize(int stackSize){
+  int diff = this.maxStackSize-this.stackSize;
+  this.maxStackSize=stackSize;
+  this.stackSize=stackSize-diff;
 }
 
 public String getVarType(SimpleNode curVariable){
