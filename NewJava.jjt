@@ -334,6 +334,12 @@ void Expr5()#void: {Token t;}
 
 void Expr6()#void: {Token t;}
 {
+  <NOT> VarTerm() [Expr6()]{}#NOT(1)
+  | Expr7()
+}
+
+void Expr7()#void: {Token t;}
+{
   FullStop(){}#FULLSTOP(2)
 }
 
@@ -384,6 +390,6 @@ void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token()
       jjtThis.column = t.beginColumn;
     }#NEW
     )
-    | <NOT> Expression() #NOT(1)
+    | Expr6()
     | <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED>
 }

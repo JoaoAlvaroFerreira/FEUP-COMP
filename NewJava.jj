@@ -820,6 +820,30 @@ void Expr5()     : {Token t;}
 
 void Expr6()     : {Token t;}
 {
+  <NOT> VarTerm() [Expr6()]/*@bgen(jjtree) #NOT( 1) */
+                           {
+                             SimpleNode jjtn001 = new SimpleNode(JJTNOT);
+                             boolean jjtc001 = true;
+                             jjtree.openNodeScope(jjtn001);
+                           }
+                           try {
+/*@egen*//*@bgen(jjtree)*/
+                           {
+                             jjtree.closeNodeScope(jjtn001,  1);
+                             jjtc001 = false;
+                           }
+/*@egen*/{}/*@bgen(jjtree)*/
+                           } finally {
+                             if (jjtc001) {
+                               jjtree.closeNodeScope(jjtn001,  1);
+                             }
+                           }
+/*@egen*/       
+  | Expr7()
+}
+
+void Expr7()     : {Token t;}
+{
   FullStop()/*@bgen(jjtree) #FULLSTOP( 2) */
             {
               SimpleNode jjtn001 = new SimpleNode(JJTFULLSTOP);
@@ -1061,33 +1085,6 @@ void VarTerm()     : {Token t;Token open = new Token();Token close = new Token()
     }
 /*@egen*/    
     )
-    | <NOT>/*@bgen(jjtree) #NOT( 1) */
-            {
-              SimpleNode jjtn010 = new SimpleNode(JJTNOT);
-              boolean jjtc010 = true;
-              jjtree.openNodeScope(jjtn010);
-            }
-            try {
-/*@egen*/ Expression()/*@bgen(jjtree)*/
-            } catch (Throwable jjte010) {
-              if (jjtc010) {
-                jjtree.clearNodeScope(jjtn010);
-                jjtc010 = false;
-              } else {
-                jjtree.popNode();
-              }
-              if (jjte010 instanceof RuntimeException) {
-                throw (RuntimeException)jjte010;
-              }
-              if (jjte010 instanceof ParseException) {
-                throw (ParseException)jjte010;
-              }
-              throw (Error)jjte010;
-            } finally {
-              if (jjtc010) {
-                jjtree.closeNodeScope(jjtn010,  1);
-              }
-            }
-/*@egen*/        
+    | Expr6()
     | <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED>
 }
