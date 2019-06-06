@@ -192,10 +192,10 @@ public class JasminParser{
       //caso de retorno, verificar se existe valor a retornar
       case NewJava.JJTRETURN:
         //se sobrarem elementos na stack, fazer pop para tamanho consistente
-        while(this.stackSize>0){
-          ret+="pop\n";
-          this.stackSize--;
-        }
+        //while(this.stackSize>0){
+          //  ret+="pop\n";
+      //    this.stackSize--;
+      //  }
         if(curStatement.jjtGetNumChildren() > 0){
           SimpleNode returnVal = (SimpleNode)curStatement.jjtGetChild(0);
           ret+=this.generateStatement(returnVal);
@@ -445,6 +445,19 @@ public class JasminParser{
         }
 
         this.stackSize-=parameter.jjtGetNumChildren();
+
+        //se for uma chamada da funcao e o valor nao for gurdado em lado nenhum
+        if((curStatement.jjtGetParent().getId()!=NewJava.JJTASSIGN) &&
+          (curStatement.jjtGetParent().getId()!=NewJava.JJTARRINDEX) &&
+          (curStatement.jjtGetParent().getId()!=NewJava.JJTRETURN) &&
+          (curStatement.jjtGetParent().getId()!=NewJava.JJTPAREMETER) &&
+          (curStatement.jjtGetParent().getId()!=NewJava.JJTARGS) &&
+          (curStatement.jjtGetParent().getId()!=NewJava.JJTOP2) &&   (curStatement.jjtGetParent().getId()!=NewJava.JJTOP3) &&   (curStatement.jjtGetParent().getId()!=NewJava.JJTOP4) &&   (curStatement.jjtGetParent().getId()!=NewJava.JJTOP5)){
+          while(this.stackSize>0){
+             ret+="pop\n";
+             this.stackSize--;
+           }
+        }
         //se retornar void, entao podemos decrementar a stack
         //if(retType.equals("V"))
         //  this.stackSize--;
