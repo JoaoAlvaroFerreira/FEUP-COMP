@@ -402,10 +402,18 @@ public class JasminParser{
           ret+=classe.symbol + "/" + parameter.symbol + "("+type+")"+retType+"\n";
         }else //classe externa ou interna
           if((localVarList.indexOf(classe.getSymbol()) == -1)&&(this.symbolTable.getGlobal(classe.getSymbol())==null)){
+            for(int i=0;i<parameter.jjtGetNumChildren();i++){
+              ret+=this.generateStatement((SimpleNode)parameter.jjtGetChild(i))+"\n";
+              //methodTypes += this.getJasminType((SimpleNode)parameter.jjtGetChild(i).) + ";";
+            }
           ret += "invokestatic ";
           this.incrementStackSize();
           ret+=classe.symbol + "/" + parameter.symbol + "("+type+")"+retType+"\n";
         }else{
+          for(int i=0;i<parameter.jjtGetNumChildren();i++){
+            ret+=this.generateStatement((SimpleNode)parameter.jjtGetChild(i))+"\n";
+            //methodTypes += this.getJasminType((SimpleNode)parameter.jjtGetChild(i).) + ";";
+          }
           retType = this.getJasminType(new SymbolType(this.symbolTable.getReturn(parameter.symbol,argTypes)));
           //load this to stack if its not parameter of another function
           if(curStatement.jjtGetParent().getId()!=NewJava.JJTPAREMETER){
