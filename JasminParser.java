@@ -29,6 +29,7 @@ public class JasminParser{
   private int ifCounter;  //identifies the scope number of the current if
   private int elseCounter;  //identifies the scope number of the current else
   private int arrayCounter;
+    private int notCounter;
 
   public JasminParser(String file_path,SimpleNode root,SymbolTable symbolTable){
     this.source = file_path;
@@ -40,6 +41,7 @@ public class JasminParser{
     this.whileCounter = 0;
     this.compCounter = 0;
     this.ifCounter = 0;
+    this.notCounter = 0;
 
 
     if(fileClass.getId() == NewJava.JJTCLASS){
@@ -316,9 +318,8 @@ public class JasminParser{
 
 
       if(parameter.symbol.equals("length")){
-        ret+= "aload ";
-        ret += Integer.toString(localVarList.indexOf(classe.getSymbol())) + "\n"; //mudar para globals
-        ret += "arraylength\n";
+        ret+=this.generateArray(classe);
+        ret+="arraylength\n";
         //se a classe for uma variavel local
       }else{    //classe externa
         //if((localVarList.indexOf(classe.getSymbol()) == -1)&&(this.symbolTable.getGlobal(classe.getSymbol())==null)){
@@ -379,7 +380,7 @@ public class JasminParser{
           classe.symbol = this.classname;
           //load this to stack if its not parameter of another function
           if(curStatement.jjtGetParent().getId()!=NewJava.JJTPAREMETER){
-            ret += "aload 0\n";
+            ret = "aload 0\n"+ret;
             this.incrementStackSize();
           }
 
@@ -402,23 +403,15 @@ public class JasminParser{
           ret+=classe.symbol + "/" + parameter.symbol + "("+type+")"+retType+"\n";
         }else //classe externa ou interna
           if((localVarList.indexOf(classe.getSymbol()) == -1)&&(this.symbolTable.getGlobal(classe.getSymbol())==null)){
-            for(int i=0;i<parameter.jjtGetNumChildren();i++){
-              ret+=this.generateStatement((SimpleNode)parameter.jjtGetChild(i))+"\n";
-              //methodTypes += this.getJasminType((SimpleNode)parameter.jjtGetChild(i).) + ";";
-            }
           ret += "invokestatic ";
           this.incrementStackSize();
           ret+=classe.symbol + "/" + parameter.symbol + "("+type+")"+retType+"\n";
         }else{
-          for(int i=0;i<parameter.jjtGetNumChildren();i++){
-            ret+=this.generateStatement((SimpleNode)parameter.jjtGetChild(i))+"\n";
-            //methodTypes += this.getJasminType((SimpleNode)parameter.jjtGetChild(i).) + ";";
-          }
           retType = this.getJasminType(new SymbolType(this.symbolTable.getReturn(parameter.symbol,argTypes)));
           //load this to stack if its not parameter of another function
           if(curStatement.jjtGetParent().getId()!=NewJava.JJTPAREMETER){
-            ret += "aload ";
-            ret += Integer.toString(localVarList.indexOf(classe.getSymbol())) + "\n";
+            String temp = "aload ";
+            ret = temp + Integer.toString(localVarList.indexOf(classe.getSymbol())) + "\n"+ ret;
             this.incrementStackSize();
           }
           ret +="invokevirtual ";
@@ -462,6 +455,18 @@ public class JasminParser{
   // case NewJava.JJTARRINDEX:
   // ret+=this.generateArray(curStatement);
 
+  case NewJava.JJTNOT:
+    ret+=this.generateStatement((SimpleNode)curStatement.jjtGetChild(0));
+    //negacao
+    ret+="\n";
+    ret+="ifeq push1_not"+this.notCounter+"\n";
+    ret+="bipush 0\n";
+    ret+="goto end_not"+this.notCounter+"\n";
+    ret+="push1_not"+this.notCounter+":\n";
+    ret+="bipush 1\n";
+    ret+="end_not"+this.notCounter+":\n";
+    this.notCounter++;
+    break;
   default:
   break;
 }
