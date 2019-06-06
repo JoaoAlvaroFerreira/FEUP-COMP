@@ -449,6 +449,12 @@ static private int jjMoveNfa_0(int startState, int curPos)
                      if (kind > 17)
                         kind = 17;
                   }
+                  else if (curChar == 36)
+                  {
+                     if (kind > 48)
+                        kind = 48;
+                     { jjCheckNAdd(8); }
+                  }
                   if (curChar == 47)
                      jjstateSet[jjnewStateCnt++] = 2;
                   break;
@@ -479,12 +485,19 @@ static private int jjMoveNfa_0(int startState, int curPos)
                      kind = 47;
                   { jjCheckNAdd(6); }
                   break;
-               case 8:
-                  if ((0x3ff000000000000L & l) == 0L)
+               case 7:
+                  if (curChar != 36)
                      break;
                   if (kind > 48)
                      kind = 48;
-                  jjstateSet[jjnewStateCnt++] = 8;
+                  { jjCheckNAdd(8); }
+                  break;
+               case 8:
+                  if ((0x3ff001000000000L & l) == 0L)
+                     break;
+                  if (kind > 48)
+                     kind = 48;
+                  { jjCheckNAdd(8); }
                   break;
                default : break;
             }
@@ -498,7 +511,8 @@ static private int jjMoveNfa_0(int startState, int curPos)
             switch(jjstateSet[--i])
             {
                case 3:
-                  if ((0x7fffffe07fffffeL & l) == 0L)
+               case 8:
+                  if ((0x7fffffe87fffffeL & l) == 0L)
                      break;
                   if (kind > 48)
                      kind = 48;
@@ -507,13 +521,6 @@ static private int jjMoveNfa_0(int startState, int curPos)
                case 1:
                   if (kind > 7)
                      kind = 7;
-                  break;
-               case 8:
-                  if ((0x7fffffe87fffffeL & l) == 0L)
-                     break;
-                  if (kind > 48)
-                     kind = 48;
-                  { jjCheckNAdd(8); }
                   break;
                default : break;
             }
