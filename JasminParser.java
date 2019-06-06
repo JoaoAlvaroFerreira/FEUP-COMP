@@ -270,7 +270,7 @@ public class JasminParser{
 
       //carregar valor duietemnte do codigo
       case NewJava.JJTVAL:
-      ret+="sipush "+curStatement.getSymbol()+"\n";
+      ret+="ldc_w "+curStatement.getSymbol()+"\n";
       this.incrementStackSize();
       break;
 
@@ -296,7 +296,7 @@ public class JasminParser{
       if(curStatement.getSymbol().equals("int[]")){
         //extrai o comprimento do array
         ret+=this.generateStatement((SimpleNode)curStatement.jjtGetChild(0));
-        
+
         ret += "newarray int\n";
       }else{
         ret += "new " + curStatement.getSymbol() + "\n";
@@ -475,10 +475,10 @@ public String generateLocalVariables(SimpleNode method){
       localVarList.add(varType.symbol);
 
       //declaracao variaveis locais
-      localVar += ".var " + Integer.toString(varIndex) + " is "
-      + varType.symbol + " "
-      + this.getJasminType(varType)
-      + " from " + method.getSymbol() + "_init to " + method.getSymbol() + "_end\n";
+        //localVar += ".var " + Integer.toString(varIndex) + " is "
+        //+ varType.symbol + " "
+        //+ this.getJasminType(varType)
+        //+ " from " + method.getSymbol() + "_init to " + method.getSymbol() + "_end\n";
 
       varIndex++;
     }
@@ -585,7 +585,7 @@ public String generateGlobals(){
   String ret = "";
 
   for(int i=0;i<this.symbolTable.globals.size();i++){
-    ret += ".field public " + this.symbolTable.globals.get(i).symbol + " " + this.getJasminType(this.symbolTable.globals.get(i)) + "\n";
+    //ret += ".field public " + this.symbolTable.globals.get(i).symbol + " " + this.getJasminType(this.symbolTable.globals.get(i)) + "\n";
   }
 
   return ret;
