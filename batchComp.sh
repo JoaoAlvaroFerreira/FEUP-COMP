@@ -4,8 +4,8 @@ javacc NewJava.jj
 echo -----------------------------------
 javac *.java
 echo -----------------------------------
-java Main FindMaximum.jmm
+java Main $1.jmm
 echo -----------------------------------
-java -jar jasmin-2.4/jasmin.jar FindMaximum.j
+java -jar jasmin-2.4/jasmin.jar $1.j
 echo -----------------------------------
-java FindMaximum
+java $1
