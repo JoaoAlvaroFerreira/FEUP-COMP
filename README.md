@@ -38,9 +38,45 @@ Para correr a ferramenta, é necessário executar o seguinte comando dentro da p
 (Pode ser necessário dar permissões de execução ao script)
 
 ### LIDAR COM ERROS SINTÁTICOS: 
+A análise sintática é feita pelo módulo NewJava.java que constrói a AST e deteta qualquer tipo de erro sintático, de acordo com os parâmetros da linguagem Java--. Quando um erro é detetado, este é reportado. O programa lida com até dez erros, terminando a execução aquando a declaração do décimo.
 
 
 ### ANÁLISE SEMÂNTICA:
+* ariable Declaration duplicates
+
+Checks for duplicate variable declarations;
+
+Checks for duplicate parameters in method Declarations;
+
+Checks for duplicated fields in classes.
+
+Variable Declaration check in
+
+Assignment Expressions(ex:a=a+2);
+
+Binary Expressions(ex:a<3);
+
+Unary Expressions(ex:c++);
+
+Method Call Expressions;
+
+Check if they are Parameters or fields(fieldExpressions ex:myclass.field1).
+
+Method Declaration check
+
+Will report if a method is calling another undeclared method;
+
+Method can be declared after or before any other function calls it, accurate to Java.
+
+Method Arguments check
+
+Checks number of arguments and if they are declared;
+
+Supports object function calls(example: Person p; p.getName()).
+
+Method Return type check
+
+Checks if functions return variable is of the same type as the method declaration type(not checking literals).
 
 
 
