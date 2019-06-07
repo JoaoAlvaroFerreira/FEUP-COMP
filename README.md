@@ -42,41 +42,36 @@ A análise sintática é feita pelo módulo NewJava.java que constrói a AST e d
 
 
 ### ANÁLISE SEMÂNTICA:
-* ariable Declaration duplicates
 
-Checks for duplicate variable declarations;
+A nossa análise semântica é capaz de detetar, como indicado no enunciado, erros semânticos existentes em expressões. Isto inclui:
 
-Checks for duplicate parameters in method Declarations;
+* Brackets abertos sem o fecho, ou brackets fechados sem a abertura;
 
-Checks for duplicated fields in classes.
+* Expressões matemáticas sem um dos elementos;
 
-Variable Declaration check in
+* Declarações de novos arrays incompletas;
 
-Assignment Expressions(ex:a=a+2);
+* Abertura de parêntesis sem fecho, ou parentesis fechado sem uma abertura anterior correspondente;
 
-Binary Expressions(ex:a<3);
+* Uso incorreto de símbolos em expressões;
 
-Unary Expressions(ex:c++);
+* Símbolos não reconhecidos pelo Java--;
 
-Method Call Expressions;
+* Declarações duplicadas de variáveis;
 
-Check if they are Parameters or fields(fieldExpressions ex:myclass.field1).
+* Declarações duplicadas de funções;
 
-Method Declaration check
+* Valores de return incompatíveis;
 
-Will report if a method is calling another undeclared method;
+* Falta de declaração de return numa função;
 
-Method can be declared after or before any other function calls it, accurate to Java.
+* Verificação do número de argumentos chamados;
 
-Method Arguments check
+* Redefinição de variáveis globais;
 
-Checks number of arguments and if they are declared;
+* Variáveis não definidas;
 
-Supports object function calls(example: Person p; p.getName()).
-
-Method Return type check
-
-Checks if functions return variable is of the same type as the method declaration type(not checking literals).
+* Entre outros.
 
 
 
