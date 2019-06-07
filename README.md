@@ -45,8 +45,17 @@ Para correr a ferramenta, é necessário executar o seguinte comando dentro da p
 
 
 ### REPRESENTAÇÕES INTERMÉDIAS (IRs): (for example, when applicable, briefly describe the HLIR (high-level IR) and the LLIR (low-level IR) used, if your tool includes an LLIR with structure different from the HLIR)
+A nossa representação intermédia e feita por meio de Symbol Tables. A estrutura de uma Symbol Table (SymbolTable.java) inclui:
 
+* Um Map entre Integers e ArrayLists de Strings para guardar as variáveis inicializadas;
+* Um Map entre Integers e um Map de Strings e Integers para guardar os arrays inicializados;
+* Um ArrayList de SymbolTableEntry para representar todas as entradas da SymbolTable;
+Estas SymbolTableEntries (SymbolTableEntry.java) são representativas de funções, tendo os parâmetros e nódulos necessários para tal representação.
+* Um ArrayList de SymbolType para representar as variáveis globais;
+Estes SymbolTypes (SymbolType.java) são representativos de variáveis.
+* Strings para guardar o nome da class e do filepath. 
 
+Estas SymbolTables são geradas ao percorrer a AST gerada anteriormente.
 
 ### GERAÇÃO DE CÓDIGO:
 
@@ -59,8 +68,7 @@ O maior problema da ferramenta é a complexidade do código. De modo a cobrir to
 
 
 
-### OVERVIEW: (refer the approach used in your tool, the main algorithms, the third-party tools and/or packages, etc.)
-
+### OVERVIEW: 
 
 ### DISTRIBUIÇÃO DE TAREFAS:
 Análise Sintática -> Fábio Azevedo, Mariana Dias, Álvaro Ferreira e Tiago Ribeiro;
@@ -69,8 +77,9 @@ Geração de código -> Tiago Ribeiro e Álvaro Ferreira;
 
 
 ### PROS:
-A nossa ferramenta cumpre a maioria dos requisitos, não tendo optimizações. (...)
+A nossa ferramenta cumpre a maioria dos requisitos à exceção das optimizações e a análise semântica engloba todo o Java-- (de salientar que não era requerido no enunciado).
 
 
-### CONS: (Identify the most negative aspects of your tool)
+### CONS:
+As optimizações não foram implementadas e a ferramenta não interpreta "extends" como é suposto.
 
