@@ -37,22 +37,26 @@ Para correr a ferramenta, é necessário executar o seguinte comando dentro da p
 
 (Pode ser necessário dar permissões de execução ao script)
 
-### LIDAR COM ERROS SINTÁTICOS: (Describe how the syntactic error recovery of your tool does work. Does it exit after the first error?)
+### LIDAR COM ERROS SINTÁTICOS: 
 
 
 ### ANÁLISE SEMÂNTICA:
 
 
 
-### REPRESENTAÇÕES INTERMÉDIAS (IRs): (for example, when applicable, briefly describe the HLIR (high-level IR) and the LLIR (low-level IR) used, if your tool includes an LLIR with structure different from the HLIR)
+### REPRESENTAÇÕES INTERMÉDIAS (IRs):
 A nossa representação intermédia e feita por meio de Symbol Tables. A estrutura de uma Symbol Table (SymbolTable.java) inclui:
 
 * Um Map entre Integers e ArrayLists de Strings para guardar as variáveis inicializadas;
 * Um Map entre Integers e um Map de Strings e Integers para guardar os arrays inicializados;
 * Um ArrayList de SymbolTableEntry para representar todas as entradas da SymbolTable;
+
 Estas SymbolTableEntries (SymbolTableEntry.java) são representativas de funções, tendo os parâmetros e nódulos necessários para tal representação.
+
 * Um ArrayList de SymbolType para representar as variáveis globais;
+
 Estes SymbolTypes (SymbolType.java) são representativos de variáveis.
+
 * Strings para guardar o nome da class e do filepath. 
 
 Estas SymbolTables são geradas ao percorrer a AST gerada anteriormente.
@@ -67,13 +71,14 @@ O maior problema da ferramenta é a complexidade do código. De modo a cobrir to
 
 
 
-
 ### OVERVIEW: 
 
+O Java-- que desenvolvemos é uma ferramenta bastante capaz e versátil, tendo sido desenvolvida para ser capaz de lidar com casos bastante abrangentes. O processo de desenvolvimento, embora trabalhoso e com alguns solavancos, foi eficaz a ensinar-nos a construção e funcionamento interno de uma linguagem e o respetivo compilador. Em retrospetiva, embora julgarmos que fizemos um bom trabalho, teríamos organizado o trabalho de uma forma diferente de modo à informação ser mais acessível e fácil de manipular da forma pretendida, já que isso facilitaria em muito o processo de desenvolvimento.
+
 ### DISTRIBUIÇÃO DE TAREFAS:
-Análise Sintática -> Fábio Azevedo, Mariana Dias, Álvaro Ferreira e Tiago Ribeiro;
+Análise Sintática -> Fábio Azevedo, Mariana Dias, João Álvaro Ferreira e Tiago Ribeiro;
 Análise Semantica -> Fábio Azevedo, Mariana Dias;
-Geração de código -> Tiago Ribeiro e Álvaro Ferreira;
+Geração de código -> Tiago Ribeiro e João Álvaro Ferreira;
 
 
 ### PROS:
