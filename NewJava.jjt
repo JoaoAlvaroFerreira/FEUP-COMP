@@ -149,7 +149,7 @@ TOKEN:
   | < WHILE: "while">
   | < STRING: "String" >
   | < INTEGERLITERAL: (["0" - "9"])+ >
-  | < IDENTIFIER: ["A"-"Z","a"-"z"](["0"-"9","A"-"Z","a"-"z","_"])* >
+  | < IDENTIFIER: ["A"-"Z","a"-"z","_","$"](["0"-"9","A"-"Z","a"-"z","_","$"])* >
 }
 SimpleNode Program(): {}
 {
@@ -229,6 +229,7 @@ void Statement()#void:{Token t=new Token();}
 {
   <CURLYBRACKETOPENED> (Statement())* <CURLYBRACKETCLOSED>
   | <IF> IfStatement()
+  | <ELSE> ElseStatement()
   | <WHILE> WhileStatement()
   | Assign()
   | Expression() <SEMICOLON>
@@ -250,9 +251,12 @@ void AssignAux() #VAR: {Token t;}
 
 void IfStatement()#IF:{}
 {
-  <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement() ([<ELSE> Statement()]){
+  <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED> Statement()
+}
 
-  }#ELSE(1)
+void ElseStatement()#ELSE:{}
+{
+ Statement()
 }
 
 void WhileStatement()#WHILE: {Token t;}
@@ -284,8 +288,8 @@ void Expression()#void: {Token t = new Token();}
 
 void Expr2()#void: {Token t;}
 {
-    FullStop(){}#FULLSTOP(2)
-    | t=<AND> VarTerm() [Expr2()]
+
+    t=<AND> VarTerm() [Expr2()]
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
@@ -297,7 +301,7 @@ void Expr2()#void: {Token t;}
 
 void Expr3()#void: {Token t;}
 {
-     t=<MINOR>VarTerm()[Expr3()]
+      t=<MINOR>VarTerm()[Expr3()]
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
@@ -319,18 +323,30 @@ void Expr4()#void: {Token t;}
 
 void Expr5()#void: {Token t;}
 {
-     t=<OPERATORSHIGH>VarTerm()
+  t=<OPERATORSHIGH>VarTerm()[Expr5()]
       {
         jjtThis.symbol = t.image;
         jjtThis.line = t.beginLine;
         jjtThis.column = t.beginColumn;
       }#OP5(2)
+  | Expr6()[Expr5()]
+}
+
+void Expr6()#void: {Token t;}
+{
+  <NOT> VarTerm() [Expr6()]{}#NOT(1)
+  | Expr7()
+}
+
+void Expr7()#void: {Token t;}
+{
+  FullStop(){}#FULLSTOP(2)
 }
 
 void FullStop()#PAREMETER: {Token t;}
 {
-  (<FULLSTOP> (t=<LENGTH> [Expr2()] |
-  t=<IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED> [Expr2()])){
+  <FULLSTOP> (t=<LENGTH> |
+  t=<IDENTIFIER> <ROUNDBRACKETOPEN> [Expression()(<COMMA> Expression())*]  <ROUNDBRACKETCLOSED>){
     jjtThis.symbol = t.image;
     jjtThis.line = t.beginLine;
     jjtThis.column = t.beginColumn;
@@ -351,7 +367,6 @@ void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token()
         jjtThis.line = t.beginLine;
         jjtThis.column = t.beginColumn;
       }#TEXT(1)
-
 
     | t=<IDENTIFIER>
       {
@@ -375,6 +390,6 @@ void VarTerm()#void: {Token t;Token open = new Token();Token close = new Token()
       jjtThis.column = t.beginColumn;
     }#NEW
     )
-    | <NOT> Expression() #NOT(1)
+    | Expr6()
     | <ROUNDBRACKETOPEN> Expression() <ROUNDBRACKETCLOSED>
 }

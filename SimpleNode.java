@@ -157,6 +157,7 @@ public class SimpleNode implements Node {
 
       String type = data.checkIfExists(name, functionNum); // checkar locais
 
+
       if (type.equals("error")) {
         type = data.searchParam(name, functionNum); // checkar params
       }
@@ -212,12 +213,17 @@ public class SimpleNode implements Node {
     if (id == NewJava.JJTNEW) {
       if (symbol.equals("int[]")) {
         Map<String, Integer> arraySize = new TreeMap<String, Integer>();
-        arraySize.put(jjtGetParent().jjtGetChild(0).getSymbol(), Integer.parseInt(this.jjtGetChild(0).getSymbol()));
+        //se o indice nao for uma constante int
+        try{
+          arraySize.put(jjtGetParent().jjtGetChild(0).getSymbol(), Integer.parseInt(this.jjtGetChild(0).getSymbol()));
+        }catch(Exception nfe){
+          arraySize.put(jjtGetParent().jjtGetChild(0).getSymbol(), -1);
+        }
         data.initializedArrays.put(functionNum, arraySize);
       }
       return symbol;
     }
-    
+
     if (id == NewJava.JJTARRINDEX) {
       if (!data.initializedArrays.isEmpty() && data.initializedArrays.get(functionNum) != null
           && data.initializedArrays.get(functionNum).get(this.jjtGetParent().getSymbol()) != null) {
@@ -227,13 +233,14 @@ public class SimpleNode implements Node {
         if (this.jjtGetChild(0).getId() == NewJava.JJTVAL) {
           index = Integer.parseInt(this.jjtGetChild(0).getSymbol());
 
-          if (index >= length) {
+          if ((index >= length) && (length>-1)) {
             error = new SemanticalError("OUT_OF_BOUNDS", data.filePath, this.jjtGetChild(0).getLineNumber(), this.jjtGetChild(0).getColumnNumber());
             error.printError(index, length);
             return "error";
           }
         }
       }
+      return "int";
     }
 
     if (id == NewJava.JJTTHIS) {
@@ -247,7 +254,7 @@ public class SimpleNode implements Node {
         error.printError(symbol);
         return "error";
       }
-      
+
       return "int";
     }
 
@@ -289,7 +296,9 @@ public class SimpleNode implements Node {
         return "error";
       }
 
-      if (!identifierType.equals(expressionType)) {
+      if ((!identifierType.equals(expressionType)) &&
+      !(identifierType.equals("int") && expressionType.equals("int[]")) && expressionType.equals("int[]") &&
+      !(identifierType.equals("boolean") && expressionType.equals("int")) && expressionType.equals("int")) {
         error = new SemanticalError("INCOMPATIBLE_TYPES", data.filePath, this.jjtGetChild(0).getLineNumber(), ((SimpleNode) this.jjtGetChild(1)).getColumnNumber());
         error.printError(expressionType, identifierType);
         return "error";
@@ -303,7 +312,9 @@ public class SimpleNode implements Node {
       String type = (String) ((SimpleNode) this.jjtGetChild(0)).visit(data, functionNum);
       String dataType = data.getReturn(functionNum);
 
-      if (!type.equals(dataType)) {
+      if ((!type.equals(dataType)) &&
+      !(type.equals("int") && dataType.equals("int[]")) && dataType.equals("int[]") &&
+      !(type.equals("boolean") && dataType.equals("int")) && dataType.equals("int")) {
         error = new SemanticalError("INCOMPATIBLE_TYPES", data.filePath, this.jjtGetChild(0).getLineNumber(), ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
         error.printError(type, dataType);
         return "error";
@@ -357,7 +368,10 @@ public class SimpleNode implements Node {
             } else {
               for (int i = 0; i < var.params.size(); i++) {
                 String typeArg = (String) ((SimpleNode) rightSide.jjtGetChild(i)).visit(data, functionNum);
-                if (!var.params.get(i).type.equals(typeArg)) {
+                //e
+                if (!var.params.get(i).type.equals(typeArg) &&
+                !(var.params.get(i).type.equals("int") && typeArg.equals("int[]")) && typeArg.equals("int[]") &&
+                !(var.params.get(i).type.equals("boolean") && typeArg.equals("int")) && typeArg.equals("int")){
                   error = new SemanticalError("INCOMPATIBLE_TYPES", data.filePath, leftSide.getLineNumber(), ((SimpleNode) rightSide.jjtGetChild(i)).getColumnNumber());
                   error.printError(typeArg, var.params.get(i).type);
                   return "error";
@@ -373,13 +387,13 @@ public class SimpleNode implements Node {
             return var.returnDescriptor;
           }
         }
-        
+
 
         error = new SemanticalError("UNKNOWN_SYMBOL",data.filePath, leftSide.getLineNumber(), rightSide.getColumnNumber());
         error.printError(data.className, "method", rightSide.getSymbol());
         return "error";
       }
-      
+
         if (rightSide.jjtGetNumChildren() != 0 && rightSide.jjtGetChild(0).getId() == NewJava.JJTFULLSTOP) {
           return rightSide.jjtGetChild(0).visit(data, functionNum);
         }
@@ -397,7 +411,7 @@ public class SimpleNode implements Node {
       String conditionType = (String) ((SimpleNode) this.jjtGetChild(0)).visit(data, functionNum);
 
       if (!conditionType.equals("boolean") && !conditionType.equals("int") && !conditionType.equals("error")
-          && NewJava.JJTOP2 != this.jjtGetChild(0).getId() && NewJava.JJTOP3 != this.jjtGetChild(0).getId()) {
+          && NewJava.JJTOP2 != this.jjtGetChild(0).getId() && NewJava.JJTOP3 != this.jjtGetChild(0).getId() && NewJava.JJTNOT != this.jjtGetChild(0).getId()) {
         error = new SemanticalError("INCOMPATIBLE_TYPES", data.filePath, this.jjtGetChild(0).getLineNumber(),
             ((SimpleNode) this.jjtGetChild(0)).getColumnNumber());
         error.printError(conditionType, "boolean");
@@ -450,7 +464,7 @@ public class SimpleNode implements Node {
         && startOP.jjtGetChild(0).getId() != NewJava.JJTOP4 && startOP.jjtGetChild(0).getId() != NewJava.JJTOP5) {
       String type = (String) startOP.jjtGetChild(0).visit(data, functionNum);
 
-      if (!type.equals("int")) {
+      if (!type.equals("int") && !type.equals("int[]") && !type.equals("boolean")) {
         return false;
       }
       // se for op, verifica se e vailda
@@ -472,7 +486,7 @@ public class SimpleNode implements Node {
         && startOP.jjtGetChild(1).getId() != NewJava.JJTOP4 && startOP.jjtGetChild(1).getId() != NewJava.JJTOP5) {
       String type = (String) startOP.jjtGetChild(1).visit(data, functionNum);
 
-      if (!type.equals("int")) {
+      if (!type.equals("int") && !type.equals("int[]") && !type.equals("boolean")) {
         return false;
       }
     } else if (!checkOpType((SimpleNode) startOP.jjtGetChild(1), data, functionNum)) {

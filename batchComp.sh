@@ -4,8 +4,8 @@ javacc NewJava.jj
 echo -----------------------------------
 javac *.java
 echo -----------------------------------
-java Main MonteCarloPi.jmm
+java Main $1.jmm
 echo -----------------------------------
-java -jar jasmin-2.4/jasmin.jar MonteCarloPi.j
+java -jar jasmin-2.4/jasmin.jar $1.j
 echo -----------------------------------
-java MonteCarloPi
+java $1

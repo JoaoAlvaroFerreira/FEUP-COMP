@@ -27,6 +27,7 @@ public class Main {
           parsers.add(new JasminParser(NewJava.filePath,NewJava.root,NewJava.table));
       }
 
+
       for(Map.Entry<String, SymbolTable> entry : tables.entrySet()) {
         SymbolTable table = entry.getValue();
 
@@ -46,6 +47,7 @@ public class Main {
           System.out.print("s");
         }
       }
+
 
     for(JasminParser curParser : parsers){
       curParser.generate();
