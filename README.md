@@ -1,8 +1,8 @@
-**PROJECT TITLE: Compiler of the Java-- language to Java Bytecodes
+# PROJECT TITLE: Compiler of the Java-- language to Java Bytecodes
 
-**Grupo: 26
+## Grupo: 26
 
-Nome: Álvaro Ferreira, Número de Estudante: up201605592, Avaliação: 16, Contribuição: 25%
+Nome: João Álvaro Ferreira, Número de Estudante: up201605592, Avaliação: 16, Contribuição: 25%
 
 Nome: Fábio Azevedo, Número de Estudante: up201606540, Avaliação: 16, Contribuição: 25%
 
@@ -10,7 +10,7 @@ Nome: Mariana Dias, Número de Estudante: up201606486, Avaliação: 16 Contribui
 
 Nome: Tiago Ribeiro, Número de Estudante: up201605619, Avaliação: 16, Contribuição: 25%
 
-# ÍNDICE:
+## ÍNDICE:
 
 - [Sumário](#sumário)
 - [Execução](#execução)
@@ -40,7 +40,7 @@ Para correr a ferramenta, é necessário executar o seguinte comando dentro da p
 ### LIDAR COM ERROS SINTÁTICOS: (Describe how the syntactic error recovery of your tool does work. Does it exit after the first error?)
 
 
-### ANÁLISE SEMÂNTICA: (Refer the semantic rules implemented by your tool.)
+### ANÁLISE SEMÂNTICA:
 
 
 
@@ -48,18 +48,28 @@ Para correr a ferramenta, é necessário executar o seguinte comando dentro da p
 
 
 
-### GERAÇÃO DE CÓDIGO: (when applicable, describe how the code generation of your tool works and identify the possible problems your tool has regarding code generation.)
+### GERAÇÃO DE CÓDIGO:
+
+A geração de código é feita com base na árvore sintática. Começando na raíz, esta é percorrida, sendo avaliado o tipo de cada nó (através de um switch no ID do SimpleNode). A cada tipo corresponde uma função diferente que gera o código adequado, chamando recursivamente esta função de avaliação para os nós inferiores. O código gerado vai sendo concatenado para uma string,sendo esta depois retornada e escrita no ficheiro .j.
+A geração de código é apoiada pela symbol table, servindo-se desta para encontrar o tipo das variáveis e funções, convertendo-se para os seus equivalentes em Jasmin. Utiliza-a também para verificar se se trata de uma classe ou função externa, invocando o comando de jasmin adequado.
+A gestão do tamanho da stack é feita a cada instrução com um contador, sendo que se for necessário fazer push de algo, este é incrementado e em situações de pull, decrementado. No fim guarda-se o valor máximo a que o contador chegou e é esse valor que é utilizado para definir o limite da stack.
+
+O maior problema da ferramenta é a complexidade do código. De modo a cobrir todos os casos particulares dentro da linguagem, acabou-se por adicionar muitas condições, tornando o código complicado e mais suceptível a alguma falha.
+
 
 
 
 ### OVERVIEW: (refer the approach used in your tool, the main algorithms, the third-party tools and/or packages, etc.)
 
 
-### DISTRIBUIÇÃO DE TAREFAS: (Identify the set of tasks done by each member of the project.)
+### DISTRIBUIÇÃO DE TAREFAS:
+Análise Sintática -> Fábio Azevedo, Mariana Dias, Álvaro Ferreira e Tiago Ribeiro;
+Análise Semantica -> Fábio Azevedo, Mariana Dias;
+Geração de código -> Tiago Ribeiro e Álvaro Ferreira;
 
 
-
-### PROS: (Identify the most positive aspects of your tool)
+### PROS:
+A nossa ferramenta cumpre a maioria dos requisitos, não tendo optimizações. (...)
 
 
 ### CONS: (Identify the most negative aspects of your tool)
